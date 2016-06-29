@@ -1,0 +1,7 @@
+#menu {background-color:#000080;height:30px;}
+#menu ul {margin: 0;padding-left: 5px;padding-top:5px;list-style-type: none;}
+#menu li {margin: 0;float:left;padding-left: 5px;width: 80px;}
+#menu a {text-decoration: none; color: white;}
+#menu a:link{text-decoration: none; color: white;}
+#menu a:visited {text-decoration: none; color: white;}
+#menu a:hover {text-decoration: none; color: #0000FF;}

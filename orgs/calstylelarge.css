@@ -1,0 +1,14 @@
+a.cal {text-decoration: none;color:black;}
+table.cal {border-collapse:collapse;font-family: Arial, Helvetica, sans-serif;}
+tr.cal {font-size:12px;max-height:50px;overflow:hidden;white-space: nowrap;height:50px;}
+tr.calros {font-size:12px;overflow:hidden;white-space: nowrap;}
+.cal1 {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:14px;}
+.cal2 {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;}
+.cal3 {border-right: black;border-right-style: solid;border-right-width: 1px;border-bottom: black;border-bottom-style: solid;border-bottom-width: 1px;width: 25px;font-size:12px;}
+.cal4 {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:14px;max-width: 25px;overflow: hidden;}
+.cal5 {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:14px;}
+.cal6 {font-size:14px;}
+.cal7 {height: 14px;}
+.cal4blue {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:10px;max-width: 20px;overflow: hidden;}
+.cal4orange {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:10px;max-width: 20px;overflow: hidden;}
+.cal4green {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:10px;max-width: 20px;overflow: hidden;}

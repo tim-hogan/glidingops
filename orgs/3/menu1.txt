@@ -1,0 +1,6 @@
+<div id='menu'>
+<ul>
+<li><a href='home'>HOME</a></li>
+<li><a onclick='goBack()'>BACK</a></li>
+</ul>
+</div>

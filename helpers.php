@@ -1,0 +1,300 @@
+<?php
+function getOrgAircraftPrefix($db,$org)
+{
+   $ret='';
+   $q="SELECT aircraft_prefix from organisations where id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   } 
+   return $ret;
+}
+
+function getOrgDefautLaunchLat($db,$org)
+{
+   $ret=0.0;
+   $q="SELECT def_launch_lat from organisations where id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   } 
+   return $ret;
+}
+
+function getOrgDefautLaunchLon($db,$org)
+{
+   $ret=0.0;
+   $q="SELECT def_launch_lon from organisations where id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   } 
+   return $ret;
+}
+
+function getFlightType($db,$strType)
+{
+   $ret=-1.0;
+   $q="SELECT id from flighttypes where name = '".$strType."'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getGlidingFlightType($db)
+{
+    return getFlightType($db,'Glider');
+}
+
+function getCheckFlightType($db)
+{
+    return getFlightType($db,'Tow plane check flight');
+}
+
+function getRetrieveFlightType($db)
+{
+    return getFlightType($db,'Tow plane retrieve');
+}
+
+function getLandingFeeFlightType($db)
+{
+    return getFlightType($db,'Landing Charge');
+}
+
+function getNoChargeOpt($db)
+{
+   $ret=-1.0;
+   $q="SELECT id from billingoptions where name = 'No Charge'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getRoleId($db,$strRole)
+{
+   $ret=-1.0;
+   $q="SELECT id from roles where name = '" . $strRole . "'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getClassId($db,$org,$strClass)
+{
+   $ret=-1.0;
+   $q="SELECT id FROM membership_class WHERE org = ".$org." and class = '" . $strClass . "'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+function getJuniorClass($db,$org){return getClassId($db,$org,'Junior');}
+function getShortTermClass($db,$org){return getClassId($db,$org,'Short Term');}
+function getNonFlyingClass($db,$org){return getClassId($db,$org,'Non Flying');}
+function getAircraftType($db,$org,$strType)
+{
+   $ret=-1.0;
+   $q="SELECT id FROM aircrafttype WHERE org = ".$org." and name = '" . $strType . "'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getTowPlaneType($db,$org){return getAircraftType($db,$org,'Tow Plane');}
+
+function getLaunchType($db,$strType)
+{
+   $ret=-1.0;
+   $q="SELECT id FROM launchtypes WHERE name = '" . $strType . "'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getTowLaunchType($db){return getLaunchType($db,'Tow Plane');}
+function getSelfLaunchType($db){return getLaunchType($db,'Self Launch');}
+function getWinchLaunchType($db){return getLaunchType($db,'Winch');}
+
+
+function getTowChargeType($db,$org)
+{
+   $ret = 0;
+   //Returns 0 (Not defined)
+   //Returns 1 (Height Based)
+   //Returns 2 (Time bases)
+   $q="SELECT tow_height_charging,tow_time_based FROM organisations WHERE id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     if ($row[0] == 1)
+       $ret = 1;
+     else
+     if ($row[1] == 1)
+       $ret = 2;
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function getOrganisationName($db,$org)
+{
+   $ret='';
+   $q="SELECT name FROM organisations WHERE id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   return $ret;
+}
+
+function getOrgOtherChargesName($db,$org)
+{
+   $ret='';
+   $q="SELECT name_othercharges FROM organisations WHERE id = " . $org;
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   return $ret;
+}
+
+function IsMemberTowy($db,$memid)
+{
+  $ret=false;
+  $roletow = getRoleId($db,'Tow Pilot');
+  $q="SELECT * from role_member where member_id = " . $memid . " and role_id = " . $roletow;
+  $r = mysqli_query($db,$q);
+  if (mysqli_num_rows($r) > 0)
+     $ret= true;
+  mysqli_free_result($r);
+  return $ret;
+}
+
+function IsMemberInstructor($db,$memid)
+{
+  $ret=false;
+  $q1="SELECT id from roles where name LIKE '%Instructor%'";
+  $r1 = mysqli_query($db,$q1);
+  while ($row1 = mysqli_fetch_array($r1) )
+  {
+     $q="SELECT * from role_member where member_id = " . $memid . " and role_id = " . $row1[0];
+     $r = mysqli_query($db,$q);
+     if (mysqli_num_rows($r) > 0)
+        $ret= true;
+     mysqli_free_result($r);
+  }
+  mysqli_free_result($r1);
+  return $ret;
+}
+
+function getGliderModel($db,$org,$short_rego)
+{
+   $ret='';
+   $q="SELECT make_model FROM aircraft WHERE org = " .$org. " and rego_short = '" . $short_rego . "'";
+   $r = mysqli_query($db,$q);
+   if (mysqli_num_rows($r) > 0)
+   {
+     $row = mysqli_fetch_array($r);
+     $ret=$row[0];
+   }
+   mysqli_free_result($r);
+   return $ret;
+}
+
+function strDuration($v)
+{
+  $duration = intval($v / 1000);
+  $hours = intval($duration / 3600);
+  $mins = intval(($duration % 3600) / 60);
+  $timeval = sprintf("%02d:%02d",$hours,$mins);
+  return $timeval;
+}
+
+function tracksforFlight($db1,$db2,$glider,$strStart,$strEnd)
+{
+   $ret = false;
+   if (null != $db1)
+   {
+    $q = "SELECT * from tracks where glider = '".$glider."' and point_time > '".$strStart."' and point_time < '".$strEnd."'";
+    $r = mysqli_query($db1,$q);
+    if (mysqli_num_rows($r) > 0)
+    {
+      $ret = true;
+      return $ret;
+    }
+   }
+   if (null != $db2)
+   {
+    $q = "SELECT * from tracksarchive where glider = '".$glider."' and point_time > '".$strStart."' and point_time < '".$strEnd."'";
+    $r = mysqli_query($db2,$q);
+    if (mysqli_num_rows($r) > 0)
+    {
+      $ret = true;
+      return $ret;
+    }
+   }
+   return $ret;
+}
+
+function isFirstPilotFlightDay($db,$org,$date,$seq,$memberid)
+{
+  $q = "SELECT id from flights where flights.org = " .$org. " and flights.localdate = ".$date." and flights.seq < ".$seq." and (flights.billing_member1 = ".$memberid." or flights.billing_member2 = ".$memberid.")";
+  $r = mysqli_query($db,$q);
+  if (!r)
+     error_log("SQL ERROR " . mysqli_error($con) . "SQL: " . $q);
+  if (mysqli_num_rows($r) > 0)
+    return false;
+  else
+    return true;
+}
+
+function SendMail($to,$subject,$message)
+{
+  $headers = 
+    'From: Gliding Operations <operations@glidingops.com>' . "\r\n" .
+    'Reply-To: wgcoperations@gmail.com' . "\r\n" .
+    'Return-PATH: operations@glidingops.com' . "\r\n" .
+    'X-Mailer: PHP/' . phpversion();   
+  return mail($to, $subject, $message, $headers, '-r operations@glidingops.com');
+}
+?>

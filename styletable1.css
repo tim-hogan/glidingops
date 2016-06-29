@@ -1,0 +1,11 @@
+body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+table {border-collapse: collapse;}
+a:link {text-decoration: none;}
+a:visited {text-decoration: none;}
+a:hover {text-decoration: none;}
+a:active {text-decoration: none;}
+th {font-size: 13px;font-family: Arial, Helvetica, sans-serif;background: linear-gradient(#eeeeee, #cccccc, #eeeeee);padding-left:10px;}
+th.colsel {font-size: 14px;padding-left:10px;font-family: Arial, Helvetica, sans-serif;background: linear-gradient(#eeeeee, #cccccc, #eeeeee); color: #0000ff;}
+td {font-size: 13px;font-family: Arial, Helvetica, sans-serif;padding-left:10px;}
+tr.even {background: #eeeeee;}
+.right {text-align: right;}
