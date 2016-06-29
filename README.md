@@ -6,7 +6,7 @@
 
 ## How to configure the database connections
 Create a `config/database.php` file with the following structure  
-
+```php
 <?php
 return [
     'gliding' => [
@@ -23,6 +23,6 @@ return [
     ]
 ];
 ?>
-
+```
 
 ## How to contribute
