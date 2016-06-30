@@ -2,6 +2,8 @@
 
 <short description>
 
+Original project author Tim Hogan.
+
 ## How to install
 
 ## How to configure the database connections
