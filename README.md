@@ -1,6 +1,6 @@
 # Title
 
-<short description>
+A bunch of tools to assist gliding operations.
 
 Original project author Tim Hogan.
 
