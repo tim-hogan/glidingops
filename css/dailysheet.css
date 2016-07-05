@@ -1,0 +1,99 @@
+#body {
+  margin: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#container {
+  margin: 0px;
+  border: px;
+}
+#final {
+  background-color: #ff9191;
+  height: 40px;
+  font-size: 14px;
+}
+#bottomdiv {
+  height: 90px;
+}
+#bookings {
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin: 5px;
+}
+#bookings2 {
+  background-color: #e0e0e0;
+  margin: 5px;
+}
+p.err1 {
+  margin: 0px;
+  color: #A00000;
+  font-size: 12px;
+}
+th {
+  font-size: 12px;
+}
+p.p1 {
+  margin: 5px;
+  font-weight: bold;
+}
+p.p2 {
+  margin: 5px;
+}
+td.pr {
+  padding-right: 10px;
+  font-size: 14px;
+}
+.bhl {
+  width: 22px;
+  font-size: 12px;
+}
+.bhm {
+  width: 22px;
+  font-size: 12px;
+}
+.bhr {
+  border-right: black;
+  border-right-style: solid;
+  border-right-width: 1px;
+  width: 20px;
+  font-size: 12px;
+}
+.bhrs {
+  border-right: black;
+  border-right-style: solid;
+  border-right-width: 1px;
+  width: 20px;
+}
+.in1 {
+  font-size: 20px;
+}
+input.upper {
+  text-transform: uppercase;
+}
+table {
+  border-collapse: collapse;
+}
+.right {
+  text-align: right;
+}
+.red {
+  color: #ff0000;
+}
+.green {
+  color: #00ff00;
+}
+#tempdiv {
+  width: 800px;
+  height: 260px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #c0c0c0;
+  padding: 10px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 10px 10px 5px #888888;
+}
+
+td select {
+  width: 100%;
+}
