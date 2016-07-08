@@ -1301,9 +1301,9 @@ function AddNewLine()
 <table id='t1'>
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
 <th>SEQ</th>
-<th>PLANE</th>
+<th>LAUNCH<br/>PLANE</th>
 <th>GLIDER</th>
-<th>TOW PILOT</th>
+<th>TOW PILOT<br/>WINCH OPERATOR</th>
 <th>PIC</th>
 <th>P2</th>
 <th>START</th>
