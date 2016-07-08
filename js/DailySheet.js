@@ -69,7 +69,7 @@ var DailySheet = function() {
         if (null == check) {
             var tp = "d" + iRow;
             var strtp = document.getElementById(tp).value;
-            DailySheet.addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
+            addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
             nextRow++;
         }
     }
@@ -299,9 +299,9 @@ var DailySheet = function() {
         entryTypeSelect.onValueSelected = function(value) {
             console.log('Entry type ' + value)
             if (value == 'l' + launchTypes.winch) {
-                launchOperatorSelect.setXml(winchdriverxml, 'wdrivers', null)
+                launchOperatorSelect.setXml(winchdriverxml, 'wdrivers', launchOperatorSelect.value())
             } else {
-                launchOperatorSelect.setXml(towpilotxml, 'tpilots', null)
+                launchOperatorSelect.setXml(towpilotxml, 'tpilots', launchOperatorSelect.value())
             }
         }
     }

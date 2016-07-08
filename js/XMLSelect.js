@@ -66,6 +66,10 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
         // do nothing on select
     }
 
+    self.value = function() {
+        return self.domNode.value
+    }
+
     buildSelect()
     self.domNode = sel
 }
