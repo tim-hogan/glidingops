@@ -1,3 +1,9 @@
+/**
+ * A very basic implementaion of a JS module to hold all functions
+ * used for setting up the Daily Sheet page.
+ *
+ * @module
+ */
 var DailySheet = function() {
     var myPublic = {};
     var launchTypes = {};

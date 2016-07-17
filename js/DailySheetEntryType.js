@@ -1,3 +1,7 @@
+/**
+ * A select that allows you to choose the type of entry. E.g. Tow/Self launch/Winch etc.
+ * @constructor
+ */
 var DailySheetEntryType = function(towplanesXml, rowIndex, selected, launchTypes) {
     var self = this;
 

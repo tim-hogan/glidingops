@@ -1,3 +1,7 @@
+/**
+ * A select backed by an XML.
+ * @constructor
+ */
 var XMLSelect = function(colname, collid, initialListXml, initialListtag, initialSelectedValue, newvalLabel) {
     var self = this;
     var sel = null;
