@@ -52,17 +52,17 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
         }
     }
 
-    function clearOoptions() {
+    // ===========================================
+    // Public interface
+    // ===========================================
+    self.clear = function() {
         for (var i = sel.options.length - 1; sel.options.length > 0; i--) {
             sel.remove(i);
         }
     }
-    // ===========================================
-    // Public interface
-    // ===========================================
 
     self.setXml = function(newListXML, newListTag, selectedValue) {
-        clearOoptions()
+        self.clear()
         addOptionsFromXml(newListXML, newListTag, selectedValue)
     }
 

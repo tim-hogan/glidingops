@@ -8,7 +8,8 @@ var DailySheet = function() {
     var myPublic = {};
     var launchTypes = {};
 
-    myPublic.init = function(launchTypeSelfId, launchTypeWinchId) {
+    myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId) {
+        launchTypes.tow = launchTypeTowId;
         launchTypes.self = launchTypeSelfId;
         launchTypes.winch = launchTypeWinchId;
     }
@@ -306,8 +307,10 @@ var DailySheet = function() {
             console.log('Entry type ' + value)
             if (value == 'l' + launchTypes.winch) {
                 launchOperatorSelect.setXml(winchdriverxml, 'wdrivers', launchOperatorSelect.value())
-            } else {
+            } else if(value.startsWith('t')){
                 launchOperatorSelect.setXml(towpilotxml, 'tpilots', launchOperatorSelect.value())
+            } else {
+                launchOperatorSelect.clear();
             }
         }
     }

@@ -244,7 +244,9 @@ var towplanes = "<?php echo $towplanes;?>";
 var pollcnt=0;
 
 // addrowdata
-DailySheet.init(<?php echo $launchTypeSelf;?>, <?php echo $launchTypeWinch;?>);
+DailySheet.init(<?php echo $launchTypeTow;?>, 
+                <?php echo $launchTypeSelf;?>,
+                <?php echo $launchTypeWinch;?>);
 
 function ShowCheckErrors(xml)
 {
@@ -1301,7 +1303,7 @@ function AddNewLine()
 <table id='t1'>
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
 <th>SEQ</th>
-<th>LAUNCH<br/>PLANE</th>
+<th>LAUNCH</th>
 <th>GLIDER</th>
 <th>TOW PILOT<br/>WINCH OPERATOR</th>
 <th>PIC</th>
