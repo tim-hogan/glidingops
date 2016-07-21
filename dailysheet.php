@@ -3,34 +3,13 @@
 <meta name="viewport" content="width=device-width">
 <meta name="viewport" content="initial-scale=1.0">
 <head>
-<link rel="icon" type="image/png" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="calstyle.css">
-<script src="cal.js"></script>
-<style type="text/css">
-#body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
-#container{margin: 0px;
-	   border: 0px;}
-#final {background-color:#ff9191;height: 40px;font-size:14px;}
-#bottomdiv{height:90px;}
-#bookings{background-color:#e0e0e0;border-radius:5px;margin: 5px;}
-#bookings2{background-color:#e0e0e0;margin: 5px;}
-p.err1 {margin: 0px;color:#A00000;font-size: 12px;}
-th {font-size:12px;}
-p.p1 {margin: 5px;font-weight: bold;}
-p.p2 {margin: 5px;}
-td.pr {padding-right: 10px;font-size:14px;}
-.bhl {width: 22px;font-size:12px;}
-.bhm {width: 22px;font-size:12px;}
-.bhr {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;font-size:12px;}
-.bhrs {border-right: black;border-right-style: solid;border-right-width: 1px;width: 20px;}
-.in1 {font-size: 20px;}
-input.upper {text-transform:uppercase;}
-table {border-collapse:collapse;}
-.right {text-align: right;}
-.red {color:#ff0000;}
-.green {color:#00ff00;}
-#tempdiv {width: 800px; height: 260px; position: absolute; top: 0px; left: 0px;background: #c0c0c0;padding: 10px;border-style:solid;border-width:1px;box-shadow: 10px 10px 5px #888888;}
-</style>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" type="text/css" href="calstyle.css">
+  <link rel="stylesheet" type="text/css" href="css/dailysheet.css">
+  <script type="text/javascript" src="cal.js"></script>
+  <script type="text/javascript" src="js/DailySheet.js"></script>
+  <script type="text/javascript" src="js/DailySheetEntryType.js"></script>
+  <script type="text/javascript" src="js/XMLSelect.js"></script>
 <script>
 var nextRow;
 var xmlDoc;
@@ -264,6 +243,11 @@ var chargeopts = "<?php echo $chargeopts;?>";
 var towplanes = "<?php echo $towplanes;?>";
 var pollcnt=0;
 
+// addrowdata
+DailySheet.init(<?php echo $launchTypeTow;?>, 
+                <?php echo $launchTypeSelf;?>,
+                <?php echo $launchTypeWinch;?>);
+
 function ShowCheckErrors(xml)
 {
   var bErr=0;
@@ -333,160 +317,141 @@ xmlhttp.onreadystatechange = function ()
     if (xmlhttp.readyState == 4) 
     {
     	console.log("Reply from server");
-        var xmlReply = xmlhttp.responseXML;
-        var replyType=xmlReplyType(xmlReply);      	
-                
-        if (replyType=="allmembers")
+      var xmlReply = xmlhttp.responseXML;
+      var replyType=xmlReplyType(xmlReply);      	
+              
+      if (replyType=="allmembers")
+      {
+        console.log("Reply type: allmembers"); 
+        allmembers = xml2Str(xmlReply);
+        var r = 0;
+        for (r=0;r < 100;r++)
         {
-            console.log("Reply type: allmembers"); 
-            allmembers = xml2Str(xmlReply);
-            var r = 0;
-            for (r=0;r < 100;r++)
-            {
- 	    	var iRow = r +1;
-                
-	        
-                var n = document.getElementById("e"+ iRow);
-                if (null != n)
-                {
-                   var p1 = document.getElementById("e" + iRow).value;
-                   //remove all list
-		   while (n.firstChild) 
-  			n.removeChild(n.firstChild);
-                   AddEntriesToDropDown(n,allmembers,"allmembers",p1,"new");
-                }
-                 
- 	    	n = document.getElementById("f"+iRow);
-                if (null != n)
-                {
-                   var p2 = document.getElementById("f" + iRow).value;
-                   //remove all list
-		   while (n.firstChild) 
-  			n.removeChild(n.firstChild);
-                   AddEntriesToDropDown(n,allmembers,"allmembers",p2,"trial");
-                }
-                 
-            } 
+            var iRow = r +1;
+          var n = document.getElementById("e"+ iRow);
+          if (null != n)
+          {
+            var p1 = document.getElementById("e" + iRow).value;
+            //remove all list
+      		  while (n.firstChild) 
+        		  n.removeChild(n.firstChild);
+            AddEntriesToDropDown(n,allmembers,"allmembers",p1,"new");
+          }
+           
+  	      n = document.getElementById("f"+iRow);
+          if (null != n)
+          {
+             var p2 = document.getElementById("f" + iRow).value;
+             //remove all list
+             while (n.firstChild) 
+	             n.removeChild(n.firstChild);
+             AddEntriesToDropDown(n,allmembers,"allmembers",p2,"trial");
+          }   
+        }
+      }
 
 
+      if (replyType=="bookings")
+      {
+         console.log("Reply type: bookings"); 
+         buildbookingtable(xml2Str(xmlReply),"btable",1);
+      }
+      if (replyType=="checks")
+      {
+         console.log("Reply type: checks"); 
+         ShowCheckErrors(xmlReply);
+      }
+      
+      if (replyType == "status") {
+        console.log("Reply type: status");
+
+
+        var status = xmlReply.getElementsByTagName("status")[0].childNodes[0].nodeValue;
+
+        //See if we have any diag messages.
+        var diagmsg = "";
+        if (null != xmlReply.getElementsByTagName("diag")) {
+          try {
+            diagmsg = xmlReply.getElementsByTagName("diag")[0].childNodes[0].nodeValue;
+            document.getElementById("diag").innerHTML = diagmsg;
+          } catch (err) {}
+        }
+        //check for member updates.
+        var nodes = xmlReply.getElementsByTagName("upd")[0].childNodes;
+
+        for (i = 0; i < nodes.length; i++) {
+
+          if (nodes[i].nodeName == "member") {
+            var tid = nodes[i].getElementsByTagName("tempid")[0].childNodes[0].nodeValue;
+            var cell = nodes[i].getElementsByTagName("cell")[0].childNodes[0].nodeValue;
+            var colid = nodes[i].getElementsByTagName("colid")[0].childNodes[0].nodeValue;
+            var id = nodes[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
+            var disp = nodes[i].getElementsByTagName("displayname")[0].childNodes[0].nodeValue;
+
+            //Find the cell and update the real ID
+            var eNodes = document.getElementById(cell).childNodes;
+            for (j = 0; j < eNodes.length; j++) {
+              if (eNodes[j].value == tid)
+                eNodes[j].value = id;
+            }
+
+
+            //Add this member to the new lists
+            if (colid == "towpilot") {
+              parser = new DOMParser();
+              towDoc = parser.parseFromString(towpilotxml, "text/xml");
+              var pilots = towDoc.getElementsByTagName("tpilots")[0].childNodes;
+              var pilot = towDoc.createElement("pilot");
+              towDoc.getElementsByTagName("tpilots")[0].appendChild(pilot);
+              var nid = towDoc.createElement("id");
+              nid.appendChild(towDoc.createTextNode(id));
+              pilot.appendChild(nid);
+
+              var nnam = towDoc.createElement("name");
+              nnam.appendChild(towDoc.createTextNode(disp));
+              pilot.appendChild(nnam);
+              towpilotxml = xml2Str(towDoc);
+              console.log("Update towpilot list " + towpilotxml);
+
+            }
+            //Now add to members list
+            parser = new DOMParser();
+            memDoc = parser.parseFromString(allmembers, "text/xml");
+            var members = memDoc.getElementsByTagName("allmembers")[0].childNodes;
+            var member = memDoc.createElement("member");
+            memDoc.getElementsByTagName("allmembers")[0].appendChild(member);
+            var nid = memDoc.createElement("id");
+            nid.appendChild(memDoc.createTextNode(id));
+            member.appendChild(nid);
+
+            var nnam = memDoc.createElement("name");
+            nnam.appendChild(memDoc.createTextNode(disp));
+            member.appendChild(nnam);
+            allmembers = xml2Str(memDoc);
+            console.log("Update towpilot list " + allmembers);
+
+
+            //Delete this node form the update required
+            var newassocnode = xmlDoc.getElementsByTagName("newassocs")[0].childNodes;
+            for (k = 0; k < newassocnode.length; k++) {
+              if (newassocnode[k].nodeName == "member") {
+                if (newassocnode[k].getElementsByTagName("tempid")[0].childNodes[0].nodeValue == tid)
+                  xmlDoc.getElementsByTagName("newassocs")[0].removeChild(newassocnode[k]);
+              }
+            }
+          }
         }
 
-
-        if (replyType=="bookings")
-        {
-           console.log("Reply type: bookings"); 
-           buildbookingtable(xml2Str(xmlReply),"btable",1);
+        server_updseq = xmlReply.getElementsByTagName("updseq")[0].childNodes[0].nodeValue;
+        if (parseInt(server_updseq) == parseInt(updseq)) {
+          inSync = 1;
+          var st = document.getElementById("sync");
+          st.innerHTML = "Sync";
+          st.setAttribute("class", "green");
         }
-        if (replyType=="checks")
-        {
-           console.log("Reply type: checks"); 
-           ShowCheckErrors(xmlReply);
-        }
-        if (replyType=="status")
-        {
-           console.log("Reply type: status"); 
 
-
-		var status = xmlReply.getElementsByTagName("status")[0].childNodes[0].nodeValue;
-                
-                //See if we have any diag messages.
-                var diagmsg="";
-		if (null !=  xmlReply.getElementsByTagName("diag")) 
-		{
-                    try
-                    {
-                     diagmsg = xmlReply.getElementsByTagName("diag")[0].childNodes[0].nodeValue;
-                     document.getElementById("diag").innerHTML = diagmsg;
-                    }
-		    catch(err)
-                    {
-                    }
-		}
-                //check for member updates.
-		var nodes=xmlReply.getElementsByTagName("upd")[0].childNodes;
-                
-                for (i=0;i<nodes.length;i++)
-                {
-                    
-                    if (nodes[i].nodeName == "member")
-                    {
-	                var tid = nodes[i].getElementsByTagName("tempid")[0].childNodes[0].nodeValue;
-	                var cell = nodes[i].getElementsByTagName("cell")[0].childNodes[0].nodeValue;
-	                var colid = nodes[i].getElementsByTagName("colid")[0].childNodes[0].nodeValue;
-                        var id = nodes[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-	                var disp = nodes[i].getElementsByTagName("displayname")[0].childNodes[0].nodeValue;
-                        
-			//Find the cell and update the real ID
-			var eNodes = document.getElementById(cell).childNodes;
-                        for(j=0;j<eNodes.length;j++)
-                        {
-			   if(eNodes[j].value==tid)
-				eNodes[j].value=id;
-			}
-
-                        
-			//Add this member to the new lists
-                        if (colid=="towpilot")
-			{
-				parser=new DOMParser();
-  				towDoc=parser.parseFromString(towpilotxml,"text/xml");
-				var pilots = towDoc.getElementsByTagName("tpilots")[0].childNodes;	
-            			var pilot = towDoc.createElement("pilot");
-				towDoc.getElementsByTagName("tpilots")[0].appendChild(pilot);
-				var nid = towDoc.createElement("id");				
-				nid.appendChild(towDoc.createTextNode(id));
-				pilot.appendChild(nid);
-
-				var nnam = towDoc.createElement("name");				
-				nnam.appendChild(towDoc.createTextNode(disp));
-				pilot.appendChild(nnam);
-				towpilotxml=xml2Str(towDoc);
-				console.log("Update towpilot list " + towpilotxml);
-					
-			}
-			//Now add to members list
-			parser=new DOMParser();
-  			memDoc=parser.parseFromString(allmembers,"text/xml");
-			var members = memDoc.getElementsByTagName("allmembers")[0].childNodes;	
-       			var member = memDoc.createElement("member");
-			memDoc.getElementsByTagName("allmembers")[0].appendChild(member);
-			var nid = memDoc.createElement("id");				
-			nid.appendChild(memDoc.createTextNode(id));
-			member.appendChild(nid);
-
-			var nnam = memDoc.createElement("name");				
-			nnam.appendChild(memDoc.createTextNode(disp));
-			member.appendChild(nnam);
-			allmembers=xml2Str(memDoc);
-			console.log("Update towpilot list " + allmembers);
-
-
-			//Delete this node form the update required
-			var newassocnode = xmlDoc.getElementsByTagName("newassocs")[0].childNodes;
-			for(k=0;k<newassocnode.length;k++)
-			{
-			    if(newassocnode[k].nodeName=="member")
-		            {
-			    	if (newassocnode[k].getElementsByTagName("tempid")[0].childNodes[0].nodeValue == tid)
-			    		xmlDoc.getElementsByTagName("newassocs")[0].removeChild(newassocnode[k]);
-			    }
-			}
-		    }
-		}
-                
-		
-                server_updseq = xmlReply.getElementsByTagName("updseq")[0].childNodes[0].nodeValue;
-		if (parseInt(server_updseq) == parseInt(updseq))
-		{
-			inSync = 1;
-                        var st = document.getElementById("sync");
-			st.innerHTML = "Sync";
-			st.setAttribute("class","green");
-		}	
-
-		console.log("Reply from server status: " + status);
-		
-	}
+        console.log("Reply from server status: " + status);
+      }
     }
 }
 
@@ -935,357 +900,6 @@ function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
 	}	
  
 }
-function CreateDropDownList(row,colnum,colname,collid,listxml,listtag,selvalue,newval)
-{
-        var r = row.insertCell(colnum);
-	sel = "<select colname='" + colname + "' onchange='fieldchange(this)'></select>";
-	r.innerHTML=sel;
-	r.firstChild.setAttribute("id",collid);
-	var selnode = r.firstChild;
-
-	//Create first null entry
-	var opt = document.createElement("option");
-        opt.value = "0";
-	opt.innerHTML = "";
-	selnode.appendChild(opt);
-
-	opt = document.createElement("option");
-        opt.value = "99999";
-	opt.innerHTML = newval;
-	selnode.appendChild(opt);
-
-        parser=new DOMParser();
-  	dropDoc=parser.parseFromString(listxml,"text/xml");	
-	if (null != dropDoc)
-	{	                                 
-	    var mems = dropDoc.getElementsByTagName(listtag)[0].childNodes;	
-            for (i=0;i < mems.length;i++)
-            {
-		var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-		var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-		opt = document.createElement("option");
-		opt.value = id;
-		opt.innerHTML = name;
-		selnode.appendChild(opt);
-	    }
-	}
-	
-        
-	//update the value to selected
-	var selnode = r.firstChild;
-	var optlist = selnode.childNodes;
-	for (i=0; i<optlist.length; i++)
-	{
-	    if (optlist[i].value == selvalue)
-		optlist[i].setAttribute("selected","");
-	}
-
-	
-}
-
-function addrowdata(id,plane,glider,towy,p1,p2,start,towland,land,height,charges,comments,del)
-{
-	
-        console.log("Add row data plane = " + plane);
-        var sel;
-	var table = document.getElementById("t1");
-	var row = table.insertRow(-1);
-	
-	row.insertCell(0).innerHTML=id;
-	
-
-        var r1 = row.insertCell(1);
-        sel = "<select colname='" + "launch" + "' onchange='fieldchange(this)'></select>";
-	r1.innerHTML=sel;
-        r1.firstChild.setAttribute("id","b" + nextRow);
-	var selnode = r1.firstChild;
-
-	parser=new DOMParser();
-  	towPlaneDoc=parser.parseFromString(towplanes,"text/xml");	
-	if (null != towPlaneDoc)
-	{	                                 
-	    var mems = towPlaneDoc.getElementsByTagName("TowPlanes")[0].childNodes;	
-            for (i=0;i < mems.length;i++)
-            {
-		if (mems[i].nodeName == "plane")
-                {
-			var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-			var rego = mems[i].getElementsByTagName("rego")[0].childNodes[0].nodeValue;
-			var opt = document.createElement("option");
-			
-			opt.value = "t"+id;
-			opt.innerHTML = rego;
-			if (plane == ("t"+id))
-                            opt.setAttribute("selected","");
-			
-			selnode.appendChild(opt);
-                }
-	    }
-	}
-  
-
-
-        
-        var opt = document.createElement("option");
-        var id=<?php echo $launchTypeSelf;?>;
-        opt.value = "l"+id;
-	opt.innerHTML = "SELF";
-        if (plane == ("l"+id))
-           opt.setAttribute("selected","");
-        selnode.appendChild(opt);	
-        
-        opt = document.createElement("option");
-        id = <?php echo $launchTypeWinch;?>;
-        opt.value = "l"+id;
-	opt.innerHTML = "WINCH";
-        if (plane == ("l"+id))
-           opt.setAttribute("selected","");
-        selnode.appendChild(opt);	
-
-        opt = document.createElement("option");
-        opt.value = "f1";
-	opt.innerHTML = "LND FEE";
-        if (plane == ("f1"))
-           opt.setAttribute("selected","");
-        selnode.appendChild(opt);	
-
-	var r2 = row.insertCell(2);
-	r2.innerHTML="<input type='text' name='glider[]' maxlength='3' size='4' class='upper' onchange='fieldchange(this)'>";
-	r2.firstChild.setAttribute("id","c" + nextRow);
-	r2.firstChild.setAttribute("value",glider);
-
-        //New towpilot code	
-	
-        CreateDropDownList(row,3,"towpilot","d"+nextRow,towpilotxml,"tpilots",towy,"new");
- 	CreateDropDownList(row,4,"pic","e"+nextRow,allmembers,"allmembers",p1,"new");
-	CreateDropDownList(row,5,"p2","f"+nextRow,allmembers,"allmembers",p2,"Trial");
-	
-	var r6 = row.insertCell(6);
-	if (parseInt(start) == 0)
-	{
-		r6.innerHTML="<button name='start[]' type='button' onclick='startbutton(this)'>Start</button>";
-		r6.firstChild.setAttribute("id","g" + nextRow);
-		r6.firstChild.setAttribute("timedata","0");
-	}
-	else
-	{
-		var para = document.createElement("input");
-		var d = new Date(parseInt(start));
-		para.setAttribute("onchange","timechange(this)");
-                para.setAttribute("timedata",d.getTime());	
-		para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-		para.setAttribute("prevval",para.value);
-		para.size=5;
-		r6.appendChild(para);
-		r6.firstChild.setAttribute("id","g" + nextRow);
-	}
-	
-	var nextCol = 7;
-        //Tow charging based on time code follows
-        if (towChargeType == 2)
-        {
-           var r13 = row.insertCell(nextCol);
-           nextCol++;
-	   if (parseInt(towland) == 0)
-	   {
-		r13.innerHTML="<button name='towland[]' type='button' onclick='towlandbutton(this)'>Tow Land</button>";
-		r13.firstChild.setAttribute("id","n" + nextRow);
-		r13.firstChild.setAttribute("timedata","0");
-	   }
-	   else
-	   {
-		var para = document.createElement("input");
-		var d = new Date(parseInt(towland));
-		para.setAttribute("onchange","timechange(this)");
-                para.setAttribute("timedata",d.getTime());	
-		para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-		para.setAttribute("prevval",para.value);
-		para.size=5;
-		r13.appendChild(para);
-		r13.firstChild.setAttribute("id","n" + nextRow);
-	   }
-        }
-
-
-
-
-        var r7=row.insertCell(nextCol);
-        nextCol++;
-	if (parseInt(land) == 0)
-	{
-		r7.innerHTML="<button name='land[]' type='button' onclick='landbutton(this)'>Land</button>";
-		r7.firstChild.setAttribute("id","h" + nextRow);	
-		r7.firstChild.setAttribute("timedata","0");
-	}
-	else
-	{
-		var para = document.createElement("input");
-		var d = new Date(parseInt(land));
-		para.setAttribute("onchange","timechange(this)");
-                para.setAttribute("timedata",d.getTime());	
-		para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-		para.setAttribute("prevval",para.value);
-		para.size=5;
-		r7.appendChild(para);
-		r7.firstChild.setAttribute("id","h" + nextRow);
-	}	
-	
-	
-        if (towChargeType == 1)
-        {
-          sel = "<select onchange='fieldchange(this)'></select>";
-	  var r8=row.insertCell(nextCol);
-          nextCol++;
-	  r8.innerHTML=sel;
-	  r8.firstChild.setAttribute("id","i" + nextRow);
-	  var selnode = r8.firstChild;
-
-	  //Create an empty node
-
-	  var opt = document.createElement("option");
-          opt.value = "0";
-	  opt.innerHTML = "";
-	  selnode.appendChild(opt);
-
-	  for (h=500;h<6000;h+=500)
-	  {	
-		opt = document.createElement("option");
-		opt.value = h.toString();
-		opt.innerHTML =  h.toString();
-		if (h == parseInt(height))
-			opt.setAttribute("selected","");
-		selnode.appendChild(opt);
-	  }
-
-	  opt = document.createElement("option");
-          opt.value = "-1";
-	  opt.innerHTML = "Check Flight";
-	  if (-1 == parseInt(height))
-	      opt.setAttribute("selected","");
-	  selnode.appendChild(opt);
-
-	  opt = document.createElement("option");
-          opt.value = "-2";
-	  opt.innerHTML = "Retrieve";
-	  if (-2 == parseInt(height))
-	      opt.setAttribute("selected","");
-	  selnode.appendChild(opt);
-	}
-
-        //Time fields
-        //If tow time option then we need tiem for tow
-        if (towChargeType == 2)
-        { 
-	  r14 = row.insertCell(nextCol);
-          nextCol++;
-	  r14.id = "o" + nextRow; 
-
-	  if (parseInt(start) != 0 && parseInt(towland) != 0)
-	  {
-		//We need to update the flight time.
-		var dest = document.getElementById("o" + nextRow);
-		var e = parseInt(towland) - parseInt(start);
-		mins = Math.floor((e / 60000) % 60);
-		var n = document.createTextNode(pad(Math.floor( e / (3600 * 1000)),2) + ":" + pad(mins,2));
-		dest.appendChild(n);	
-	  }
-
-	
-        }
-
-
-	r9 = row.insertCell(nextCol);
-        nextCol++;
-	r9.id = "j" + nextRow; 	
-
-	if (parseInt(start) != 0 && parseInt(land) != 0)
-	{
-		//We need to update the flight time.
-		var dest = document.getElementById("j" + nextRow);
-		var e = parseInt(land) - parseInt(start);
-		mins = Math.floor((e / 60000) % 60);
-		var n = document.createTextNode(pad(Math.floor( e / (3600 * 1000)),2) + ":" + pad(mins,2));
-		dest.appendChild(n);	
-	}
-
-        
-
-	
-        r10 = row.insertCell(nextCol);
-        nextCol++;
-        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)'></select>";
-	r10.innerHTML=sel;
-        r10.firstChild.setAttribute("id","k" + nextRow);
-	var selnode = r10.firstChild;
-
-	parser=new DOMParser();
-  	chargeDoc=parser.parseFromString(chargeopts,"text/xml");	
-	if (null != chargeDoc)
-	{	                                 
-	    var mems = chargeDoc.getElementsByTagName("ChargeOpts")[0].childNodes;	
-            for (i=0;i < mems.length;i++)
-            {
-		if (mems[i].nodeName == "opt")
-                {
-			var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-			var desc = mems[i].getElementsByTagName("desc")[0].childNodes[0].nodeValue;
-			opt = document.createElement("option");
-			
-			opt.value = "c"+id;
-			opt.innerHTML = desc;
-			if (charges == ("c"+id))
-                            opt.setAttribute("selected","");
-			
-			selnode.appendChild(opt);
-                }
-	    }
-	}
-
-	parser2=new DOMParser();
-  	membersDoc=parser2.parseFromString(allmembers,"text/xml");	
-	if (null != membersDoc)
-	{	                                 
-	    var mems = membersDoc.getElementsByTagName("allmembers")[0].childNodes;	
-            for (i=0;i < mems.length;i++)
-            {
-		
-		var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-		var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-		opt = document.createElement("option");
-			
-		opt.value = "m"+id;
-		opt.innerHTML = name;
-		if (charges == ("m"+id))
-                    opt.setAttribute("selected","");
-			
-		selnode.appendChild(opt);
-                
-	    }
-	}
-
-
-
-
-	
-
-
-        r11 = row.insertCell(nextCol);
-        nextCol++;
-	r11.innerHTML="<input type='text' name='comment[]' size='30' onchange='fieldchange(this)'>";
-	r11.firstChild.setAttribute("value",unescape(comments));
-	r11.firstChild.setAttribute("id","l" + nextRow);
-	
-	r12 = row.insertCell(nextCol);
-        nextCol++;
-        if (del == "0")	
-         r12.innerHTML="<button name='delete[]' type='button' onclick='deleteline(this)'>DELETE</button>";
-	else
-         r12.innerHTML="<button name='delete[]' type='button' onclick='deleteline(this)'>UNDELETE</button>";        
-        r12.firstChild.setAttribute("id","m" + nextRow);	
-	r12.firstChild.setAttribute("value",del);
-	if (del != "0")
-            greyRow(nextRow,1);
-}
 
 function greyItem(item,b)
 {
@@ -1340,76 +954,69 @@ function deleteline(what)
         fieldchange(what);
 }
 
-function fieldchange(what)
-{
-	var iRow = what.id; 
-	iRow = iRow.substring(1,iRow.length);
-	
-	var plane = document.getElementById("b" + iRow).value;
-        var launchtype = <?php echo $launchTypeTow;?>;
+function fieldchange(what) {
+  var iRow = what.id;
+  iRow = iRow.substring(1, iRow.length);
+
+  var plane = document.getElementById("b" + iRow).value;
+  var launchtype = <?php echo $launchTypeTow;?> ;
 
 
-        var glider = document.getElementById("c" + iRow).value;
-	glider = glider.toUpperCase();
-        if (glider.length > 0)
-        {
-            if (glider.length == 3 && glider.substring(0,1) != "G")
-              glider = "G" + glider.substring(1,3);
-            if (glider.length == 2)
-              glider = "G" + glider;
-            document.getElementById("c" + iRow).value = glider;
-        }
-    
-        var towp = document.getElementById("d" + iRow).value;
-	var p1 = document.getElementById("e" + iRow).value;
-	var p2 = document.getElementById("f" + iRow).value;
-        
-	if (towp == "99999" || p1=="99999" || p2=="99999")
-        {
-            UnSelect(what.id);
-            createAssociateMember(what.id);
-            return;
-        }
-	
-	var n = document.getElementById("g" + iRow);
-	var start = n.getAttribute("timedata");
-	
-	n = document.getElementById("h" + iRow);
-	var land = n.getAttribute("timedata");
-	
-        //towland is optional
-        var towland = 0;
-        if (towChargeType == 2)
-        {
-          n = document.getElementById("n" + iRow);
-	  towland = n.getAttribute("timedata");
-        }
-        
-        var height = 0;
-        if (towChargeType == 1)
-        {
-          height = document.getElementById("i" + iRow).value;
-          if (parseInt(height) == -1)
-          {
-	       var ch = document.getElementById("k" +iRow).childNodes;
-               for (mm=0;mm<ch.length;mm++)
-               {
-                  ch[mm].selected=false;
-                  if (ch[mm].value == "c9")
-			ch[mm].selected=true;
-	       }
-          }  
-        }      
+  var glider = document.getElementById("c" + iRow).value;
+  glider = glider.toUpperCase();
+  if (glider.length > 0) {
+    if (glider.length == 3 && glider.substring(0, 1) != "G")
+      glider = "G" + glider.substring(1, 3);
+    if (glider.length == 2)
+      glider = "G" + glider;
+    document.getElementById("c" + iRow).value = glider;
+  }
 
-        var charges= document.getElementById("k" + iRow).value;
-	var comments = document.getElementById("l" + iRow).value;
-	comments = comments.replace(/&/g,"&amp;");
-        comments = escape(comments);
-        var del = document.getElementById("m" + iRow).value;
-	
-	updatexmlflight(xmlDoc,iRow,launchtype,plane,glider,towp,p1,p2,start,towland,land,height,charges,comments,del);
-	//update the seq
-	sendXMLtoServer();
+  var towp = document.getElementById("d" + iRow).value;
+  var p1 = document.getElementById("e" + iRow).value;
+  var p2 = document.getElementById("f" + iRow).value;
+
+  if (towp == "99999" || p1 == "99999" || p2 == "99999") {
+    UnSelect(what.id);
+    createAssociateMember(what.id);
+    return;
+  }
+
+  var n = document.getElementById("g" + iRow);
+  var start = n.getAttribute("timedata");
+
+  n = document.getElementById("h" + iRow);
+  var land = n.getAttribute("timedata");
+
+  //towland is optional
+  var towland = 0;
+  if (towChargeType == 2) {
+    n = document.getElementById("n" + iRow);
+    towland = n.getAttribute("timedata");
+  }
+
+  var height = 0;
+  if (towChargeType == 1) {
+    height = document.getElementById("i" + iRow).value;
+    if (parseInt(height) == -1) {
+      var ch = document.getElementById("k" + iRow).childNodes;
+      for (mm = 0; mm < ch.length; mm++) {
+        ch[mm].selected = false;
+        if (ch[mm].value == "c9")
+          ch[mm].selected = true;
+      }
+    }
+  }
+
+  var charges = document.getElementById("k" + iRow).value;
+  var comments = document.getElementById("l" + iRow).value;
+  comments = comments.replace(/&/g, "&amp;");
+  comments = escape(comments);
+  var del = document.getElementById("m" + iRow).value;
+
+  updatexmlflight(xmlDoc, iRow, launchtype, plane, glider, towp, p1, p2, start, towland, land, height, charges, comments, del);
+  //update the seq
+  sendXMLtoServer();
 }
 
 function calcFlightTime(iRow)
@@ -1636,72 +1243,18 @@ function StartUp()
                 var vcharge = grplist[k].getElementsByTagName("charges")[0].childNodes[0].nodeValue;
 		var vcomments = strNodeValue(grplist[k].getElementsByTagName("comments")[0].childNodes[0]); 
 		var vdel = strNodeValue(grplist[k].getElementsByTagName("del")[0].childNodes[0]); 
-		addrowdata(vid,vplane,vglider,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
+		DailySheet.addrowdata(vid,vplane,vglider,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
 		nextRow++
 		
 	    }
-		
 	}
-	addrowdata(nextRow,"","",lastTowPilot,"","","0","0","0","","","","0");
+	DailySheet.addrowdata(nextRow,"","",lastTowPilot,"","","0","0","0","","","","0");
 	nextRow++;
 	
 	if (bUpdServer == 1)
 		sendXMLtoServer();
 	
 	getBookings();
-}
-
-function startbutton(what)
-{
-	
- 	var stid = what.id;
-	var iRow = what.id;   // h rownumber
-	iRow = iRow.substring(1,iRow.length);
-	var parent = what.parentNode;
-	parent.removeChild(what);
-	var para = document.createElement("input");
-	para.setAttribute("onchange","timechange(this)");
-	var d = new Date();
-	para.setAttribute("timedata",d.getTime());	
-	para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-	para.setAttribute("prevval",para.value);
-	para.id = stid;	
-	para.size=5;
-	parent.appendChild(para);
-	
-	
-
-        //Get the value of P2
-        var p2 = document.getElementById("f" +iRow).value;	
-        if (p2 == "0")
-        {
-		//check now check if k = set to P2 change to PIC
-	       var ch1 = document.getElementById("k" +iRow).value;
-               if (ch1=="c1")
-               {
-               var ch = document.getElementById("k" +iRow).childNodes;
-               for (mm=0;mm<ch.length;mm++)
-               {
-                  ch[mm].selected=false;
-                  if (ch[mm].value == "c2")
-			ch[mm].selected=true;
-	       }
-		}	
-	}
-        
-        
-        fieldchange(what);
-
-	//Create a new row in the table
-	var nextrow = parseInt(iRow) + 1;
-	var check = document.getElementById("b" +nextrow);
-	if (null == check)	
-	{
-		var tp = "d" + iRow;
-		var strtp = document.getElementById(tp).value;
-		addrowdata(nextRow,"SUG","",strtp,"","","0","0","0","","","","0");
-		nextRow++;
-	}
 }
 
 function towlandbutton(what)
@@ -1731,40 +1284,11 @@ function towlandbutton(what)
 	
 }
 
-function landbutton(what)
-{
-	var stid = what.id;
-	var iRow = what.id;   // h rownumber
-	iRow = iRow.substring(1,iRow.length);
-	var n = document.getElementById("g" + iRow);	
-        if (n.getAttribute("timedata") != "0")
-	{
-
-
-		
-		var parent = what.parentNode;
-		parent.removeChild(what);
-		var para = document.createElement("input");
-		var d = new Date();
-		para.setAttribute("onchange","timechange(this)");
-                para.setAttribute("timedata",d.getTime());
-                para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-		para.setAttribute("prevval",para.value);
-		para.size=5;
-		para.id = stid;	
-		parent.appendChild(para);
-
-		calcFlightTime(iRow);
-		fieldchange(what);
-	}
-	
-}
-
 function AddNewLine()
 {
    var iRow = (nextRow-1);
    var strtp = document.getElementById("d" + iRow).value;
-   addrowdata(nextRow,"SUG","",strtp,"","","0","0","0","","","","0");
+   DailySheet.addrowdata(nextRow,"SUG","",strtp,"","","0","0","0","","","","0");
    nextRow++;
 }
 
@@ -1779,9 +1303,9 @@ function AddNewLine()
 <table id='t1'>
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
 <th>SEQ</th>
-<th>PLANE</th>
+<th>LAUNCH</th>
 <th>GLIDER</th>
-<th>TOW PILOT</th>
+<th>TOW PILOT<br/>WINCH OPERATOR</th>
 <th>PIC</th>
 <th>P2</th>
 <th>START</th>
