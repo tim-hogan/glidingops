@@ -88,8 +88,7 @@ else
 <tr><td>Choose Aircraft</td><td>
 <select name='glider' id='glider'>
 <?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+$con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
 if (mysqli_connect_errno())
 {
   echo "<p>Unable to connect to database</p>";
@@ -118,8 +117,7 @@ $diagtext="";
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {	
   
-  $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+  $con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
   if (mysqli_connect_errno())
   {
    echo "<p>Unable to connect to database</p>";
@@ -133,10 +131,10 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 
   echo "<h2>Flight Data For " .$_POST['glider'] . "</h2>";
   
-  echo "<table><tr><th>DATE</th><th>FLIGHT DURATION</th></tr>";
+  echo "<table><tr><th>DATE</th><th>FLIGHT DURATION</th><th>LAUNCH TYPE</th></tr>";
   $totalcnt = 0;
   $totaltime = 0;
-  $q="SELECT flights.localdate, (flights.land-flights.start) from flights where flights.org = ".$_SESSION['org']." and flights.glider = '".$_POST['glider']."' and localdate >= " . $dateStart2 . " and localdate <= " . $dateEnd2 . " order by localdate,seq";
+  $q="SELECT flights.localdate, (flights.land-flights.start) ,a.name from flights LEFT JOIN launchtypes a ON a.id = flights.launchtype where flights.org = ".$_SESSION['org']." and flights.glider = '".$_POST['glider']."' and localdate >= " . $dateStart2 . " and localdate <= " . $dateEnd2 . " order by localdate,seq";
   $r = mysqli_query($con,$q);
   while ($row = mysqli_fetch_array($r) )
   {
@@ -154,7 +152,10 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   	  $timeval = sprintf("%02d:%02d",$hours,$mins);
           echo "<td class='right'>";
 	  echo $timeval;
-          echo "</td></tr>";
+          
+          echo "</td>";
+          echo "<td>" . $row[2] . "</td>";
+          echo "</tr>";
   }
   echo "<tr><td>Total</td>";
   $timeval = sprintf("%d:%02d",($totaltime/60),($totaltime%60));

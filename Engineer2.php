@@ -2,8 +2,7 @@
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
   header('Content-type: text/csv');
-  $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+  $con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
   if (mysqli_connect_errno())
   {
    echo "<p>Unable to connect to database</p>";
@@ -18,10 +17,10 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   $org=$_POST["org"];
   echo "Glider " .$_POST['glider'] . ",,\r\n";
   
-  echo "DATE,FLIGHT DURATION\r\n";
+  echo "DATE,FLIGHT DURATION,LAUNCH TYPE\r\n";
   $totalcnt = 0;
   $totaltime = 0;
-  $q="SELECT flights.localdate, (flights.land-flights.start) from flights where flights.org = ".$org." and flights.glider = '".$_POST['glider']."' and localdate >= " . $dateStart2 . " and localdate <= " . $dateEnd2 . " order by localdate,seq";
+  $q="SELECT flights.localdate, (flights.land-flights.start), a.name from flights LEFT JOIN launchtypes a ON a.id = flights.launchtype where flights.org = ".$org." and flights.glider = '".$_POST['glider']."' and localdate >= " . $dateStart2 . " and localdate <= " . $dateEnd2 . " order by localdate,seq";
   $r = mysqli_query($con,$q);
   while ($row = mysqli_fetch_array($r) )
   {
@@ -38,6 +37,8 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   	  $timeval = sprintf("%02d:%02d",$hours,$mins);
 
 	  echo $timeval;
+          echo "," . $row[2] ;        
+ 
           echo "\r\n";
   }
 
