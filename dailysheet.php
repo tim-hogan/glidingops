@@ -1305,7 +1305,7 @@ function AddNewLine()
 <th>SEQ</th>
 <th>LAUNCH</th>
 <th>GLIDER</th>
-<th>TOW PILOT<br/>WINCH OPERATOR</th>
+<th>TOW PILOT<br/>WINCH DRIVER</th>
 <th>PIC</th>
 <th>P2</th>
 <th>START</th>
