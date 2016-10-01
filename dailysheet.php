@@ -1311,8 +1311,12 @@ function AddNewLine()
 </tr>
 </table>
 <div id='bottomdiv'>
-<button  class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="AddNewLine()">Add Line</button>
-<br><button id='final' class='ui-button ui-corner-all ui-widget' onclick='finalise()'>Check and Finish Day</button>
+<div id='add-line'>
+  <button  class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="AddNewLine()">Add Line</button>
+</div>
+<div id='final'>
+  <button id='final' class='ui-button ui-corner-all ui-widget' onclick='finalise()'>Check and Finish Day</button>
+</div>
 </div>
 <div id='areachecks'>
 </div>
