@@ -1,4 +1,10 @@
 <?php session_start(); ?>
+
+<?php
+  $con_params = require('./config/database.php');
+  $con_params = $con_params['gliding'];
+?>
+
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
@@ -87,8 +93,8 @@ else
 <table>
 <tr><td>Choose Aircraft</td><td>
 <select name='glider' id='glider'>
-<?php
-$con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
+<?php 
+$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
   echo "<p>Unable to connect to database</p>";
@@ -117,7 +123,7 @@ $diagtext="";
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {	
   
-  $con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
+  $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
   if (mysqli_connect_errno())
   {
    echo "<p>Unable to connect to database</p>";

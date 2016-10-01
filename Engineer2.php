@@ -1,8 +1,11 @@
 <?php
+$con_params = require('./config/database.php');
+$con_params = $con_params['gliding'];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
   header('Content-type: text/csv');
-  $con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
+  $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
   if (mysqli_connect_errno())
   {
    echo "<p>Unable to connect to database</p>";
