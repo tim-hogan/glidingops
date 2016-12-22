@@ -1,9 +1,21 @@
+<?php 
+  include '../helpers/session_helpers.php';
+  session_start();
+  require_security_level(64);
+?>
+
 <!DOCTYPE HTML>
 <html>
   <meta name="viewport" content="width=device-width">
   <meta name="viewport" content="initial-scale=1.0">
   <head>
     <link rel="icon" type="image/png" href="favicon.png" />
+    <script type="text/javascript">
+      function genuineIdChanged() {
+        var submitBtn = document.getElementById('submit');
+        submitBtn.disabled = false;
+      }
+    </script>
     <style type="text/css">
       table { 
         border-collapse: collapse; 
@@ -35,7 +47,9 @@
   $surname = $_GET['surname'];
   $org = $_GET['org'];
 
-  $columns = array("id", "member_id", "firstname", "surname", "org", "date_of_birth", "phone_home", 
+  $columns = array("id", "create_time", "member_id", 
+                    "firstname", "surname", 
+                    "org", "date_of_birth", "phone_home", 
                     "phone_mobile",
                     "phone_work",
                     "email", "class", "status", "gnz_number");
@@ -74,7 +88,9 @@
     <?php foreach ($columns as $column): ?>
       <td><?php echo $row[$column] ?></td>
     <?php endforeach ?>
-    <td><input type='radio' name='genuine_id' value='<?php echo $row['id'] ?>' /></td>
+      <td>
+        <input type='radio' name='genuine_id' value='<?php echo $row['id'] ?>' onClick='genuineIdChanged();'/>
+      </td>
     </tr>
 <?php
     array_push($ids, $row['id']);
@@ -87,7 +103,7 @@
     <input type="hidden" name="ids" value="<?php echo implode(",", $ids) ?>"/>
     <input type="hidden" name="org" value="<?php echo implode(",", $org) ?>"/>
     <div style="margin-top: 10px;">
-      <input type="submit" name="Clean"/>
+      <input type="submit" name="Clean" id="submit" disabled="true" style="font-size: x-large;" />
     </div>
     </form>
   </body>

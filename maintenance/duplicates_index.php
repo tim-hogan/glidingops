@@ -1,3 +1,9 @@
+<?php 
+  include '../helpers/session_helpers.php';
+  session_start();
+  require_security_level(64);
+?>
+
 <!DOCTYPE HTML>
 <html>
   <meta name="viewport" content="width=device-width">
@@ -79,5 +85,8 @@
 ?>
       </tbody>
     </table>
+    <div>
+      <p><a href="/">HOME</a></p>
+    </div>
   </body>
 </html>
