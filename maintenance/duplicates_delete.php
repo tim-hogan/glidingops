@@ -1,5 +1,6 @@
 <?php 
   include '../helpers/session_helpers.php';
+  include '../helpers/audit_helpers.php';
   session_start();
   require_security_level(64);
 ?>
@@ -62,6 +63,7 @@
         $con->query("UPDATE users SET member = {$genuine_id} WHERE member={$id}");
 
         $con->query("DELETE FROM members WHERE id = {$id}");
+        audit_log($con, "Merged member with id {$id} into member with id {$genuine_id}");
       }
 
       $con->commit();
