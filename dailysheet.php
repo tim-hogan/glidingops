@@ -1238,9 +1238,9 @@ function StartUp()
 		var vp2 = strNodeValue(grplist[k].getElementsByTagName("p2")[0].childNodes[0]);
 		var vstart = grplist[k].getElementsByTagName("start")[0].childNodes[0].nodeValue;
 		var vtowland = grplist[k].getElementsByTagName("towland")[0].childNodes[0].nodeValue;
-                var vland = grplist[k].getElementsByTagName("land")[0].childNodes[0].nodeValue;
+    var vland = grplist[k].getElementsByTagName("land")[0].childNodes[0].nodeValue;
 		var vheight = grplist[k].getElementsByTagName("height")[0].childNodes[0].nodeValue;
-                var vcharge = grplist[k].getElementsByTagName("charges")[0].childNodes[0].nodeValue;
+    var vcharge = grplist[k].getElementsByTagName("charges")[0].childNodes[0].nodeValue;
 		var vcomments = strNodeValue(grplist[k].getElementsByTagName("comments")[0].childNodes[0]); 
 		var vdel = strNodeValue(grplist[k].getElementsByTagName("del")[0].childNodes[0]); 
 		DailySheet.addrowdata(vid,vplane,vglider,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
