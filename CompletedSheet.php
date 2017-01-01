@@ -84,6 +84,7 @@ $message="";
 $stClass = getShortTermClass($con,$org);
 $towLaunchType = getTowLaunchType($con);
 $q= "SELECT members.id, members.email from members where class <> " . $stClass . " and enable_email > 0 and localdate_lastemail <> " .$dateStr;
+
 $r = mysqli_query($con,$q);
 while ($row = mysqli_fetch_array($r) )
 {
@@ -92,7 +93,7 @@ while ($row = mysqli_fetch_array($r) )
     $done=0;
     if (strlen($row[1]) > 0)
     {
-        $q1= "SELECT flights.glider, flights.location, (flights.land - flights.start), flights.height, flights.launchtype, a.acronym, flights.pic , flights.p2 from flights LEFT JOIN launchtypes a on a.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " and flights.finalised = 1 and (flights.pic = ".$row[0]." or flights.p2 = ".$row[0].") order by flights.seq ASC";
+        $q1= "SELECT flights.glider, flights.location, (flights.land - flights.start), flights.height, flights.launchtype, a.acronym, flights.pic , flights.p2,flights.land, flights.start from flights LEFT JOIN launchtypes a on a.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " and flights.finalised = 1 and (flights.pic = ".$row[0]." or flights.p2 = ".$row[0].") order by flights.seq ASC";
         $r2 = mysqli_query($con,$q1);
         while ($row2 = mysqli_fetch_array($r2) )
         {
@@ -123,7 +124,7 @@ table {border-collapse: collapse;}
 <tr><td colspan='7' class='td1'>Your flights for ";
              $message .= $dateStr2;
              $message .= "</td></tr><tr><td colspan='7' class='td1'></td></tr>
-<tr><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th>";
+<tr><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th>";
 if ($towChargeType==1)
    $message .= "<th>HEIGHT</th>";
 $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
@@ -141,6 +142,15 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
           $tr .= "<td>".$model."</td>";
           $tr .= "<td>".$row2[1]."</td>";
           $tr .= "<td class='right'>".$timeval."</td>";
+
+
+          $start = (int)$row2[8] / 1000;
+          $land = (int)$row2[9] / 1000;
+          $start_time = ($start == 0) ? "" : date('G:i', $start);
+          $land_time = ($land == 0) ? "" : date('G:i', $land);
+          $tr .= "<td class='right'>".$start_time."</td>";
+          $tr .= "<td class='right'>".$land_time."</td>";          
+
 	  if ($towChargeType==1)
           {
             $tr .= "<td class='right'>";

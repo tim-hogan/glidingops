@@ -157,7 +157,7 @@ while ($row = mysqli_fetch_array($r) )
   if ($rownum == 1)
   {
      if ($istowy) echo "<h2>Gliding Flights</h2>";
-     echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+     echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
   } 
 
 
@@ -185,6 +185,13 @@ while ($row = mysqli_fetch_array($r) )
   $type=0;  //1 = P1 2 = p2 3 = PIC Solo
 
   echo "<td class='right'>";echo $timeval;echo "</td>";
+
+  $start = (int)$row[9];
+  $land = (int)$row[10];
+  $start_time = ($start == 0) ? "" : date('G:i', $start);
+  $land_time = ($land == 0) ? "" : date('G:i', $land);
+  echo "<td class='right'>{$start_time}</td>";
+  echo "<td class='right'>{$land_time}</td>";
  
   echo "<td class='right'>";
   if ($row[7] == $towlaunch)
