@@ -2,6 +2,7 @@
   include '../helpers/session_helpers.php';
   session_start();
   require_security_level(64);
+  $current_org = current_org();
 ?>
 
 <!DOCTYPE HTML>
@@ -45,6 +46,7 @@
             members
         JOIN organisations 
         ON members.org = organisations.id
+        WHERE members.org = {$current_org}
         GROUP BY firstname , surname , org
         HAVING COUNT(*) > 1";
 ?>

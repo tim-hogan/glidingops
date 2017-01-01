@@ -3,6 +3,7 @@
   include '../helpers/audit_helpers.php';
   session_start();
   require_security_level(64);
+  $current_org = current_org();
 ?>
 
 <!DOCTYPE HTML>
@@ -15,6 +16,8 @@
 
 <?php
   function purge() {
+    global $current_org;
+
     $con_params = require('../config/database.php'); $con_params = $con_params['gliding'];
     mysqli_report(MYSQLI_REPORT_ALL); 
     $con=mysqli_connect($con_params['hostname'],$con_params['username'],
@@ -31,8 +34,12 @@
 
     $ids = explode(',', $_POST['ids']);
     $genuine_id = $_POST['genuine_id'];
-    
+
     try {
+      $result = $con->query("SELECT count(*) AS org_count FROM members WHERE id IN ({$_POST['ids']}) AND org != {$current_org}");
+      $row = $result->fetch_assoc();
+      if(0 != $row['org_count']) die('You can only manage members in your own organisation.');
+
       $con->begin_transaction();
 
       foreach ($ids as $id) {

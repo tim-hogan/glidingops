@@ -2,6 +2,7 @@
   include '../helpers/session_helpers.php';
   session_start();
   require_security_level(64);
+  $current_org = current_org();
 ?>
 
 <!DOCTYPE HTML>
@@ -46,6 +47,10 @@
   $firstname = $_GET['firstname'];
   $surname = $_GET['surname'];
   $org = $_GET['org'];
+
+  if($org != $current_org) {
+    die('You can only delete members from your own organisation.');
+  }
 
   $columns = array("id", "create_time", "member_id", 
                     "firstname", "surname", 
