@@ -88,8 +88,13 @@
       <p>Success</p>
     <?php endif ?>
     </div>
-    <div style="width: 100%">
-      <a href='./duplicates_index.php'>BACK</a>
+    <div style="width: 100%; margin-top: 20px;">
+      <div style="float: left; margin-right: 20px;">
+        <a href='./duplicates_index.php'>BACK</a>
+      </div>
+      <div style="float: left;">
+        <a href="/">HOME</a>
+      </div>
     </div>
   </body>
 </html>

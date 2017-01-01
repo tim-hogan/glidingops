@@ -40,9 +40,11 @@
 
   $q = "
         SELECT 
-            firstname, surname, org, COUNT(*) AS dup_count
+            firstname, surname, org, COUNT(*) AS dup_count, organisations.name AS org_name
         FROM
             members
+        JOIN organisations 
+        ON members.org = organisations.id
         GROUP BY firstname , surname , org
         HAVING COUNT(*) > 1";
 ?>
@@ -68,7 +70,7 @@
       <tr class='<?php echo $tr_class ?>'>
         <td><?php echo $row['firstname'] ?></td>
         <td><?php echo $row['surname'] ?></td>
-        <td><?php echo $row['org'] ?></td>
+        <td><?php echo $row['org_name'] ?></td>
 <?php
       $firstname=urlencode($row['firstname']);
       $surname=urldecode($row['surname']);

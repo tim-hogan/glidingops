@@ -49,15 +49,17 @@
 
   $columns = array("id", "create_time", "member_id", 
                     "firstname", "surname", 
-                    "org", "date_of_birth", "phone_home", 
+                    "org_name", "date_of_birth", "phone_home", 
                     "phone_mobile",
                     "phone_work",
                     "email", "class", "status", "gnz_number");
   
   $q = "
-    SELECT *
+    SELECT members.*, organisations.name AS org_name
     FROM
         members
+        JOIN organisations 
+        ON members.org = organisations.id
         WHERE members.firstname = '{$firstname}'
         AND   members.surname   = '{$surname}'
         AND   members.org       = {$org}";
@@ -106,5 +108,13 @@
       <input type="submit" name="Clean" id="submit" disabled="true" style="font-size: x-large;" />
     </div>
     </form>
+    <div style="width: 100%; margin-top: 20px;">
+      <div style="float: left; margin-right: 20px;">
+        <a href='./duplicates_index.php'>BACK</a>
+      </div>
+      <div style="float: left;">
+        <a href="/">HOME</a>
+      </div>
+    </div>
   </body>
 </html>
