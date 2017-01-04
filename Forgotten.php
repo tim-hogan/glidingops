@@ -50,7 +50,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $row = mysqli_fetch_array($r);
     $pw = generateRandomString();
     $pw2 = md5($pw);
-    $q="UPDATE users SET password = '".$pw2."', force_pw_reset = 1 where id = ".$row[id];
+    $q="UPDATE users SET password = '".$pw2."', force_pw_reset = 1 where id = ".$row['id'];
     $r = mysqli_query($con,$q);
     $headers = 'From: operations@glidingops.com' . "\r\n" .
      'Reply-To: wgcoperations@gmail.com' . "\r\n" .
