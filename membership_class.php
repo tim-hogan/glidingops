@@ -25,6 +25,10 @@ if(isset($_SESSION['security'])){
 <script>function goBack() {window.history.back()}</script>
 <?php
 $DEBUG=0;
+$dateTimeZone = new DateTimeZone($_SESSION['timezone']);
+$dateTime = new DateTime('now', $dateTimeZone);
+$dateStr = $dateTime->format('Y-m-d');
+$timeoffset = $dateTime->getOffset();
 $pageid=7;
 $errtext="";
 $sqltext="";
@@ -37,6 +41,10 @@ $class_f="";
 $class_err="";
 $disp_message_broadcast_f="";
 $disp_message_broadcast_err="";
+$dailysheet_dropdown_f="";
+$dailysheet_dropdown_err="";
+$email_broadcast_f="";
+$email_broadcast_err="";
 function InputChecker($data)
 {
  $data = trim($data);
@@ -46,12 +54,12 @@ function InputChecker($data)
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
- if($_GET['id'] != "" && $_GET['id'] != null)
+ if(isset($_GET['id']))
  {
   $recid = $_GET['id'];
   if ($recid >= 0)
   {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
@@ -67,6 +75,8 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $id_f = $row['id'];
     $class_f = htmlspecialchars($row['class'],ENT_QUOTES);
     $disp_message_broadcast_f = $row['disp_message_broadcast'];
+    $dailysheet_dropdown_f = $row['dailysheet_dropdown'];
+    $email_broadcast_f = $row['email_broadcast'];
     $trantype="Update";
     mysqli_close($con);
    }
@@ -81,15 +91,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $create_time_err = "";
  $class_err = "";
  $disp_message_broadcast_err = "";
+ $dailysheet_dropdown_err = "";
+ $email_broadcast_err = "";
  $class_f = InputChecker($_POST["class_i"]);
 if(in_array("1",$_POST['disp_message_broadcast_i']))
  $disp_message_broadcast_f = 1;
 else
  $disp_message_broadcast_f = 0;
  if (!empty($disp_message_broadcast_f ) ) {if (!is_numeric($disp_message_broadcast_f ) ) {$disp_message_broadcast_err = "Disiplay on Message Broadcast Screeen is not numeric";$error = 1;}}
+if(in_array("1",$_POST['dailysheet_dropdown_i']))
+ $dailysheet_dropdown_f = 1;
+else
+ $dailysheet_dropdown_f = 0;
+if(in_array("1",$_POST['email_broadcast_i']))
+ $email_broadcast_f = 1;
+else
+ $email_broadcast_f = 0;
  if ($error != 1)
  {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
@@ -106,15 +126,23 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
       $Q .= "'" . mysqli_real_escape_string($con, $class_f)  . "'";
       $Q .= ",disp_message_broadcast=";
       $Q .= "'" . $disp_message_broadcast_f . "'";
+      $Q .= ",dailysheet_dropdown=";
+      $Q .= "'" . $dailysheet_dropdown_f . "'";
+      $Q .= ",email_broadcast=";
+      $Q .= "'" . $email_broadcast_f . "'";
 $Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
 $Q .= $_POST['updateid'];}
      else
      if ($_POST["tran"] == "Create"){
-       $Q = "INSERT INTO membership_class (";$Q .= "org";$Q .= ", class";$Q .= ", disp_message_broadcast";$Q .= " ) VALUES (";
+       $Q = "INSERT INTO membership_class (";$Q .= "org";$Q .= ", class";$Q .= ", disp_message_broadcast";$Q .= ", dailysheet_dropdown";$Q .= ", email_broadcast";$Q .= " ) VALUES (";
 $Q.=$_SESSION['org'];       $Q.= ",";
        $Q .= "'" . mysqli_real_escape_string($con, $class_f) . "'";
        $Q.= ",";
        $Q .= "'" . $disp_message_broadcast_f . "'";
+       $Q.= ",";
+       $Q .= "'" . $dailysheet_dropdown_f . "'";
+       $Q.= ",";
+       $Q .= "'" . $email_broadcast_f . "'";
       $Q.= ")";
     }}
     $sqltext = $Q;
@@ -157,6 +185,20 @@ echo $class_err; echo "</td></tr>";
 echo "<tr><td class='desc'>Disiplay on Message Broadcast Screeen</td><td></td>";
 echo "<td><input type='checkbox' name='disp_message_broadcast_i[]' Value='1' ";if ($disp_message_broadcast_f ==1) echo "checked";echo "></td>";echo "<td>";
 echo $disp_message_broadcast_err; echo "</td></tr>";
+}
+?>
+<?php if (true)
+{
+echo "<tr><td class='desc'>Show member on daily sheet dropdown</td><td></td>";
+echo "<td><input type='checkbox' name='dailysheet_dropdown_i[]' Value='1' ";if ($dailysheet_dropdown_f ==1) echo "checked";echo "></td>";echo "<td>";
+echo $dailysheet_dropdown_err; echo "</td></tr>";
+}
+?>
+<?php if (true)
+{
+echo "<tr><td class='desc'>Allow broadcast to member by email</td><td></td>";
+echo "<td><input type='checkbox' name='email_broadcast_i[]' Value='1' ";if ($email_broadcast_f ==1) echo "checked";echo "></td>";echo "<td>";
+echo $email_broadcast_err; echo "</td></tr>";
 }
 ?>
 </table>

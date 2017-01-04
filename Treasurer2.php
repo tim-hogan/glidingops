@@ -331,11 +331,16 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
                     $towcost = CalcTowCharge2($org,$row2[17],$row2[18],$row2[21],$row2[3],$row[3],$clubGlid,$is5050);
                 else
                     if ($row2[17] == $winchlaunch)
-                        $towclost = CalcWinchCharge($con,$org,$row2[19],$flightDate);
+                    {
+    
+                    $towcost = CalcWinchCharge($con,$org,$row2[19],$flightDate);
+                    }
                         
                 $towcost2 = $towcost;                              
 		        if ($SchemeCharge > 0 && $iChargeTow == 0)
                      $towcost=0.0;
+
+
             }
 		    if ($towcost < 0.00)
 			    echo "ERROR";

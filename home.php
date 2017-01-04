@@ -54,8 +54,7 @@ table.tbl1 {width: 100%;table-layout: fixed;}
 <div id='messagearea2'>
 <p class='p2'>CLUB MESSAGES:</p>
 <?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+$con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
 if (!mysqli_connect_errno())
 {
  $rownum=0;
@@ -171,6 +170,8 @@ if ($_SESSION['security'] >= 1)
 if (($_SESSION['security'] & 120)) 
 {
   echo "<td><h2 class='u'>DATA MAINTENANCE</h2>";
+  if (($_SESSION['security'] & 64)) 
+     echo "<p class='u'><a href='address_type-list.php'>Address Types</a></p>";
   if (($_SESSION['security'] & 104)) 
      echo "<p class='u'><a href='AllAircraft'>Aircraft</a></p>";
   if (($_SESSION['security'] & 64)) 
@@ -191,6 +192,8 @@ if (($_SESSION['security'] & 120))
      echo "<p class='u'><a href='IncentiveSchemes'>Incentive Schemes</a></p>";
   if (($_SESSION['security'] & 64)) 
      echo "<p class='u'><a href='membership_class-list.php'>Membership Classes</a></p>";
+  if (($_SESSION['security'] & 64)) 
+     echo "<p class='u'><a href='membership_status-list.php'>Membership Statuses</a></p>";
   if (($_SESSION['security'] & 72)) 
      echo "<p class='u'><a href='OtherCharges'>Other Charges</a></p>";
   if (($_SESSION['security'] & 64)) 
@@ -203,7 +206,7 @@ if (($_SESSION['security'] & 120))
      echo "<p class='u'><a href='SubsToSchemes'>Subs to Incentives</a></p>";
   if (($_SESSION['security'] & 72)) 
      echo "<p class='u'><a href='TowCharges'>Tow Charging</a></p>";
-  if (($_SESSION['security'] & 64)) 
+  if (($_SESSION['security'] & 64))
      echo "<p class='u'><a href='maintenance/duplicates_index.php'>Manage duplicate memberships</a></p>";
 
   echo "</td>";

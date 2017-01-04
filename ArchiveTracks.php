@@ -1,7 +1,7 @@
 <?php
 $db_params = require('./config/database.php');
-$con_params = $db_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+$con1_params = $db_params['gliding']; 
+$con1=mysqli_connect($con1_params['hostname'],$con1_params['username'],$con1_params['password'],$con1_params['dbname']);
 if (mysqli_connect_errno())
 {
  error_log("Unable to connect to database gliding");

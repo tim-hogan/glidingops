@@ -91,22 +91,28 @@ function CalcTowCharge2($org,$launchtype,$towplane,$duration,$height,$strmemberc
 function CalcWinchCharge($db,$org,$location,$flightDate)
 {
    $ret = 0.00;
-   $q ="SELECT amount,validfrom from charges where org = ".$org." and name ='Winch' and location = ".$location." and validfrom <= '" . $flightDate->format('Y-m-d')  ."' order by validfrom DESC";
+   $q ="SELECT amount,validfrom from charges where org = ".$org." and name ='Winch' and location = '".$location."' and validfrom <= '" . $flightDate->format('Y-m-d')  ."' order by validfrom DESC";
+ 
    $r = mysqli_query($db,$q);
    if (mysqli_num_rows($r) > 0)
    {
+   
        $row = mysqli_fetch_array($r);
        $ret = $row[0];
+ 
    }
    else
    {
      //Ignore the location and see if we find one.
      $q ="SELECT amount,validfrom from charges where org = ".$org." and name ='Winch' and validfrom <= '" . $flightDate->format('Y-m-d')  ."' order by validfrom DESC";
+    
      $r = mysqli_query($db,$q);
      if (mysqli_num_rows($r) > 0)
      {
-         $row = mysqli_fetch_array($r);
+
+        $row = mysqli_fetch_array($r);
         $ret = $row[0];
+     
      }
    }
    return $ret;
