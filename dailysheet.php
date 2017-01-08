@@ -3,6 +3,17 @@
 <meta name="viewport" content="width=device-width">
 <meta name="viewport" content="initial-scale=1.0">
 <head>
+  <!-- Add jquery into the soup -->
+  <link href="client/lib/jquery/jquery-ui.min.css" rel="stylesheet">
+  <script src="client/lib/jquery/external/jquery/jquery.js"></script>
+  <script src="client/lib/jquery/jquery-ui.min.js"></script>
+
+  <link href="client/lib/select2/css/select2.min.css" rel="stylesheet" />
+  <script src="client/lib/select2/js/select2.min.js"></script>
+
+  <!-- <link href="client/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" -->
+  <!-- <script src="client/lib/bootstrap/js/bootstrap.min.js"></script> -->
+
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" type="text/css" href="calstyle.css">
   <link rel="stylesheet" type="text/css" href="css/dailysheet.css">
@@ -89,9 +100,7 @@ $r2 = mysqli_query($con,$q2);
 $row_cnt = $r2->num_rows;
 if ($row_cnt > 0)
 {
-   
-
-   //We have already some info for today
+   //We already have some info for today
    while ($row = mysqli_fetch_array($r2) )
    {
       $udpver = $row['updseq'];
@@ -130,6 +139,7 @@ if ($row_cnt > 0)
       $flights .= "</land><height>";
       $flights .= $row['height'];
       $flights .= "</height><charges>";
+
       if ($row['billing_option'] == $billing_other_member)
       {
            $flights .= "m" . $row['billing_member1'];
@@ -139,17 +149,11 @@ if ($row_cnt > 0)
            $flights .= "c" . $row['billing_option'];
       }
 
-
-      
       $flights .= "</charges><comments>";
       $vcom = $row['comments'];
       $vcom = str_replace("&","&amp;",$vcom);
       $flights .= $vcom;
       $flights .= "</comments></flight>";
-
-
-
-
    }
 }
 else
@@ -163,7 +167,7 @@ while ($row = mysqli_fetch_array($r2) )
 {
 	$pilots .= "<pilot><id>";
 	$pilots .= $row[0];
-        $pilots .= "</id><name>";
+  $pilots .= "</id><name>";
 	$pilots .= $row[1];
 	$pilots .= "</name></pilot>";
 }
@@ -176,22 +180,23 @@ while ($row = mysqli_fetch_array($r2) )
 {
 	$winchdrivers .= "<wdriver><id>";
 	$winchdrivers .= $row[0];
-        $winchdrivers .= "</id><name>";
+  $winchdrivers .= "</id><name>";
 	$winchdrivers .= $row[1];
 	$winchdrivers .= "</name></wdriver>";
 }
 
 $members="";
 $olddate = new DateTime("now");
-$olddate->setTimestamp($olddate->getTimestamp() - (3600*24*90));   
+$olddate->setTimestamp($olddate->getTimestamp() - (3600*24*30));   
 $q2 = "SELECT * from members where org = ".$org." and class <> ".$shorttermclass." or (class = ".$shorttermclass." and create_time > '".$olddate->format('Y-m-d')."') order by displayname ASC";
+
 //$q2 = "SELECT * FROM members where org=".$org." ORDER BY displayname ASC";
 $r2 = mysqli_query($con,$q2);
 while ($row = mysqli_fetch_array($r2) )
 {
 	$members .= "<member><id>";
 	$members .= $row['id'];
-        $members .= "</id><name>";
+  $members .= "</id><name>";
 	$members .= $row['displayname'];
 	$members .= "</name></member>";
 }
@@ -495,30 +500,23 @@ function getMembers()
 
 function finalise()
 {
-   if (inSync==0)
-   {   
-	sendXMLtoServer();
-	alert("Synchronising data with server first, try again after server is in Sync");
-   }
-   else
-   {
-   	var r = confirm("Please confirm that the day is complete");  
-   	if (r == true) 
-   	{
-     	   if (anyDeleted(xmlDoc) )
-           {
-	    r = confirm("There are delete items, please confirm these are to be deleted.");
-           }
-           if (r == true)
-           {
-            var org=<?php echo $org; ?>;
-            var v="DaycheckAndFinal.php?date=" + datestring + "&org=" + org;
-     	    xmlhttp.open("GET", v, true);
-     	    xmlhttp.send();
-           }
+  if (inSync==0){
+    sendXMLtoServer();
+  	alert("Synchronising data with server first, try again after server is in Sync");
+  } else {
+    var r = confirm("Please confirm that the day is complete");  
+   	if (r == true) {
+      if (anyDeleted(xmlDoc)) {
+        r = confirm("There are delete items, please confirm these are to be deleted.");
+      } 
+      if (r == true) {
+        var org=<?php echo $org; ?>;
+        var v="DaycheckAndFinal.php?date=" + datestring + "&org=" + org;
+     	  xmlhttp.open("GET", v, true);
+     	  xmlhttp.send();
+      }
    	} 
-   }
-        
+  }     
 }
 
 function pad(num, size) {
@@ -888,7 +886,7 @@ function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
 	    }
 	}
 	
-        //update the value to selected
+  //update the value to selected
 	var optlist = selnode.childNodes;
 	for (i=0; i<optlist.length; i++)
 	{
@@ -901,57 +899,53 @@ function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
  
 }
 
-function greyItem(item,b)
+function greyRow(row,b)
 {
-    console.log('Grey Item ' + item);
-    if (b > 0)
-    {
-     document.getElementById(item).style.textDecoration="line-through";
-     document.getElementById(item).style.color="#c0c0c0";
-    }
-    else
-    {
-     document.getElementById(item).style.textDecoration="none";
-     document.getElementById(item).style.color="#000000"; 
-    }
-}
-function greyRow(iRow,b)
-{
-    greyItem("b" + iRow,b);  //Plane
-    greyItem("c" + iRow,b);  //Gider
-    greyItem("d" + iRow,b);  //Tow Pilot
-    greyItem("e" + iRow,b);  //PIC
-    greyItem("f" + iRow,b);  //P2
-    greyItem("g" + iRow,b);  //Start
-    if (towChargeType==1) 
-    	greyItem("i" + iRow,b);  //Height
-    if (towChargeType==2)
-    	greyItem("n" + iRow,b);  //Tow Land button
-    greyItem("h" + iRow,b);  //Land
-    greyItem("j" + iRow,b);  //Glide Time
-    greyItem("k" + iRow,b);
-    greyItem("l" + iRow,b);
-    if (towChargeType==2)
-	greyItem("o" + iRow,b);  //Tow Time
+  if (b > 0)
+  {
+    $(row).find('.select2-container').addClass('deleted')
+    $(row).find(':input').addClass('deleted')
+    $(row).find('td').addClass('deleted')
+    
+    // $(row).find('.select2-container').css('textDecoration', 'line-through')
+    // $(row).find('.select2-container').css('color', '#c0c0c0')
+    // $(row).find(':input').css('color', '#c0c0c0')
+    // $(row).find('td').css('color', '#c0c0c0')
+   // document.getElementById(item).style.textDecoration="line-through";
+   // document.getElementById(item).style.color="#c0c0c0";
+  }
+  else
+  {
+    $(row).find('.select2-container').removeClass('deleted')
+    $(row).find(':input').removeClass('deleted')
+    $(row).find('td').removeClass('deleted')
+
+    // $(row).find('.select2-container').css('textDecoration', 'none')
+    // $(row).find('.select2-container').css('color', '#000000')
+    // $(row).find(':input').css('textDecoration', 'none')
+    // $(row).find(':input').css('color', '#000000')
+    // $(row).find('td').css('textDecoration', 'none')
+    // $(row).find('td').css('color', '#000000')
+   // document.getElementById(item).style.textDecoration="none";
+   // document.getElementById(item).style.color="#000000"; 
+  }
 }
 
-function deleteline(what)
+function deleteline(what, row)
 {
-	var iRow = what.id; 
+  var iRow = what.id; 
 	iRow = iRow.substring(1,iRow.length);
-        if (what.value == 0)
-        {
-	   what.value="1";
-           what.innerHTML="UNDELETE";
-           greyRow(iRow,1);
-        }
-        else
-        {
-	   what.value="0";
-           what.innerHTML="DELETE";
-           greyRow(iRow,0);
-        }
-        fieldchange(what);
+  if (what.value == 0)
+  {
+    what.value="1";
+    what.innerHTML="UNDELETE";
+    greyRow(row, 1);
+  } else {
+    what.value="0";
+    what.innerHTML="DELETE";
+    greyRow(row);
+  }
+  fieldchange(what);
 }
 
 function fieldchange(what) {
@@ -1157,18 +1151,16 @@ function StartUp()
 {
 	setInterval(poll,1000);
 
-        var bUpdServer = 0;
+  var bUpdServer = 0;
 	var lastTowPilot="";
 	var lxml=null;
 	if(typeof(Storage) !== "undefined") 
 	{
-    		locstore = 1;
+    locstore = 1;
 		lxml = localStorage.getItem(datestring);
 	} else {
-    		lxml = null;
+    lxml = null;
 	}
-
-
         
 	parser=new DOMParser();
   	xmlDoc=parser.parseFromString(fxml,"text/xml");	
@@ -1300,7 +1292,7 @@ function AddNewLine()
 <div id="container">
 <span id='dayfield'>DATE</span>
 <span id='sync'>SYNC</span><br>
-<table id='t1'>
+<table id='t1' style="width: 100%">
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
 <th>SEQ</th>
 <th>LAUNCH</th>
@@ -1319,8 +1311,8 @@ function AddNewLine()
 </tr>
 </table>
 <div id='bottomdiv'>
-<button onclick="AddNewLine()">Add Line</button>
-<br><button id='final' onclick='finalise()'>Check and Finish Day</button>
+<button  class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="AddNewLine()">Add Line</button>
+<br><button id='final' class='ui-button ui-corner-all ui-widget' onclick='finalise()'>Check and Finish Day</button>
 </div>
 <div id='areachecks'>
 </div>
