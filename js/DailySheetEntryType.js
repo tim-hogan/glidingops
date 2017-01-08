@@ -58,6 +58,7 @@ var DailySheetEntryType = function(towplanesXml, rowIndex, selected, launchTypes
             opt.setAttribute("selected", "");
         sel.appendChild(opt);
 
+        $(sel).addClass('autocomplete')
         return sel
     }
 
