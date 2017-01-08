@@ -6,13 +6,24 @@
   margin: 0px;
   border: px;
 }
-#final {
+div#add-line {
+  float: left;
+  clear: left;
+}
+div#final {
+  margin-left: 40px;
+  margin-right: 40px;
+  float: left;
+}
+#final button {
   background-color: #ff9191;
   height: 40px;
   font-size: 14px;
 }
 #bottomdiv {
   height: 90px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 #bookings {
   background-color: #e0e0e0;
@@ -94,6 +105,16 @@ table {
   box-shadow: 10px 10px 5px #888888;
 }
 
+td.wide {
+  min-width: 130px;
+  max-width: 200px;
+}
+
 td select {
   width: 100%;
+}
+
+.deleted {
+    text-decoration: line-through;
+    color: #c0c0c0;
 }

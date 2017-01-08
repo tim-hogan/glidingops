@@ -16,6 +16,7 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
         sel.id = collid;
 
         addOptionsFromXml(initialListXml, initialListtag, initialSelectedValue)
+        $(sel).addClass('autocomplete')
     }
 
     function addOptionsFromXml(listxml, listtag, selvalue) {
