@@ -4,30 +4,29 @@ header('Content-type: text/xml');
 echo "<checks>";
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
-   $someerrors=0;
-   $datestr=$_GET["date"];
-   $org=$_GET["org"];
-   $shorttermclass=0;
-   echo "<diag>" . $datestr . "</diag>";
+  $someerrors=0;
+  $datestr=$_GET["date"];
+  $org=$_GET["org"];
+  $shorttermclass=0;
+  echo "<diag>" . $datestr . "</diag>";
   
-   $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
-   if (mysqli_connect_errno())
-   {
-      echo "<err>Database open error:</err></checks>";
-      exit();
-   }
+  $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+  $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+  if (mysqli_connect_errno()) {
+     echo "<err>Database open error:</err></checks>";
+     exit();
+  }
 
-   $towlaunch = getTowLaunchType($con);
-   $winchlaunch = getWinchLaunchType($con);
-   $flightTypeGlider = getGlidingFlightType($con); 
-   $flightTypeCheck = getCheckFlightType($con); 
-   $flightTypeRetrieve = getRetrieveFlightType($con);
-   $flightTypeLandingFee = getLandingFeeFlightType($con);
-   $towChargeType = getTowChargeType($con,$org);
-   $strNameShortTerm = 'Short Term';
-   if ($org == 3)
-       $strNameShortTerm = 'Associate';
+  $towlaunch = getTowLaunchType($con);
+  $winchlaunch = getWinchLaunchType($con);
+  $flightTypeGlider = getGlidingFlightType($con); 
+  $flightTypeCheck = getCheckFlightType($con); 
+  $flightTypeRetrieve = getRetrieveFlightType($con);
+  $flightTypeLandingFee = getLandingFeeFlightType($con);
+  $towChargeType = getTowChargeType($con,$org);
+  $strNameShortTerm = 'Short Term';
+  if ($org == 3)
+    $strNameShortTerm = 'Associate';
 
    $q="SELECT id from membership_class where org = ".$org." and class = '".$strNameShortTerm."'";
    $r = mysqli_query($con,$q);

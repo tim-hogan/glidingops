@@ -23,6 +23,8 @@ var DailySheet = function() {
             var parent = what.parentNode;
             parent.removeChild(what);
             var para = document.createElement("input");
+            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
+            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
             var d = new Date();
             para.setAttribute("onchange", "timechange(this)");
             para.setAttribute("timedata", d.getTime());
@@ -44,6 +46,8 @@ var DailySheet = function() {
         var parent = what.parentNode;
         parent.removeChild(what);
         var para = document.createElement("input");
+        para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
+        para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
         para.setAttribute("onchange", "timechange(this)");
         var d = new Date();
         para.setAttribute("timedata", d.getTime());
@@ -82,7 +86,6 @@ var DailySheet = function() {
     }
 
     myPublic.addrowdata = function(id, plane, glider, towy, p1, p2, start, towland, land, height, charges, comments, del) {
-
         console.log("Add row data plane = " + plane);
         var sel;
         var table = document.getElementById("t1");
@@ -96,7 +99,7 @@ var DailySheet = function() {
         r1.appendChild(entryTypeSelect.domNode)
 
         var r2 = row.insertCell(2);
-        r2.innerHTML = "<input type='text' name='glider[]' maxlength='3' size='4' class='upper' onchange='fieldchange(this)'>";
+        r2.innerHTML = "<input type='text' name='glider[]' class='upper ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' maxlength='3' size='4' onchange='fieldchange(this)'>";
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
@@ -106,18 +109,20 @@ var DailySheet = function() {
         var xml = isWinch ? winchdriverxml : towpilotxml
         var rootTag = isWinch ? 'wdrivers' : 'tpilots'
 
-        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new");
-        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new");
-        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial");
+        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new", 'wide');
+        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new", 'wide');
+        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial", 'wide');
 
         var r6 = row.insertCell(6);
         if (parseInt(start) == 0) {
-            r6.innerHTML = "<button name='start[]' type='button' onclick='DailySheet.startbutton(this)'>Start</button>";
+            r6.innerHTML = "<button name='start[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='DailySheet.startbutton(this)'>Start</button>";
             r6.firstChild.setAttribute("id", "g" + nextRow);
             r6.firstChild.setAttribute("timedata", "0");
         } else {
             var para = document.createElement("input");
             var d = new Date(parseInt(start));
+            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
+            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
             para.setAttribute("onchange", "timechange(this)");
             para.setAttribute("timedata", d.getTime());
             para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
@@ -133,12 +138,14 @@ var DailySheet = function() {
             var r13 = row.insertCell(nextCol);
             nextCol++;
             if (parseInt(towland) == 0) {
-                r13.innerHTML = "<button name='towland[]' type='button' onclick='towlandbutton(this)'>Tow Land</button>";
+                r13.innerHTML = "<button name='towland[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='towlandbutton(this)'>Tow Land</button>";
                 r13.firstChild.setAttribute("id", "n" + nextRow);
                 r13.firstChild.setAttribute("timedata", "0");
             } else {
                 var para = document.createElement("input");
                 var d = new Date(parseInt(towland));
+                para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
+                para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
                 para.setAttribute("onchange", "timechange(this)");
                 para.setAttribute("timedata", d.getTime());
                 para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
@@ -152,12 +159,14 @@ var DailySheet = function() {
         var r7 = row.insertCell(nextCol);
         nextCol++;
         if (parseInt(land) == 0) {
-            r7.innerHTML = "<button name='land[]' type='button' onclick='DailySheet.landbutton(this)'>Land</button>";
+            r7.innerHTML = "<button name='land[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='DailySheet.landbutton(this)'>Land</button>";
             r7.firstChild.setAttribute("id", "h" + nextRow);
             r7.firstChild.setAttribute("timedata", "0");
         } else {
             var para = document.createElement("input");
             var d = new Date(parseInt(land));
+            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
+            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
             para.setAttribute("onchange", "timechange(this)");
             para.setAttribute("timedata", d.getTime());
             para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
@@ -168,7 +177,7 @@ var DailySheet = function() {
         }
 
         if (towChargeType == 1) {
-            sel = "<select onchange='fieldchange(this)'></select>";
+            sel = "<select onchange='fieldchange(this)' class='autocomplete'></select>";
             var r8 = row.insertCell(nextCol);
             nextCol++;
             r8.innerHTML = sel;
@@ -239,8 +248,9 @@ var DailySheet = function() {
         }
 
         r10 = row.insertCell(nextCol);
+        $(r10).addClass('wide')
         nextCol++;
-        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)'></select>";
+        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)' class='autocomplete'></select>";
         r10.innerHTML = sel;
         r10.firstChild.setAttribute("id", "k" + nextRow);
         var selnode = r10.firstChild;
@@ -287,20 +297,37 @@ var DailySheet = function() {
 
         r11 = row.insertCell(nextCol);
         nextCol++;
-        r11.innerHTML = "<input type='text' name='comment[]' size='30' onchange='fieldchange(this)'>";
+        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='30' onchange='fieldchange(this)'>";
         r11.firstChild.setAttribute("value", unescape(comments));
         r11.firstChild.setAttribute("id", "l" + nextRow);
 
         r12 = row.insertCell(nextCol);
         nextCol++;
-        if (del == "0")
-            r12.innerHTML = "<button name='delete[]' type='button' onclick='deleteline(this)'>DELETE</button>";
-        else
-            r12.innerHTML = "<button name='delete[]' type='button' onclick='deleteline(this)'>UNDELETE</button>";
+        if (del == "0") {
+            var btn = document.createElement('button')
+            $(btn).addClass('ui-button ui-corner-all ui-widget')
+            $(btn).text('DELETE')
+            btn.name = 'delete[]'
+            btn.type = 'button'
+            btn.onclick = function() {
+                deleteline(this, row)
+            }
+            r12.appendChild(btn)
+        }
+        else {
+            var btn = document.createElement('button')
+            $(btn).addClass('ui-button ui-corner-all ui-widget')
+            $(btn).text('UNDELETE')
+            btn.name = 'delete[]'
+            btn.type = 'button'
+            btn.onclick = function() {
+                deleteline(this, row)
+            }
+            r12.appendChild(btn)
+            // r12.innerHTML = "<button class='ui-button ui-corner-all ui-widget' name='delete[]' type='button' onclick='deleteline(this, row)'>UNDELETE</button>";
+        }
         r12.firstChild.setAttribute("id", "m" + nextRow);
         r12.firstChild.setAttribute("value", del);
-        if (del != "0")
-            greyRow(nextRow, 1);
 
         // Configure update events between columns
         entryTypeSelect.onValueSelected = function(value) {
@@ -313,16 +340,27 @@ var DailySheet = function() {
                 launchOperatorSelect.clear();
             }
         }
+        $(row).find('.autocomplete').select2({
+            // placeholder: 'Select a value',
+            width: '100%',
+            dropdownAutoWidth : true,
+            // allowClear: false
+        })
+        if (del != "0")
+            greyRow(row, 1);
     }
 
     // ===========================================
     // private section
     // ===========================================
 
-    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval) {
-        var r = row.insertCell(colnum);
+    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, classes = undefined) {
+        var cell = row.insertCell(colnum);
+        if(classes) {
+            $(cell).addClass(classes);
+        }
         var xmlSelect = new XMLSelect(colname, collid, listxml, listtag, selvalue, newval)
-        r.appendChild(xmlSelect.domNode)
+        cell.appendChild(xmlSelect.domNode)
 
         return xmlSelect
     }

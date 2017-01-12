@@ -94,6 +94,16 @@ table {
   box-shadow: 10px 10px 5px #888888;
 }
 
+td.wide {
+  min-width: 130px;
+  max-width: 200px;
+}
+
 td select {
   width: 100%;
+}
+
+.deleted {
+    text-decoration: line-through;
+    color: #c0c0c0;
 }
