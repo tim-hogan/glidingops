@@ -1,7 +1,16 @@
-#body {
+/* Make the page use up the whole viewport height
+ * and scroll its content.
+ */
+html, body {
   margin: 0px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
 #container {
   margin: 0px;
   border: px;
@@ -114,7 +123,21 @@ td select {
   width: 100%;
 }
 
+.deleted span,
 .deleted {
     text-decoration: line-through;
     color: #c0c0c0;
+}
+
+/* Bootstrap-select customizations to make the
+ * dropdown-menu open at the top of the viewport
+ * and use the full width. This is to cope with the
+ * software keyboard on mobile devices.
+ */
+.combo-search .dropdown-menu {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }

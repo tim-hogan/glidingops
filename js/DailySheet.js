@@ -7,6 +7,8 @@
 var DailySheet = function() {
     var myPublic = {};
     var launchTypes = {};
+    var membersFields = [];
+    var chargesFields = [];
 
     myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId) {
         launchTypes.tow = launchTypeTowId;
@@ -60,7 +62,7 @@ var DailySheet = function() {
         //Get the value of P2
         var p2 = document.getElementById("f" + iRow).value;
         if (p2 == "0") {
-            //check now check if k = set to P2 change to PIC
+            //now check if k = set to P2 change to PIC
             var ch1 = document.getElementById("k" + iRow).value;
             if (ch1 == "c1") {
                 var ch = document.getElementById("k" + iRow).childNodes;
@@ -80,9 +82,18 @@ var DailySheet = function() {
         if (null == check) {
             var tp = "d" + iRow;
             var strtp = document.getElementById(tp).value;
-            addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
+            myPublic.addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
             nextRow++;
         }
+    }
+
+    myPublic.refreshMembers = function() {
+        $.each(membersFields, function(index, field) {
+            field.refresh()
+        })
+        $.each(chargesFields, function(index, field) {
+            field.refresh()
+        })
     }
 
     myPublic.addrowdata = function(id, plane, glider, towy, p1, p2, start, towland, land, height, charges, comments, del) {
@@ -103,15 +114,22 @@ var DailySheet = function() {
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
-        //New towpilot code 
+        //New towpilot code
 
         var isWinch = (plane == 'l' + launchTypes.winch)
         var xml = isWinch ? winchdriverxml : towpilotxml
         var rootTag = isWinch ? 'wdrivers' : 'tpilots'
 
-        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new", 'wide');
-        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new", 'wide');
-        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial", 'wide');
+        var launchOperatorSelect = new LaunchOperator("towpilot", "d" + nextRow, xml, rootTag, towy, "new")
+        addComboCell(row, 3, launchOperatorSelect, {classes: 'wide'});
+
+        pic = new MemberSelect("pic", "e" + nextRow, p1, "new");
+        addComboCell(row, 4, pic, {classes: 'wide'});
+        membersFields.push(pic)
+
+        p2  = new MemberSelect("p2",  "f" + nextRow, p2, "Trial");
+        addComboCell(row, 5, p2,  {classes: 'wide'});
+        membersFields.push(p2)
 
         var r6 = row.insertCell(6);
         if (parseInt(start) == 0) {
@@ -177,7 +195,7 @@ var DailySheet = function() {
         }
 
         if (towChargeType == 1) {
-            sel = "<select onchange='fieldchange(this)' class='autocomplete'></select>";
+            sel = "<select data-width='100%' onchange='fieldchange(this)' class='combo'></select>";
             var r8 = row.insertCell(nextCol);
             nextCol++;
             r8.innerHTML = sel;
@@ -188,7 +206,7 @@ var DailySheet = function() {
 
             var opt = document.createElement("option");
             opt.value = "0";
-            opt.innerHTML = "";
+            opt.innerHTML = "--";
             selnode.appendChild(opt);
 
             for (h = 500; h < 6000; h += 500) {
@@ -247,53 +265,10 @@ var DailySheet = function() {
             dest.appendChild(n);
         }
 
-        r10 = row.insertCell(nextCol);
-        $(r10).addClass('wide')
+        var chargesField = new Charges("charge", "k" + nextRow, charges)
+        addComboCell(row, nextCol, chargesField, {classes: 'wide'});
+        chargesFields.push(chargesField);
         nextCol++;
-        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)' class='autocomplete'></select>";
-        r10.innerHTML = sel;
-        r10.firstChild.setAttribute("id", "k" + nextRow);
-        var selnode = r10.firstChild;
-
-        parser = new DOMParser();
-        chargeDoc = parser.parseFromString(chargeopts, "text/xml");
-        if (null != chargeDoc) {
-            var mems = chargeDoc.getElementsByTagName("ChargeOpts")[0].childNodes;
-            for (i = 0; i < mems.length; i++) {
-                if (mems[i].nodeName == "opt") {
-                    var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-                    var desc = mems[i].getElementsByTagName("desc")[0].childNodes[0].nodeValue;
-                    opt = document.createElement("option");
-
-                    opt.value = "c" + id;
-                    opt.innerHTML = desc;
-                    if (charges == ("c" + id))
-                        opt.setAttribute("selected", "");
-
-                    selnode.appendChild(opt);
-                }
-            }
-        }
-
-        parser2 = new DOMParser();
-        membersDoc = parser2.parseFromString(allmembers, "text/xml");
-        if (null != membersDoc) {
-            var mems = membersDoc.getElementsByTagName("allmembers")[0].childNodes;
-            for (i = 0; i < mems.length; i++) {
-
-                var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-                var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-                opt = document.createElement("option");
-
-                opt.value = "m" + id;
-                opt.innerHTML = name;
-                if (charges == ("m" + id))
-                    opt.setAttribute("selected", "");
-
-                selnode.appendChild(opt);
-
-            }
-        }
 
         r11 = row.insertCell(nextCol);
         nextCol++;
@@ -340,11 +315,9 @@ var DailySheet = function() {
                 launchOperatorSelect.clear();
             }
         }
-        $(row).find('.autocomplete').select2({
-            // placeholder: 'Select a value',
+
+        $(row).find('.combo').selectpicker({
             width: '100%',
-            dropdownAutoWidth : true,
-            // allowClear: false
         })
         if (del != "0")
             greyRow(row, 1);
@@ -354,15 +327,26 @@ var DailySheet = function() {
     // private section
     // ===========================================
 
-    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, classes = undefined) {
+    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, options = {}) {
         var cell = row.insertCell(colnum);
-        if(classes) {
-            $(cell).addClass(classes);
+        if(options.cellClasses) {
+            $(cell).addClass(options.cellClasses);
         }
         var xmlSelect = new XMLSelect(colname, collid, listxml, listtag, selvalue, newval)
+        if(options.comboClasses) {
+            $(xmlSelect.domNode).addClass(options.comboClasses)
+        }
         cell.appendChild(xmlSelect.domNode)
 
         return xmlSelect
+    }
+
+    function addComboCell(row, colnum, combo, options = {}) {
+        var cell = row.insertCell(colnum);
+        if(options.classes) {
+            $(cell).addClass(options.classes);
+        }
+        combo.addTo(cell)
     }
 
     return myPublic
