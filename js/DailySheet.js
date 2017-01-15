@@ -60,7 +60,7 @@ var DailySheet = function() {
         //Get the value of P2
         var p2 = document.getElementById("f" + iRow).value;
         if (p2 == "0") {
-            //check now check if k = set to P2 change to PIC
+            //now check if k = set to P2 change to PIC
             var ch1 = document.getElementById("k" + iRow).value;
             if (ch1 == "c1") {
                 var ch = document.getElementById("k" + iRow).childNodes;
@@ -103,15 +103,15 @@ var DailySheet = function() {
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
-        //New towpilot code 
+        //New towpilot code
 
         var isWinch = (plane == 'l' + launchTypes.winch)
         var xml = isWinch ? winchdriverxml : towpilotxml
         var rootTag = isWinch ? 'wdrivers' : 'tpilots'
 
-        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new", 'wide');
-        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new", 'wide');
-        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial", 'wide');
+        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new", {cellClasses: 'wide', comboClasses: 'combo-search'});
+        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new", {cellClasses: 'wide', comboClasses: 'combo-search'});
+        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial", {cellClasses: 'wide', comboClasses: 'combo-search'});
 
         var r6 = row.insertCell(6);
         if (parseInt(start) == 0) {
@@ -177,7 +177,7 @@ var DailySheet = function() {
         }
 
         if (towChargeType == 1) {
-            sel = "<select onchange='fieldchange(this)' class='autocomplete'></select>";
+            sel = "<select data-width='100%' onchange='fieldchange(this)' class='combo'></select>";
             var r8 = row.insertCell(nextCol);
             nextCol++;
             r8.innerHTML = sel;
@@ -188,7 +188,7 @@ var DailySheet = function() {
 
             var opt = document.createElement("option");
             opt.value = "0";
-            opt.innerHTML = "";
+            opt.innerHTML = "--";
             selnode.appendChild(opt);
 
             for (h = 500; h < 6000; h += 500) {
@@ -250,7 +250,8 @@ var DailySheet = function() {
         r10 = row.insertCell(nextCol);
         $(r10).addClass('wide')
         nextCol++;
-        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)' class='autocomplete'></select>";
+        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)' class='combo-search'></select>";
+
         r10.innerHTML = sel;
         r10.firstChild.setAttribute("id", "k" + nextRow);
         var selnode = r10.firstChild;
@@ -339,12 +340,18 @@ var DailySheet = function() {
             } else {
                 launchOperatorSelect.clear();
             }
+            $(launchOperatorSelect.domNode).selectpicker('refresh')
         }
-        $(row).find('.autocomplete').select2({
-            // placeholder: 'Select a value',
+        $(row).find('.combo-search').selectpicker({
+            // header: 'Put a nice header heare'
+            dropupAuto: false,
+            dropdownAlignRight: false,
+            size: 10,
             width: '100%',
-            dropdownAutoWidth : true,
-            // allowClear: false
+            liveSearch: true,
+        })
+        $(row).find('.combo').selectpicker({
+            width: '100%',
         })
         if (del != "0")
             greyRow(row, 1);
@@ -354,13 +361,16 @@ var DailySheet = function() {
     // private section
     // ===========================================
 
-    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, classes = undefined) {
+    function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, options = {}) {
         var cell = row.insertCell(colnum);
-        if(classes) {
-            $(cell).addClass(classes);
+        if(options.cellClasses) {
+            $(cell).addClass(options.cellClasses);
         }
         var xmlSelect = new XMLSelect(colname, collid, listxml, listtag, selvalue, newval)
         cell.appendChild(xmlSelect.domNode)
+        if(options.comboClasses) {
+            $(xmlSelect.domNode).addClass(options.comboClasses)
+        }
 
         return xmlSelect
     }

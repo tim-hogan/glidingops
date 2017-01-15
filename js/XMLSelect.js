@@ -9,6 +9,7 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
     function buildSelect() {
         sel = document.createElement('select')
         sel.setAttribute('colname', colname)
+
         sel.onchange = function() {
             self.onValueSelected(sel.value)
             fieldchange(sel)
@@ -16,14 +17,12 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
         sel.id = collid;
 
         addOptionsFromXml(initialListXml, initialListtag, initialSelectedValue)
-        $(sel).addClass('autocomplete')
     }
 
     function addOptionsFromXml(listxml, listtag, selvalue) {
-        //Create first null entry
         var opt = document.createElement("option");
         opt.value = "0";
-        opt.text = "";
+        opt.text = "--";
         sel.appendChild(opt);
 
         opt = document.createElement("option");
