@@ -94,14 +94,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   echo "</h1>";
   
 
-  echo "<table><tr><th>SEQ</th><th>TOWPLANE</th><th>GLIDER</th><th>TOW PILOT</th><th>PIC</th><th>P2</th><th>DURATION</th><th>TOW HEIGHT</th><th>CHARGE</th><th>COMMENTS</th>";
-  $sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.location , flights.type from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f ON f.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " order by flights.seq ASC";
+  echo "<table><tr><th>SEQ</th><th>TOWPLANE</th><th>GLIDER</th><th>TOW PILOT</th><th>PIC</th><th>P2</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>CHARGE</th><th>COMMENTS</th>";
+  $sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.location , flights.type, flights.start, flights.land from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f ON f.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " order by flights.seq ASC";
   $diagtext .= $sql . "<br>";
   $r = mysqli_query($con,$sql);
   $rownum = 0;
   while ($row = mysqli_fetch_array($r) )
   {
-   
    if ($rownum == 0)
      echo "<h1>LOCATION: ".$row[14]."</h1>";
    $rownum = $rownum + 1;
@@ -113,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    }
    else
    {
-	echo "<td>";echo $row[12];echo "</td>";
+	     echo "<td>";echo $row[12];echo "</td>";
    }
    echo "<td>";echo $row[2];echo "</td>";
    echo "<td>";echo $row[3];echo "</td>";
@@ -124,6 +123,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    $mins = intval(($duration % 3600) / 60);
    $timeval = sprintf("%02d:%02d",$hours,$mins);    
    echo "<td class='right'>";echo $timeval;echo "</td>";
+   
+   $start = (int)$row[16] / 1000;
+   $land = (int)$row[17] / 1000;
+   $start_time = ($start == 0) ? "" : date('G:i', $start);
+   $land_time = ($land == 0) ? "" : date('G:i', $land);
+   echo "<td>{$start_time}</td>";
+   echo "<td>{$land_time}</td>";
+
    if ($towluanch == $row[13] && $row[15] == $flightTypeGlider)
    {
       echo "<td class='right'>";echo $row[7];echo "</td>";
