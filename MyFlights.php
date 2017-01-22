@@ -186,10 +186,16 @@ while ($row = mysqli_fetch_array($r) )
 
   echo "<td class='right'>";echo $timeval;echo "</td>";
 
-  $start = (int)$row[9];
-  $land = (int)$row[10];
-  $start_time = ($start == 0) ? "" : date('G:i', $start);
-  $land_time = ($land == 0) ? "" : date('G:i', $land);
+  $start = (new DateTime())->setTimestamp((int)$row[9]);
+  $land  = (new DateTime())->setTimestamp((int)$row[10]);
+
+  $nz_timezone = new DateTimeZone("NZ");
+  $start->setTimezone($nz_timezone);
+  $land->setTimezone($nz_timezone);
+
+  $start_time = ($start == 0) ? "" : date('G:i', $start->getTimestamp());
+  $land_time = ($land == 0) ? "" : date('G:i', $land->getTimestamp());
+
   echo "<td class='right'>{$start_time}</td>";
   echo "<td class='right'>{$land_time}</td>";
  
