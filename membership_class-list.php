@@ -63,8 +63,8 @@ if ($colsort == 0)
 if (true){echo '<th ';if ($colsort == 1) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=1'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "ID";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 2) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=2'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CREATE TIME";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 3) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=3'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CLASS";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Display";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Dropdown";echo "</th>";}
+if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Messaging";echo "</th>";}
+if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Dailysheet Dropdown";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 6) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=6'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Allow Email";echo "</th>";}
 ?>
 </tr>
@@ -75,7 +75,7 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT membership_class.id,membership_class.create_time,membership_class.class,membership_class.disp_message_broadcast,membership_class.dailysheet_dropdown,membership_class.email_broadcast FROM membership_class"; 
+$sql= "SELECT membership_class.id,membership_class.create_time,membership_class.class,membership_class.disp_message_broadcast,membership_class.dailysheet_dropdown,membership_class.email_broadcast FROM membership_class";
 if ($_SESSION['org'] > 0){$sql .= " WHERE membership_class.org=".$_SESSION['org'];}
 $sql.=" ORDER BY ";
 switch ($colsort) {
@@ -112,8 +112,8 @@ while ($row = mysqli_fetch_array($r) )
 if (true){echo "<td>";echo $row[1];echo "</td>";}
 if (true){echo "<td>";echo $row[2];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[3];echo "</td>";}
-if (true){echo "<td>";echo $row[4];echo "</td>";}
-if (true){echo "<td>";echo $row[5];echo "</td>";}
+if (true){echo "<td class='right'>";echo $row[4];echo "</td>";}
+if (true){echo "<td class='right'>";echo $row[5];echo "</td>";}
   echo "</tr>";
 }
 ?>
