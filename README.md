@@ -2,7 +2,7 @@
 
 A bunch of tools to assist gliding operations.
 
-Original project author Tim Hogan.
+Based on original by Tim Hogan.
 
 ## How to install
 
