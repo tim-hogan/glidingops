@@ -22,8 +22,6 @@ if(isset($_SESSION['security'])){
  die("Please logon");
 }
 
-$classes = App\MembershipClass::where('org', $org)->get();
-
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -74,70 +72,72 @@ if ($colsort == 0)
 ?>
 <div id="div1">
 <div id="div2">
-<table><tr>
+<table>
+  <tr>
+    <th class="<?php if ($colsort == 1) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=1'" style='cursor:pointer;'>ID</th>
+    <th class="<?php if ($colsort == 2) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=2'" style='cursor:pointer;'>CREATE TIME</th>
+    <th class="<?php if ($colsort == 3) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=3'" style='cursor:pointer;'>CLASS</th>
+    <th class="<?php if ($colsort == 4) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=4'" style='cursor:pointer;'>Display</th>
+    <th class="<?php if ($colsort == 5) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=5'" style='cursor:pointer;'>Dropdown</th>
+    <th class="<?php if ($colsort == 6) echo 'colsel' ?>"
+        onclick="location.href='membership_class-list.php?col=6'" style='cursor:pointer;'>Allow Email</th>
+  </tr>
 <?php
-if (true){echo '<th ';if ($colsort == 1) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=1'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "ID";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 2) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=2'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CREATE TIME";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 3) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=3'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CLASS";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Display";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Dropdown";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 6) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='membership_class-list.php?col=6'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "Allow Email";echo "</th>";}
-?>
-</tr>
-<?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
-if (mysqli_connect_errno())
-{
- echo "<p>Unable to connect to database</p>";
-}
-$sql= "SELECT membership_class.id,membership_class.create_time,membership_class.class,membership_class.disp_message_broadcast,membership_class.dailysheet_dropdown,membership_class.email_broadcast FROM membership_class";
-if ($_SESSION['org'] > 0){$sql .= " WHERE membership_class.org=".$_SESSION['org'];}
-$sql.=" ORDER BY ";
+$sort_col_name = NULL;
 switch ($colsort) {
  case 0:
-   $sql .= "id";
+   $sort_col_name = "id";
 break;
  case 1:
-   $sql .= "id";
+   $sort_col_name = "id";
    break;
  case 2:
-   $sql .= "create_time";
+   $sort_col_name = "create_time";
    break;
  case 3:
-   $sql .= "class";
+   $sort_col_name = "class";
    break;
  case 4:
-   $sql .= "disp_message_broadcast";
+   $sort_col_name = "disp_message_broadcast";
    break;
  case 5:
-   $sql .= "dailysheet_dropdown";
+   $sort_col_name = "dailysheet_dropdown";
    break;
  case 6:
-   $sql .= "email_broadcast";
+   $sort_col_name = "email_broadcast";
    break;
 }
-$sql .= " ASC";
-$diagtext.= "SQL=".$sql;
-$r = mysqli_query($con,$sql);
+
+$classes = App\MembershipClass::where('org', $org)->orderBy($sort_col_name)->get();
+
 $rownum = 0;
-while ($row = mysqli_fetch_array($r) )
-{
- $rownum = $rownum + 1;
-  echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";if (true){echo "<td class='right'>";echo "<a href='membership_class.php?id=";echo $row[0];echo "'>";echo $row[0];echo "</a>";echo "</td>";}
-if (true){echo "<td>";echo $row[1];echo "</td>";}
-if (true){echo "<td>";echo $row[2];echo "</td>";}
-if (true){echo "<td class='right'>";echo $row[3];echo "</td>";}
-if (true){echo "<td>";echo $row[4];echo "</td>";}
-if (true){echo "<td>";echo $row[5];echo "</td>";}
-  echo "</tr>";
-}
+$classes->each(function($row)  use (&$rownum){
+  $rownum = $rownum + 1;
+  $style = "odd";
+  if (($rownum % 2) == 0) $style = "even";
+?>
+  <tr class=''>
+    <td class='right'>
+      <a href='membership_class.php?id=<?= $row->id?>'><?= $row->id ?></a>
+    </td>
+    <td><?= $row->create_time?></td>
+    <td><?= $row->class?></td>
+    <td class='right'><?= $row->disp_message_broadcast?></td>
+    <td><?= $row->dailysheet_dropdown?></td>
+    <td><?= $row->email_broadcast?></td>
+  </tr>
+<?php
+});
 ?>
 </table>
 </div>
 </div>
 <form id="form1" action='membership_class.php' method='GET'><input type='submit' value = 'Create New'>
 </form>
-<?php if($DEBUG>0) echo "<p>".$diagtext."</p>";?>
 </body>
 </html>
