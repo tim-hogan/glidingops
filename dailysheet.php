@@ -1,3 +1,7 @@
+<?php
+require __DIR__.'/lrv/bootstrap/autoload.php';
+$app = require_once __DIR__.'/lrv/bootstrap/app.php';
+?>
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
@@ -1198,7 +1202,6 @@ function towlandbutton(what)
     calcFlightTime(iRow);
     fieldchange(what);
   }
-
 }
 
 function AddNewLine()

@@ -1,5 +1,18 @@
 <?php session_start(); ?>
 <?php
+require __DIR__.'/lrv/bootstrap/autoload.php';
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$cfg = require __DIR__.'/lrv/config/database.php';
+$capsule = new Capsule;
+$capsule->addConnection($cfg['connections']['mysql']);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+// set timezone for timestamps etc
+date_default_timezone_set('UTC');
+
+use App\MembershipClasslass;
+
 $org=0;
 if(isset($_SESSION['org'])) $org=$_SESSION['org'];
 if(isset($_SESSION['security'])){
@@ -8,6 +21,9 @@ if(isset($_SESSION['security'])){
  header('Location: Login.php');
  die("Please logon");
 }
+
+$classes = App\MembershipClass::where('org', $org)->get();
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -75,7 +91,7 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT membership_class.id,membership_class.create_time,membership_class.class,membership_class.disp_message_broadcast,membership_class.dailysheet_dropdown,membership_class.email_broadcast FROM membership_class"; 
+$sql= "SELECT membership_class.id,membership_class.create_time,membership_class.class,membership_class.disp_message_broadcast,membership_class.dailysheet_dropdown,membership_class.email_broadcast FROM membership_class";
 if ($_SESSION['org'] > 0){$sql .= " WHERE membership_class.org=".$_SESSION['org'];}
 $sql.=" ORDER BY ";
 switch ($colsort) {
