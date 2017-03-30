@@ -7,6 +7,8 @@
 var DailySheet = function() {
     var myPublic = {};
     var launchTypes = {};
+    var membersFields = [];
+    var chargesFields = [];
 
     myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId) {
         launchTypes.tow = launchTypeTowId;
@@ -85,6 +87,15 @@ var DailySheet = function() {
         }
     }
 
+    myPublic.refreshMembers = function() {
+        $.each(membersFields, function(index, field) {
+            field.refresh()
+        })
+        $.each(chargesFields, function(index, field) {
+            field.refresh()
+        })
+    }
+
     myPublic.addrowdata = function(id, plane, glider, towy, p1, p2, start, towland, land, height, charges, comments, del) {
         console.log("Add row data plane = " + plane);
         var sel;
@@ -109,9 +120,16 @@ var DailySheet = function() {
         var xml = isWinch ? winchdriverxml : towpilotxml
         var rootTag = isWinch ? 'wdrivers' : 'tpilots'
 
-        var launchOperatorSelect = createDropDownList(row, 3, "towpilot", "d" + nextRow, xml, rootTag, towy, "new", {cellClasses: 'wide', comboClasses: 'combo-search'});
-        createDropDownList(row, 4, "pic", "e" + nextRow, allmembers, "allmembers", p1, "new", {cellClasses: 'wide', comboClasses: 'combo-search'});
-        createDropDownList(row, 5, "p2", "f" + nextRow, allmembers, "allmembers", p2, "Trial", {cellClasses: 'wide', comboClasses: 'combo-search'});
+        var launchOperatorSelect = new LaunchOperator("towpilot", "d" + nextRow, xml, rootTag, towy, "new")
+        addComboCell(row, 3, launchOperatorSelect, {classes: 'wide'});
+
+        pic = new MemberSelect("pic", "e" + nextRow, p1, "new");
+        addComboCell(row, 4, pic, {classes: 'wide'});
+        membersFields.push(pic)
+
+        p2  = new MemberSelect("p2",  "f" + nextRow, p2, "Trial");
+        addComboCell(row, 5, p2,  {classes: 'wide'});
+        membersFields.push(p2)
 
         var r6 = row.insertCell(6);
         if (parseInt(start) == 0) {
@@ -247,54 +265,10 @@ var DailySheet = function() {
             dest.appendChild(n);
         }
 
-        r10 = row.insertCell(nextCol);
-        $(r10).addClass('wide')
+        var chargesField = new Charges("charge", "k" + nextRow, charges)
+        addComboCell(row, nextCol, chargesField, {classes: 'wide'});
+        chargesFields.push(chargesField);
         nextCol++;
-        sel = "<select colname='" + "charge" + "' onchange='fieldchange(this)' class='combo-search'></select>";
-
-        r10.innerHTML = sel;
-        r10.firstChild.setAttribute("id", "k" + nextRow);
-        var selnode = r10.firstChild;
-
-        parser = new DOMParser();
-        chargeDoc = parser.parseFromString(chargeopts, "text/xml");
-        if (null != chargeDoc) {
-            var mems = chargeDoc.getElementsByTagName("ChargeOpts")[0].childNodes;
-            for (i = 0; i < mems.length; i++) {
-                if (mems[i].nodeName == "opt") {
-                    var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-                    var desc = mems[i].getElementsByTagName("desc")[0].childNodes[0].nodeValue;
-                    opt = document.createElement("option");
-
-                    opt.value = "c" + id;
-                    opt.innerHTML = desc;
-                    if (charges == ("c" + id))
-                        opt.setAttribute("selected", "");
-
-                    selnode.appendChild(opt);
-                }
-            }
-        }
-
-        parser2 = new DOMParser();
-        membersDoc = parser2.parseFromString(allmembers, "text/xml");
-        if (null != membersDoc) {
-            var mems = membersDoc.getElementsByTagName("allmembers")[0].childNodes;
-            for (i = 0; i < mems.length; i++) {
-
-                var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-                var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-                opt = document.createElement("option");
-
-                opt.value = "m" + id;
-                opt.innerHTML = name;
-                if (charges == ("m" + id))
-                    opt.setAttribute("selected", "");
-
-                selnode.appendChild(opt);
-
-            }
-        }
 
         r11 = row.insertCell(nextCol);
         nextCol++;
@@ -340,16 +314,8 @@ var DailySheet = function() {
             } else {
                 launchOperatorSelect.clear();
             }
-            $(launchOperatorSelect.domNode).selectpicker('refresh')
         }
-        $(row).find('.combo-search').selectpicker({
-            // header: 'Put a nice header heare'
-            dropupAuto: false,
-            dropdownAlignRight: false,
-            size: 10,
-            width: '100%',
-            liveSearch: true,
-        })
+
         $(row).find('.combo').selectpicker({
             width: '100%',
         })
@@ -367,12 +333,20 @@ var DailySheet = function() {
             $(cell).addClass(options.cellClasses);
         }
         var xmlSelect = new XMLSelect(colname, collid, listxml, listtag, selvalue, newval)
-        cell.appendChild(xmlSelect.domNode)
         if(options.comboClasses) {
             $(xmlSelect.domNode).addClass(options.comboClasses)
         }
+        cell.appendChild(xmlSelect.domNode)
 
         return xmlSelect
+    }
+
+    function addComboCell(row, colnum, combo, options = {}) {
+        var cell = row.insertCell(colnum);
+        if(options.classes) {
+            $(cell).addClass(options.classes);
+        }
+        combo.addTo(cell)
     }
 
     return myPublic

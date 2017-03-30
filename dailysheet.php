@@ -329,30 +329,7 @@ xmlhttp.onreadystatechange = function ()
       {
         console.log("Reply type: allmembers");
         allmembers = xml2Str(xmlReply);
-        var r = 0;
-        for (r=0;r < 100;r++)
-        {
-            var iRow = r +1;
-          var n = document.getElementById("e"+ iRow);
-          if (null != n)
-          {
-            var p1 = document.getElementById("e" + iRow).value;
-            //remove all list
-            while (n.firstChild)
-              n.removeChild(n.firstChild);
-            AddEntriesToDropDown(n,allmembers,"allmembers",p1,"new");
-          }
-
-          n = document.getElementById("f"+iRow);
-          if (null != n)
-          {
-             var p2 = document.getElementById("f" + iRow).value;
-             //remove all list
-             while (n.firstChild)
-               n.removeChild(n.firstChild);
-             AddEntriesToDropDown(n,allmembers,"allmembers",p2,"trial");
-          }
-        }
+        DailySheet.refreshMembers()
       }
 
 
@@ -482,20 +459,20 @@ function sendXMLtoServer()
 
 function getBookings()
 {
-        console.log("StrToday = " + strToday);
-        strToday = strToday+"";
-        var v="bookingsForDate.php?date=" + strToday + "&org=<?php echo $org; ?>";
+  console.log("StrToday = " + strToday);
+  strToday = strToday+"";
+  var v="bookingsForDate.php?date=" + strToday + "&org=<?php echo $org; ?>";
   xmlhttp.open("GET", v, true);
-        xmlhttp.send();
+  xmlhttp.send();
 }
 
 function getMembers()
 {
-        console.log("StrToday = " + strToday);
-        strToday = strToday+"";
-        var v="memberlistfortimesheet.php?org=<?php echo $org; ?>";
-        xmlhttp.open("GET", v, true);
-        xmlhttp.send();
+  console.log("StrToday = " + strToday);
+  strToday = strToday+"";
+  var v="memberlistfortimesheet.php?org=<?php echo $org; ?>";
+  xmlhttp.open("GET", v, true);
+  xmlhttp.send();
 }
 
 function finalise()
@@ -588,10 +565,12 @@ function UnSelect(field)
 
 function newassociatecancel(field)
 {
-   UnSelect(field);
-   document.body.removeChild(document.getElementById("tempdiv"));
-   document.getElementById("container").style.display="block";
+  UnSelect(field);
+  $('#tempdiv').hide()
+  $('#tempdiv').remove()
+  $('#container').show()
 }
+
 function newassociate(field)
 {
  console.log("New associate field = " + field);
@@ -617,6 +596,8 @@ function newassociate(field)
  var f=document.getElementById(field);
  colid= f.getAttribute("colname");
 
+ // Unselect
+ $(f).val([])
 
  var s = document.createElement("option");
  var displayname = fir + " " + sur;
@@ -624,7 +605,11 @@ function newassociate(field)
 
  s.innerHTML = displayname;
  f.appendChild(s);
- s.selected=true;
+ $(f).val([strTempId])
+
+ if( $(f).hasClass('combo') || $(f).hasClass('combo-search') ) {
+  $(f).selectpicker('refresh')
+ }
 
  var newassocnode = xmlDoc.getElementsByTagName("newassocs")[0];
  if (null != newassocnode)
@@ -671,12 +656,16 @@ function newassociate(field)
     t.appendChild(xmlDoc.createTextNode(em));
     s.appendChild(t);
  }
- else
+ else {
    console.log("ERROR creating XML");
+ }
+
  nexttempid++;
- fieldchange(f);
- document.body.removeChild(document.getElementById("tempdiv"));
- document.getElementById("container").style.display="block";
+
+ $('#tempdiv').hide()
+ $('#tempdiv').remove()
+ $('#container').show()
+ fieldchange(f)
 }
 
 function createAssociateMember(field)
@@ -684,9 +673,8 @@ function createAssociateMember(field)
   //We need to create a new window
   console.log("In createAssco field = " + field);
   //Need to hide the container
-  document.getElementById("container").style.display="none";
-
-
+  $('#container').hide()
+  // document.getElementById("container").style.display="none";
 
   var win=document.createElement("div");
   win.id = "tempdiv";
@@ -699,7 +687,7 @@ function createAssociateMember(field)
 "<tr><td>EMAIL</td><td><input class='in1' type = 'text' name='email' id='nad' size='40'></td></tr>" +
 "<tr><td><button class='in1' onclick='newassociate(\"" + field + "\")'>Enter</button></td><td><button class='in1' onclick='newassociatecancel(\"" + field + "\")'>Cancel</button></td></tr>" +
 "</table>";
-win.innerHTML = codeHTML;
+  win.innerHTML = codeHTML;
 }
 
 function anyDeleted(doc)
@@ -739,27 +727,26 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,towpilot,p1,p2,start,to
    //Look to see if it exists
    if (null != flight )
    {
+      node = flight.childNodes;
+      var i;
 
-  node = flight.childNodes;
-  var i;
+      var node2 = flight.getElementsByTagName("towpilot");
 
-  var node2 = flight.getElementsByTagName("towpilot");
-
-  updseq++;
-        updatenode(doc,doc.getElementsByTagName("updseq")[0],updseq);
-  updatenode(doc,flight.getElementsByTagName("launchtype")[0],launchtype);
-        updatenode(doc,flight.getElementsByTagName("plane")[0],plane);
-  updatenode(doc,flight.getElementsByTagName("glider")[0],glider);
-  updatenode(doc,flight.getElementsByTagName("towpilot")[0],towpilot);
-  updatenode(doc,flight.getElementsByTagName("p1")[0],p1);
-  updatenode(doc,flight.getElementsByTagName("p2")[0],p2);
-  updatenode(doc,flight.getElementsByTagName("start")[0],start);
-  updatenode(doc,flight.getElementsByTagName("land")[0],land);
-        updatenode(doc,flight.getElementsByTagName("towland")[0],towland);
-  updatenode(doc,flight.getElementsByTagName("height")[0],height);
-  updatenode(doc,flight.getElementsByTagName("charges")[0],charges);
-  updatenode(doc,flight.getElementsByTagName("comments")[0],comments);
-        updatenode(doc,flight.getElementsByTagName("del")[0],del);
+      updseq++;
+      updatenode(doc,doc.getElementsByTagName("updseq")[0],updseq);
+      updatenode(doc,flight.getElementsByTagName("launchtype")[0],launchtype);
+      updatenode(doc,flight.getElementsByTagName("plane")[0],plane);
+      updatenode(doc,flight.getElementsByTagName("glider")[0],glider);
+      updatenode(doc,flight.getElementsByTagName("towpilot")[0],towpilot);
+      updatenode(doc,flight.getElementsByTagName("p1")[0],p1);
+      updatenode(doc,flight.getElementsByTagName("p2")[0],p2);
+      updatenode(doc,flight.getElementsByTagName("start")[0],start);
+      updatenode(doc,flight.getElementsByTagName("land")[0],land);
+      updatenode(doc,flight.getElementsByTagName("towland")[0],towland);
+      updatenode(doc,flight.getElementsByTagName("height")[0],height);
+      updatenode(doc,flight.getElementsByTagName("charges")[0],charges);
+      updatenode(doc,flight.getElementsByTagName("comments")[0],comments);
+      updatenode(doc,flight.getElementsByTagName("del")[0],del);
    }
    else
    {
@@ -861,28 +848,28 @@ function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
 {
   //Create first null entry
   var opt = document.createElement("option");
-        opt.value = "0";
+  opt.value = "0";
   opt.innerHTML = "";
   selnode.appendChild(opt);
 
-        opt = document.createElement("option");
-        opt.value = "99999";
+  opt = document.createElement("option");
+  opt.value = "99999";
   opt.innerHTML = newval;
   selnode.appendChild(opt);
 
-        parser=new DOMParser();
-    dropDoc=parser.parseFromString(listxml,"text/xml");
+  parser=new DOMParser();
+  dropDoc=parser.parseFromString(listxml,"text/xml");
   if (null != dropDoc)
   {
       var mems = dropDoc.getElementsByTagName(listtag)[0].childNodes;
-            for (i=0;i < mems.length;i++)
-            {
-    var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-    var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    opt = document.createElement("option");
-    opt.value = id;
-    opt.innerHTML = name;
-    selnode.appendChild(opt);
+      for (i=0;i < mems.length;i++)
+      {
+        var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
+        var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
+        opt = document.createElement("option");
+        opt.value = id;
+        opt.innerHTML = name;
+        selnode.appendChild(opt);
       }
   }
 
@@ -890,13 +877,11 @@ function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
   var optlist = selnode.childNodes;
   for (i=0; i<optlist.length; i++)
   {
-      if (optlist[i].value == selvalue)
-    optlist[i].selected = true;
-            else
-    optlist[i].selected = false;
-
+    if (optlist[i].value == selvalue)
+      optlist[i].selected = true;
+    else
+      optlist[i].selected = false;
   }
-
 }
 
 function greyRow(row,b)
@@ -1147,7 +1132,7 @@ function StartUp()
   }
 
   parser=new DOMParser();
-    xmlDoc=parser.parseFromString(fxml,"text/xml");
+  xmlDoc=parser.parseFromString(fxml,"text/xml");
 
   var st = document.getElementById("sync");
   st.innerHTML = "Sync";
@@ -1155,7 +1140,7 @@ function StartUp()
   inSync=1;
 
 
-        if (null != lxml)
+  if (null != lxml)
   {
 
 
@@ -1207,6 +1192,7 @@ function StartUp()
             {
     var vid = grplist[k].getElementsByTagName("id")[0].childNodes[0].nodeValue;
     var vplane = strNodeValue(grplist[k].getElementsByTagName("plane")[0].childNodes[0]);
+
     var vglider = strNodeValue(grplist[k].getElementsByTagName("glider")[0].childNodes[0]);
     var vtow = strNodeValue(grplist[k].getElementsByTagName("towpilot")[0].childNodes[0]);
     lastTowPilot=vtow;
