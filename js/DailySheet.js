@@ -82,7 +82,7 @@ var DailySheet = function() {
         if (null == check) {
             var tp = "d" + iRow;
             var strtp = document.getElementById(tp).value;
-            addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
+            myPublic.addrowdata(nextRow, "SUG", "", strtp, "", "", "0", "0", "0", "", "", "", "0");
             nextRow++;
         }
     }

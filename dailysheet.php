@@ -844,46 +844,6 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,towpilot,p1,p2,start,to
        localStorage.setItem(datestring, xml2Str(doc) );
 }
 
-function AddEntriesToDropDown(selnode,listxml,listtag,selvalue,newval)
-{
-  //Create first null entry
-  var opt = document.createElement("option");
-  opt.value = "0";
-  opt.innerHTML = "";
-  selnode.appendChild(opt);
-
-  opt = document.createElement("option");
-  opt.value = "99999";
-  opt.innerHTML = newval;
-  selnode.appendChild(opt);
-
-  parser=new DOMParser();
-  dropDoc=parser.parseFromString(listxml,"text/xml");
-  if (null != dropDoc)
-  {
-      var mems = dropDoc.getElementsByTagName(listtag)[0].childNodes;
-      for (i=0;i < mems.length;i++)
-      {
-        var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
-        var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-        opt = document.createElement("option");
-        opt.value = id;
-        opt.innerHTML = name;
-        selnode.appendChild(opt);
-      }
-  }
-
-  //update the value to selected
-  var optlist = selnode.childNodes;
-  for (i=0; i<optlist.length; i++)
-  {
-    if (optlist[i].value == selvalue)
-      optlist[i].selected = true;
-    else
-      optlist[i].selected = false;
-  }
-}
-
 function greyRow(row,b)
 {
   if (b > 0)
@@ -939,7 +899,7 @@ function fieldchange(what) {
   var p1 = document.getElementById("e" + iRow).value;
   var p2 = document.getElementById("f" + iRow).value;
 
-  if (towp == "99999" || p1 == "99999" || p2 == "99999") {
+  if (towp == "new" || p1 == "new" || p2 == "new") {
     UnSelect(what.id);
     createAssociateMember(what.id);
     return;

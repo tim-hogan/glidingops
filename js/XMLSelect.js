@@ -26,7 +26,7 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
         sel.appendChild(opt);
 
         opt = document.createElement("option");
-        opt.value = "99999";
+        opt.value = "new";
         opt.text = newvalLabel;
         sel.appendChild(opt);
 
