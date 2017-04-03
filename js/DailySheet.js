@@ -88,12 +88,21 @@ var DailySheet = function() {
     }
 
     myPublic.refreshMembers = function() {
-        $.each(membersFields, function(index, field) {
-            field.refresh()
-        })
-        $.each(chargesFields, function(index, field) {
-            field.refresh()
-        })
+        $('#loading-spinner').show()
+        setTimeout(function(){
+            try{
+                MemberSelectTemplate = null;
+                $.each(membersFields, function(index, field) {
+                    field.refresh()
+                })
+                ChargesSelectTemplate = null;
+                $.each(chargesFields, function(index, field) {
+                    field.refresh()
+                })
+            } finally {
+                $('#loading-spinner').hide()
+            }
+        }, 0);
     }
 
     myPublic.addrowdata = function(id, plane, glider, towy, p1, p2, start, towland, land, height, charges, comments, del) {
@@ -265,7 +274,7 @@ var DailySheet = function() {
             dest.appendChild(n);
         }
 
-        var chargesField = new Charges("charge", "k" + nextRow, charges)
+        var chargesField = new ChargesSelect("charge", "k" + nextRow, charges)
         addComboCell(row, nextCol, chargesField, {classes: 'wide'});
         chargesFields.push(chargesField);
         nextCol++;

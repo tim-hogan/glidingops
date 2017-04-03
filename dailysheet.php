@@ -21,6 +21,8 @@
   <script type="text/javascript" src="js/DailySheet.js"></script>
   <script type="text/javascript" src="js/DailySheetEntryType.js"></script>
   <script type="text/javascript" src="js/XMLSelect.js"></script>
+  <script type="text/javascript" src="js/CrewSelect.js"></script>
+  <script type="text/javascript" src="js/ChargesSelect.js"></script>
 <script>
 var nextRow;
 var xmlDoc;
@@ -347,7 +349,6 @@ xmlhttp.onreadystatechange = function ()
       if (replyType == "status") {
         console.log("Reply type: status");
 
-
         var status = xmlReply.getElementsByTagName("status")[0].childNodes[0].nodeValue;
 
         //See if we have any diag messages.
@@ -410,7 +411,7 @@ xmlhttp.onreadystatechange = function ()
             nnam.appendChild(memDoc.createTextNode(disp));
             member.appendChild(nnam);
             allmembers = xml2Str(memDoc);
-            console.log("Update towpilot list " + allmembers);
+            console.log("Update allmembers list " + allmembers);
 
 
             //Delete this node form the update required
@@ -1078,6 +1079,7 @@ function poll()
 
 function StartUp()
 {
+  $('#loading-spinner').show()
   setInterval(poll,1000);
 
   var bUpdServer = 0;
@@ -1102,8 +1104,6 @@ function StartUp()
 
   if (null != lxml)
   {
-
-
     parserl=new DOMParser();
       ldoc=parserl.parseFromString(lxml,"text/xml");
 
@@ -1124,16 +1124,13 @@ function StartUp()
 
   }
 
-
   if (locstore==1)
     localStorage.setItem(datestring, fxml);
   console.log(xml2Str(xmlDoc));
 
-
   var dt = xmlDoc.getElementsByTagName("date")[0].childNodes[0].nodeValue;
 
-
-        nextRow = 1;
+  nextRow = 1;
   var today = new Date(parseInt(dt));
   var year    = today.getFullYear();
   var month   = today.getMonth() + 1;
@@ -1177,6 +1174,7 @@ function StartUp()
     sendXMLtoServer();
 
   getBookings();
+  $('#loading-spinner').hide()
 }
 
 function towlandbutton(what)
@@ -1261,5 +1259,8 @@ function AddNewLine()
 <p id="err"></p>
 <p id="diag"><?php if($DEBUG>0)echo $diagtext;?></p>
 </div>
+  <div id='loading-spinner'>
+    <div class='loader'></div>
+  </div>
 </body>
 </html>
