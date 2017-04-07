@@ -83,7 +83,7 @@ var MemberSelect = function(colname, collid, selvalue, newvalLabel, options = {}
     self.addTo = function(targetDomNode) {
         targetDomNode.appendChild(sel)
         $(sel).selectpicker({
-            // header: 'Put a nice header heare'
+            header: colname,
             dropupAuto: false,
             dropdownAlignRight: false,
             size: 10,

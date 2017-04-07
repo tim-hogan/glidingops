@@ -118,7 +118,7 @@ var LaunchOperator = function(colname, collid, xml, xmlTag, selvalue, newval, op
     self.addTo = function(targetDomNode) {
         targetDomNode.appendChild(xmlSelect.domNode)
         $(xmlSelect.domNode).selectpicker({
-            // header: 'Put a nice header heare'
+            header: colname,
             dropupAuto: false,
             dropdownAlignRight: false,
             size: 10,
