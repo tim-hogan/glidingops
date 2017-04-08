@@ -4,19 +4,20 @@
 <meta name="viewport" content="initial-scale=1.0">
 <head>
   <!-- Add jquery into the soup -->
-  <link href="client/lib/jquery/jquery-ui.min.css" rel="stylesheet">
   <script src="client/lib/jquery/external/jquery/jquery.js"></script>
+  <link href="client/lib/jquery/jquery-ui.min.css" rel="stylesheet">
   <script src="client/lib/jquery/jquery-ui.min.js"></script>
 
   <link href="client/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="client/lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
-
   <script src="client/lib/bootstrap/js/bootstrap.min.js"></script>
-  <script src="client/lib/bootstrap-select/js/bootstrap-select.js"></script>
+
+  <link href="client/lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
+  <script src="client/lib/bootstrap-select/js/bootstrap-select.min.js"></script>
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" type="text/css" href="calstyle.css">
   <link rel="stylesheet" type="text/css" href="css/dailysheet.css">
+
   <script type="text/javascript" src="cal.js"></script>
   <script type="text/javascript" src="js/DailySheet.js"></script>
   <script type="text/javascript" src="js/DailySheetEntryType.js"></script>
