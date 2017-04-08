@@ -89,6 +89,7 @@ var MemberSelect = function(colname, collid, selvalue, newvalLabel, options = {}
             size: 10,
             width: '100%',
             liveSearch: true,
+            liveSearchStyle: 'startsWith',
         })
     }
 
