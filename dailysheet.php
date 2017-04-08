@@ -1167,7 +1167,7 @@ function StartUp()
 
       }
   }
-  DailySheet.addrowdata(nextRow,"","",lastTowPilot,"","","0","0","0","","","","0");
+  DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastTowPilot,"","","0","0","0","","","","0");
   nextRow++;
 
   if (bUpdServer == 1)
@@ -1208,7 +1208,7 @@ function AddNewLine()
 {
    var iRow = (nextRow-1);
    var strtp = document.getElementById("d" + iRow).value;
-   DailySheet.addrowdata(nextRow,"SUG","",strtp,"","","0","0","0","","","","0");
+   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",strtp,"","","0","0","0","","","","0");
    nextRow++;
 }
 
