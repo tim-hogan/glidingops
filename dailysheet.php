@@ -188,11 +188,7 @@ while ($row = mysqli_fetch_array($r2) )
 }
 
 $members="";
-$olddate = new DateTime("now");
-$olddate->setTimestamp($olddate->getTimestamp() - (3600*24*30));
-$q2 = "SELECT * from members where org = ".$org." and class <> ".$shorttermclass." or (class = ".$shorttermclass." and create_time > '".$olddate->format('Y-m-d')."') order by displayname ASC";
-
-//$q2 = "SELECT * FROM members where org=".$org." ORDER BY displayname ASC";
+$q2 = "SELECT * FROM members WHERE org=".$org." ORDER BY displayname ASC";
 $r2 = mysqli_query($con,$q2);
 while ($row = mysqli_fetch_array($r2) )
 {
