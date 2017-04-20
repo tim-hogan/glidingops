@@ -1,6 +1,9 @@
 # .htaccess
 DirectoryIndex home.php
 RewriteEngine On
+
+RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
+
 RewriteRule home home.php [L]
 RewriteRule AssignRoles role_member-list.php [L]
 RewriteRule AssignRole role_member.php [L]

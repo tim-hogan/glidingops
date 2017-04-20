@@ -11,7 +11,7 @@ $capsule->bootEloquent();
 // set timezone for timestamps etc
 date_default_timezone_set('UTC');
 
-use App\MembershipClasslass;
+use App\MembershipClass;
 
 $org=0;
 if(isset($_SESSION['org'])) $org=$_SESSION['org'];
