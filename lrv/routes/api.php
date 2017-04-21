@@ -20,6 +20,9 @@ Route::get('/members', function (Request $request) {
 }); //->middleware('auth:api');
 
 Route::get('/flights', function (Request $request) {
+  // eval(\Psy\sh());
+  // xdebug_break();
+
   $orgInput       = $request->input('org');
   $localdateInput = $request->input('localdate');
 
