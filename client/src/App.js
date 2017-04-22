@@ -6,6 +6,8 @@ import {
   Route
 } from 'react-router-dom'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap-theme.min.css'
 import Main from './components/Main'
 import './App.css'
 
@@ -18,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider>
-        <div className="App">
+        <div className="container-fluid">
           <Router>
             <div>
               <Route path='/' component={ Main } />

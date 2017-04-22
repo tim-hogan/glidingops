@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Route, NavLink as Link } from 'react-router-dom'
 
 import AppBar from 'material-ui/AppBar'
@@ -7,7 +8,6 @@ import { List, ListItem } from 'material-ui/List'
 import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
 import ActionToday from 'material-ui/svg-icons/action/today'
 
-import PropTypes from 'prop-types'
 
 import DailyTimeSheet from './DailyTimeSheet'
 import Tracker        from './Tracker'
@@ -66,16 +66,21 @@ class Main extends Component {
                       containerElement={ <Link to='/tracker'/> } />
           </List>
         </Drawer>
-        <AppBar
-          title={ this.title() }
-          iconClassNameRight="muidocs-icon-navigation-expand-more"
-          onLeftIconButtonTouchTap={this.toggleMenu}
-        />
-
-        <div>
-          <Route exact path='/' component={ DailyTimeSheet } />
-          <Route path='/daily-time-sheet' component={ DailyTimeSheet }/>
-          <Route path='/tracker' component={ Tracker } />
+        <div className='row'>
+          <div className='col-xs-12'>
+            <AppBar
+              title={ this.title() }
+              iconClassNameRight="muidocs-icon-navigation-expand-more"
+              onLeftIconButtonTouchTap={this.toggleMenu}
+            />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-xs-12'>
+            <Route exact path='/' component={ DailyTimeSheet } />
+            <Route path='/daily-time-sheet' component={ DailyTimeSheet }/>
+            <Route path='/tracker' component={ Tracker } />
+          </div>
         </div>
       </div>
     )
