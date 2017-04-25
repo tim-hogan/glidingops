@@ -26,3 +26,20 @@
 .full-height {
   height: 100%;
 }
+
+.DailyTimeSheet-flights {
+}
+
+table.DailyTimeSheet-flights {
+  width: 100%;
+}
+
+table.DailyTimeSheet-flights > thead > tr > th {
+  font-size: 12px;
+  font-weight: normal;
+  color: rgb(158, 158, 158);
+}
+
+table.DailyTimeSheet-flights > tbody > tr  {
+  height: 48px;
+}

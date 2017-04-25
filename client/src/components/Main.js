@@ -5,7 +5,7 @@ import { Route, NavLink as Link } from 'react-router-dom'
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import { List, ListItem } from 'material-ui/List'
-import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
+import MapsFlight from 'material-ui/svg-icons/maps/flight'
 import ActionToday from 'material-ui/svg-icons/action/today'
 
 
@@ -48,6 +48,10 @@ class Main extends Component {
     )
   }
 
+  renderDailyTimesheet = () => {
+    return <DailyTimeSheet />
+  }
+
   render () {
     return (
       <div>
@@ -61,7 +65,7 @@ class Main extends Component {
                       onTouchTap={this.closeMenu}
                       containerElement={ <Link to='/daily-time-sheet'/> } />
             <ListItem primaryText='Tracker'
-                      leftIcon={<ActionFlightTakeoff />}
+                      leftIcon={<MapsFlight />}
                       onTouchTap={this.closeMenu}
                       containerElement={ <Link to='/tracker'/> } />
           </List>
@@ -77,8 +81,8 @@ class Main extends Component {
         </div>
         <div className='row'>
           <div className='col-xs-12'>
-            <Route exact path='/' component={ DailyTimeSheet } />
-            <Route path='/daily-time-sheet' component={ DailyTimeSheet }/>
+            <Route exact path='/' render={ this.renderDailyTimesheet }   />
+            <Route path='/daily-time-sheet' render={ this.renderDailyTimesheet }/>
             <Route path='/tracker' component={ Tracker } />
           </div>
         </div>
