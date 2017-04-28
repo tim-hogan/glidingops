@@ -20,9 +20,9 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{height: '100%'}}>
           <Router>
-            <div>
+            <div style={{height: '100%'}}>
               <Route path='/' component={ Main } />
             </div>
           </Router>

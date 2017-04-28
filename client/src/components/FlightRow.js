@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import IconButton from 'material-ui/IconButton';
+
 import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
 import ActionFlightLand from 'material-ui/svg-icons/action/flight-land'
 import Create from 'material-ui/svg-icons/content/create'
@@ -24,9 +26,11 @@ import {
  *
  */
 
-class Flight extends Component {
+class FlightRow extends Component {
+
   static propTypes = {
-    flight: PropTypes.object
+    flight: PropTypes.object,
+    onEdit: PropTypes.func
   }
 
   static mapStateToProps = (flightId, state) => {
@@ -76,6 +80,51 @@ class Flight extends Component {
     return `${hours}:${minutsStr}`
   }
 
+  editFlightHandler = (flight) => {
+    return () => {
+      console.log('Editing flight: ', flight)
+      if(this.props.onEdit) {
+        this.props.onEdit(flight)
+      }
+    }
+  }
+
+  takeOffHandler = (flight) => {
+    return () => {
+      console.log('Take off flight: ', flight)
+    }
+  }
+
+  landHandler = (flight) => {
+    return () => {
+      console.log('Land flight: ', flight)
+    }
+  }
+
+  takeOffField = (flight, start, land) => {
+    return (
+      (start) ? start.format('HH:mm') :
+        <IconButton onTouchTap={this.takeOffHandler(flight)}
+                        touch={true} tooltip="Take off" tooltipPosition="bottom-right">
+          <ActionFlightTakeoff/>
+        </IconButton>
+    )
+  }
+
+  landField = (flight, start, land) => {
+    if(!start) {
+      return null
+    }
+
+    return (
+      (land) ? land.format('HH:mm') :
+        <IconButton onTouchTap={this.landHandler(flight)}
+                        touch={true} tooltip="Take off" tooltipPosition="bottom-right">
+          <ActionFlightLand/>
+        </IconButton>
+    )
+  }
+
   render() {
     const { flight } = this.props
     const towpilotDisplayName = (flight.relationships.towpilot) ? flight.relationships.towpilot.displayname : ''
@@ -88,15 +137,20 @@ class Flight extends Component {
 
     return (
       <tr>
-        <td><Create/></td>
+        <td>
+          <IconButton onTouchTap={this.editFlightHandler(flight)}
+                      touch={true} tooltip="Edit" tooltipPosition="bottom-right">
+            <Create/>
+          </IconButton>
+        </td>
         <td>{ flight.seq }</td>
         <td>{ this.launchtypeLabel(flight) }</td>
         <td>{ flight.glider }</td>
         <td>{ towpilotDisplayName }</td>
         <td>{ picDisplayName }</td>
         <td>{ p2DisplayName }</td>
-        <td>{ (start) ? start.format('HH:mm') :  <ActionFlightTakeoff/> }</td>
-        <td>{ (land) ? land.format('HH:mm') : <ActionFlightLand/> }</td>
+        <td>{ this.takeOffField(flight, start, land) }</td>
+        <td>{ this.landField(flight, start, land) }</td>
         <td>{ flight.height }</td>
         <td>{ (start && land) ? this.formatDuration(Moment.duration(land - start)) : null }</td>
         <td></td>
@@ -107,4 +161,4 @@ class Flight extends Component {
   }
 }
 
-export default Flight
+export default FlightRow
