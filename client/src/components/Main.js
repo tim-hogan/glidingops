@@ -11,9 +11,6 @@ import ActionToday from 'material-ui/svg-icons/action/today'
 
 import DailyTimeSheet from './DailyTimeSheet'
 import Tracker        from './Tracker'
-import MembersList    from './MembersList'
-
-import MembersSample from '../samples/MembersSample'
 
 class Main extends Component {
   static propTypes = {
@@ -60,7 +57,6 @@ class Main extends Component {
   render () {
     return (
       <div style={{height: '100%'}}>
-        <MembersList members={MembersSample.data}/>
         <Drawer
           open={this.state.menuOpen}
           docked={false}
