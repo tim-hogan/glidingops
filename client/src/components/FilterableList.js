@@ -8,10 +8,10 @@ import { List, ListItem } from 'material-ui/List'
 
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
 
-class MembersList extends Component {
+class FilterableList extends Component {
   static propTypes = {
     open: PropTypes.bool,
-    members: PropTypes.arrayOf(PropTypes.object),
+    items: PropTypes.arrayOf(PropTypes.object),
     searchTermMinLength: PropTypes.number,
     onSelect: PropTypes.func,
     onRequestClose: PropTypes.func
@@ -25,7 +25,7 @@ class MembersList extends Component {
     super(props)
     this.state = {
       searchTerm: '',
-      filteredMembers: []
+      filteredItems: []
     }
   }
 
@@ -35,29 +35,29 @@ class MembersList extends Component {
       value = ''
     }
 
-    let filteredMembers = []
+    let filteredItems = []
     if(value.length >= this.props.searchTermMinLength) {
-      filteredMembers = this.props.members.filter((member) => {
-        return member.displayname.toUpperCase().startsWith(value.toUpperCase())
+      filteredItems = this.props.items.filter((item) => {
+        return this.props.filterFn(item, value)
       })
     }
 
     this.setState({
       searchTerm: value,
-      filteredMembers: filteredMembers
+      filteredItems: filteredItems
     })
   }
 
   clear = () => {
     this.setState({
       searchTerm: '',
-      filteredMembers: []
+      filteredItems: []
     })
   }
 
-  listItemSelectedHandler = (member) => {
+  listItemSelectedHandler = (item) => {
     this.clear()
-    this.props.onSelect(member)
+    this.props.onSelect(item)
   }
 
   renderFilteredList = () => {
@@ -76,11 +76,11 @@ class MembersList extends Component {
       )
     }
 
-    let memberItems = []
-    this.state.filteredMembers.forEach((member) => {
-      memberItems.push(
-        <ListItem key={member.id} primaryText={member.displayname}
-          onTouchTap={() => {this.listItemSelectedHandler(member)}}/>
+    let listItems = []
+    this.state.filteredItems.forEach((item) => {
+      listItems.push(
+        <ListItem key={item.id} primaryText={item.displayname}
+          onTouchTap={() => {this.listItemSelectedHandler(item)}}/>
       )
     })
 
@@ -95,7 +95,7 @@ class MembersList extends Component {
 
     return (
       <List style={listStyle}>
-        {memberItems}
+        {listItems}
       </List>
     )
   }
@@ -127,4 +127,4 @@ class MembersList extends Component {
   }
 }
 
-export default MembersList
+export default FilterableList

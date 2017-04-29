@@ -1222,4 +1222,10 @@ const MebersSample = {
   ]
 }
 
+MebersSample.forOrg = (orgId) => {
+    return MebersSample.data.filter((member) => {
+        return member.org === orgId
+    })
+}
+
 export default MebersSample

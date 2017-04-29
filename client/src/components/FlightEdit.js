@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
-import MembersList    from './MembersList'
+import FilterableList    from './FilterableList'
 
 import MembersSample from '../samples/MembersSample'
 import FlightsSample from '../samples/FlightsSample'
@@ -31,6 +31,20 @@ class FlightEdit extends Component {
       membersListOpen: false,
       onMemberSelected: () => {}
     }
+  }
+
+  onGliderRegoChanged = (event, newRego) => {
+    if(newRego.length > 3) {
+      return
+    }
+
+    const rego = newRego.toUpperCase()
+    const flightSample = FlightsSample.data.find((flight) => {
+      return flight.id === this.props.flight.id
+    })
+    flightSample.glider = rego
+    this.props.flight.glider = rego
+    this.forceUpdate()
   }
 
   onPicSelected = (member) => {
@@ -81,11 +95,16 @@ class FlightEdit extends Component {
 
     return (
       <div>
-        <MembersList
+        <FilterableList
           open={this.state.membersListOpen}
           onSelect={this.state.onMemberSelected}
           onRequestClose={() => {this.setState({membersListOpen: false})}}
-          members={MembersSample.data}/>
+          items={MembersSample.forOrg(this.props.flight.org)}
+          filterFn={
+            (member, filterTerm) => {
+              return member.displayname.toUpperCase().startsWith(filterTerm.toUpperCase())
+            }
+          }/>
         <div className='row'>
           <div className='col-xs-12'>
             <h2 style={styles.headline}>#{this.props.flight.seq}</h2>
@@ -96,7 +115,9 @@ class FlightEdit extends Component {
             <TextField style={{width: '100%'}}
               hintText="GLIDER rego"
               floatingLabelText="GLIDER"
-              floatingLabelFixed={true} />
+              floatingLabelFixed={true}
+              onChange={this.onGliderRegoChanged}
+              value={this.props.flight.glider} />
           </div>
         </div>
         <div className='row'>
