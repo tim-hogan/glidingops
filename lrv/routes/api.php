@@ -13,44 +13,22 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/members', function (Request $request) {
-  return response()->json([
-      'data' => App\Member::all()
-  ]);
-}); //->middleware('auth:api');
+Route::resource('members', 'MembersController', ['only' => [
+    'index'
+  ]
+]);
 
-Route::get('/flights', function (Request $request) {
-  // eval(\Psy\sh());
-  // xdebug_break();
+Route::resource('flights', 'FlightsController', ['only' => [
+    'index'
+  ]
+]);
 
-  $orgInput       = $request->input('org');
-  $localdateInput = $request->input('localdate');
+Route::resource('launch-types', 'LaunchTypesController', ['only' => [
+    'index'
+  ]
+]);
 
-  $org = App\Organisation::find($orgInput);
-  if(! $localdateInput) {
-    $dateTimeZone = new DateTimeZone($org->timezone);
-    $dateTime     = new DateTime('now', $dateTimeZone);
-    $localdate    = $dateTime->format('Ymd');
-  } else {
-    $localdate = $localdateInput;
-  }
-
-  return response()->json([
-      'data' => App\Flight::where(['org' => $org->id, 'localdate' => $localdate])->get()
-  ]);
-}); //->middleware('auth:api');
-
-Route::get('/launch-types', function (Request $request) {
-  return response()->json([
-      'data' => App\LaunchType::all()
-  ]);
-}); //->middleware('auth:api');
-
-Route::get('/aircrafts', function (Request $request) {
-  $orgInput       = $request->input('org');
-  $org = App\Organisation::find($orgInput);
-
-  return response()->json([
-      'data' => App\Aircraft::where(['org' => $org->id])->get()
-  ]);
-}); //->middleware('auth:api');
+Route::resource('aircrafts', 'AircraftsController', ['only' => [
+    'index'
+  ]
+]);

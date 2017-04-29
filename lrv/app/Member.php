@@ -26,4 +26,12 @@ class Member extends Model
      * @var array
      */
     protected $visible = ['id', 'member_id', 'org', 'firstname', 'surname', 'displayname'];
+
+    /**
+     * The roles that belong to the meber.
+     */
+    public function roles()
+    {
+        return $this->belongsToMany('App\Role', 'role_member');
+    }
 }
