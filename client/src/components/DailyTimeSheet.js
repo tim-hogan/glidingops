@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import {
-  Table, TableBody, TableHeader, TableHeaderColumn, TableRow
-} from 'material-ui/Table'
 
-import FlightRow from './FlightRow'
+import FlightRow  from './FlightRow'
 import FlightEdit from './FlightEdit'
+import MainAppBar from './MainAppBar'
+import MainLayout from '../layouts/MainLayout'
 
 import FlightsSample     from '../samples/FlightsSample'
 import MembersSample     from '../samples/MembersSample'
@@ -77,11 +76,19 @@ class DailyTimeSheet extends Component {
   }
 
   render() {
-    if(this.state.editing) {
-      return this.renderEditFlight(this.state.editing)
-    } else {
-      return this.renderFlights()
-    }
+    const content = (this.state.editing) ?
+      this.renderEditFlight(this.state.editing) :
+      this.renderFlights()
+
+    return (
+      <MainLayout
+        navigationComponent={
+          <MainAppBar title={ 'Daily time sheet' }/>
+        }
+      >
+        { content }
+      </MainLayout>
+    )
   }
 }
 

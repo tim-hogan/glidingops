@@ -101,7 +101,7 @@ class FilterableList extends Component {
   }
 
   closeButtonHandler = () => {
-    this.clear
+    this.clear()
     this.props.onRequestClose()
   }
 

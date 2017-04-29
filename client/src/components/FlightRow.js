@@ -9,10 +9,6 @@ import Create from 'material-ui/svg-icons/content/create'
 
 import Moment from 'moment';
 
-import {
-  TableRow, TableRowColumn
-} from 'material-ui/Table'
-
 /**
  * Sample of expected flight JSON object
  * {
@@ -133,7 +129,6 @@ class FlightRow extends Component {
 
     const start = (flight.start) ? Moment(flight.start) : null
     const land = (flight.land) ? Moment(flight.land) : null
-    const m = Moment
 
     return (
       <tr>
