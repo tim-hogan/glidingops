@@ -15,10 +15,35 @@ Optional host name of the Gliding New Zealand
 The index of the club 
 #### Result
 A sucessful result is a php array of JSON elements with the following format.  
-'''php  
-{"flying":
-    {
-    }
+```php  
+{
+"flying":
+    [
+        {
+            "seq":10,
+            "glider":"GGG",
+            "pic":"Name 1",
+            "p2":"Name 2",
+            "flighttime":"01:23"
+        },
+        {
+            "seq":12,
+            "glider":"GGH",
+            "pic":"Name 3",
+            "p2":"",
+            "flighttime":"00:47"
+         }
+    ],
+"completed":
+    [
+        {
+            "seq":3,
+            "glider":"GGI",
+            "pic":"Name 1",
+            "p2":"Name 2",
+            "flighttime":"02:12"
+        }
+    ]
 }
-'''
+```
 ## Examples
