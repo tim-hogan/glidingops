@@ -47,3 +47,22 @@ A sucessful result is a php array of JSON elements with the following format.
 }
 ```
 ## Examples
+```php
+<?php
+require 'GlidingClass.php'
+$club = 1;
+$myGlide = new Gliding('glidingops.com','www.gliding.net.nz');
+$result = $myGlide->getFlyingToday($club);
+if (!in_array('error',result))
+{
+    $flying_flights = result['flying'];
+    $completed_flights = result['completed'];
+    
+    foreach ($flying_flights as $flight) {
+        echo $flight['seq'] ." ," . $flight['pic'] ." ," . $flight['p2']  ." ," . $flight['flighttime'];
+    }
+    ........
+    
+}
+?>
+```
