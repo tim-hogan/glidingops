@@ -8,7 +8,7 @@ function getOrgAircraftPrefix($db,$org)
    {
      $row = mysqli_fetch_array($r);
      $ret=$row[0];
-   } 
+   }
    return $ret;
 }
 
@@ -21,7 +21,7 @@ function getOrgDefautLaunchLat($db,$org)
    {
      $row = mysqli_fetch_array($r);
      $ret=$row[0];
-   } 
+   }
    return $ret;
 }
 
@@ -34,7 +34,7 @@ function getOrgDefautLaunchLon($db,$org)
    {
      $row = mysqli_fetch_array($r);
      $ret=$row[0];
-   } 
+   }
    return $ret;
 }
 
@@ -150,6 +150,21 @@ function getTowLaunchType($db){return getLaunchType($db,'Tow Plane');}
 function getSelfLaunchType($db){return getLaunchType($db,'Self Launch');}
 function getWinchLaunchType($db){return getLaunchType($db,'Winch');}
 
+function getStatusId($db, $strName) {
+  $ret=-1.0;
+  $q="SELECT id FROM membership_status WHERE status_name='{$strName}'";
+  $r = mysqli_query($db,$q);
+  if (mysqli_num_rows($r) > 0)
+  {
+    $row = mysqli_fetch_array($r);
+    $ret=$row[0];
+  }
+  mysqli_free_result($r);
+  return $ret;
+}
+function getActiveStatusId($db){
+  return getStatusId($db, 'Active');
+}
 
 function getTowChargeType($db,$org)
 {
@@ -290,11 +305,39 @@ function isFirstPilotFlightDay($db,$org,$date,$seq,$memberid)
 
 function SendMail($to,$subject,$message)
 {
-  $headers = 
+  $headers =
     'From: Gliding Operations <operations@glidingops.com>' . "\r\n" .
     'Reply-To: wgcoperations@gmail.com' . "\r\n" .
     'Return-PATH: operations@glidingops.com' . "\r\n" .
-    'X-Mailer: PHP/' . phpversion();   
+    'X-Mailer: PHP/' . phpversion();
   return mail($to, $subject, $message, $headers, '-r operations@glidingops.com');
+}
+
+function getMemmbersXmlRows($db, $org, $timesheedDate)
+{
+  $activeStatusID = getActiveStatusId($db);
+  $timesheedDateStr = $timesheedDate->format('Ymd');
+
+  $q1 = "SELECT DISTINCT members.* FROM members
+          LEFT JOIN flights pic_flight ON pic_flight.pic = members.id
+          LEFT JOIN flights p2_flight ON p2_flight.p2 = members.id
+          WHERE members.org={$org} AND (
+                (status IS NULL OR status = {$activeStatusID}) OR
+                (pic_flight.org={$org} AND pic_flight.localdate={$timesheedDateStr}) OR
+                (p2_flight.org={$org} AND p2_flight.localdate={$timesheedDateStr}))
+          ORDER BY displayname ASC";
+
+  $members="";
+  $r1 = mysqli_query($db,$q1);
+  while ($row = mysqli_fetch_array($r1) )
+  {
+    $members .= "<member><id>";
+    $members .= $row['id'];
+    $members .= "</id><name>";
+    $members .= $row['displayname'];
+    $members .= "</name></member>";
+  }
+
+  return $members;
 }
 ?>

@@ -75,7 +75,8 @@ $launchTypeSelf=getSelfLaunchType($con);
 $launchTypeWinch=getWinchLaunchType($con);
 $shorttermclass = getShortTermClass($con,$org);
 $towChargeType = getTowChargeType($con,$org);
-echo "var towChargeType=" . $towChargeType . ";";
+echo "var towChargeType={$towChargeType};";
+$activeStatusID = getActiveStatusId($con);
 
  //Find billing option for Other Member
  $r = mysqli_query($con,"SELECT * FROM billingoptions WHERE bill_other = 1");
@@ -181,17 +182,7 @@ while ($row = mysqli_fetch_array($r2) )
 	$winchdrivers .= "</name></wdriver>";
 }
 
-$members="";
-$q2 = "SELECT * FROM members where org=".$org." ORDER BY displayname ASC";
-$r2 = mysqli_query($con,$q2);
-while ($row = mysqli_fetch_array($r2) )
-{
-	$members .= "<member><id>";
-	$members .= $row['id'];
-        $members .= "</id><name>";
-	$members .= $row['displayname'];
-	$members .= "</name></member>";
-}
+$members=getMemmbersXmlRows($con, $org, $dateTime);
 
 //Billing options
 $chargeopts="<ChargeOpts>";
@@ -483,11 +474,11 @@ function getBookings()
 
 function getMembers()
 {
-        console.log("StrToday = " + strToday);
-        strToday = strToday+"";
-        var v="memberlistfortimesheet.php?org=<?php echo $org; ?>";
- 	xmlhttp.open("GET", v, true);
-        xmlhttp.send();
+  console.log("StrToday = " + strToday);
+  strToday = strToday+"";
+  var v="<?= "memberlistfortimesheet.php?org={$org}&ds={$specific_date}" ?>";
+  xmlhttp.open("GET", v, true);
+  xmlhttp.send();
 }
 
 function finalise()
@@ -1295,8 +1286,12 @@ function AddNewLine()
 <?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
 <?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
 <div id="container">
+
 <span id='dayfield'>DATE</span>
 <span id='sync'>SYNC</span>
+<a href='./dailysheet_new.php?org=<?=$org?>&location=<?=$location?>&ds=<?=$specific_date?>'>New daily sheet</a>
+<br>
+
 <table id='t1'>
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
 <th>SEQ</th>

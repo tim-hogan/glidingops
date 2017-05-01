@@ -87,6 +87,7 @@ $launchTypeWinch=getWinchLaunchType($con);
 $shorttermclass = getShortTermClass($con,$org);
 $towChargeType = getTowChargeType($con,$org);
 echo "var towChargeType=" . $towChargeType . ";";
+$activeStatusID = getActiveStatusId($con);
 
  //Find billing option for Other Member
  $r = mysqli_query($con,"SELECT * FROM billingoptions WHERE bill_other = 1");
@@ -177,17 +178,7 @@ while ($row = mysqli_fetch_array($r2) )
 	$pilots .= "</name></pilot>";
 }
 
-$members="";
-$q2 = "SELECT * FROM members WHERE org=".$org." ORDER BY displayname ASC";
-$r2 = mysqli_query($con,$q2);
-while ($row = mysqli_fetch_array($r2) )
-{
-	$members .= "<member><id>";
-	$members .= $row['id'];
-        $members .= "</id><name>";
-	$members .= $row['displayname'];
-	$members .= "</name></member>";
-}
+$members=getMemmbersXmlRows($con, $org, $dateTime);
 
 //Billing options
 $chargeopts="<ChargeOpts>";
@@ -492,11 +483,11 @@ function getBookings()
 
 function getMembers()
 {
-        console.log("StrToday = " + strToday);
-        strToday = strToday+"";
-        var v="memberlistfortimesheet.php?org=<?php echo $org; ?>";
- 	xmlhttp.open("GET", v, true);
-        xmlhttp.send();
+  console.log("StrToday = " + strToday);
+  strToday = strToday+"";
+  var v="<?= "memberlistfortimesheet.php?org={$org}&ds=" ?>";
+  xmlhttp.open("GET", v, true);
+  xmlhttp.send();
 }
 
 function finalise()

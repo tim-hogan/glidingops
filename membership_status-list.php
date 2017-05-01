@@ -70,7 +70,7 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT membership_status.id,membership_status.status_name FROM membership_status"; 
+$sql= "SELECT membership_status.id,membership_status.status_name FROM membership_status";
 $sql.=" ORDER BY ";
 switch ($colsort) {
  case 0:

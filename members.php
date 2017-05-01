@@ -709,9 +709,9 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
      while($row = mysqli_fetch_array($r))
      {
      if ($class_f == $row['id'])
-     echo "<option value='" . $row['id'] ."' selected>" . $row['class'] ."</option>" ; 
+     echo "<option value='" . $row['id'] ."' selected>" . $row['class'] ."</option>" ;
     else
-     echo "<option value='" . $row['id'] ."'>" . $row['class'] ."</option>" ; 
+     echo "<option value='" . $row['id'] ."'>" . $row['class'] ."</option>" ;
       }
     mysqli_close($con);
    }
@@ -737,9 +737,9 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
      while($row = mysqli_fetch_array($r))
      {
      if ($status_f == $row['id'])
-     echo "<option value='" . $row['id'] ."' selected>" . $row['status_name'] ."</option>" ; 
+     echo "<option value='" . $row['id'] ."' selected>" . $row['status_name'] ."</option>" ;
     else
-     echo "<option value='" . $row['id'] ."'>" . $row['status_name'] ."</option>" ; 
+     echo "<option value='" . $row['id'] ."'>" . $row['status_name'] ."</option>" ;
       }
     mysqli_close($con);
    }
