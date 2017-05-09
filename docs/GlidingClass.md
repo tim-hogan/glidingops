@@ -55,7 +55,7 @@ A sucessful result is a php array of JSON elements with the following format.
     }
 }
 ```
-## Examples
+### Example
 ```php
 <?php
 require 'GlidingClass.php'
@@ -75,3 +75,25 @@ if (!in_array('error',result))
 }
 ?>
 ```
+### getFlarmCode($glider)
+#### Description
+Returns a specific gliders flarm code.  
+#### Parameters
+*$glider* [String]  
+The 3 character code for the glider. 
+#### Result
+A sucessful result is a php array of JSON elements with the following format.
+```php
+{  
+    "meta":
+    {
+        .......
+    }
+    "data":
+    {
+        "glider": "GGR",
+        "flarmcode": "DDEFDD"
+    }
+}
+```
+### Example
