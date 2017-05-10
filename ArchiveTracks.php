@@ -1,5 +1,5 @@
 <?php
-$db_params = require('./config/database.php');
+$db_params = require('/var/www/html/config/database.php');
 $con1_params = $db_params['gliding']; 
 $con1=mysqli_connect($con1_params['hostname'],$con1_params['username'],$con1_params['password'],$con1_params['dbname']);
 if (mysqli_connect_errno())
