@@ -13,7 +13,7 @@ function HaveFlight($db,$dt,$glider)
    return false;
 }
 
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('/var/www/html/config/database.php'); $con_params = $con_params['gliding']; 
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
