@@ -1,19 +1,18 @@
 <?php
 /*
+    This routine looks at all tracks data and deletes the data if a flight time was not during a flight.
+    This has the effect of removing location data for Gliders who are stationary on the ground.
+    
     From apache as a web page: http://<hostname>/ArchiveTracks.php
-    From a CRON Job:  php ArchiveTracks.php <route directory>
-      Example: php ArchiveTracks.php /var/www/html
+    From a CRON Job:  php TracksRemoveRudundant.php <route directory>
+      Example: php TracksRemoveRudundant.php /var/www/html
 */
 $configDir = '.';
 if (null != $argv && count($argv) > 1)
 {
     $configDir = rtrim($argv[1],"/");
 }
-?>
-<html>
-<head></head>
-<body>
-<?php
+
 include 'timehelpers.php';
 function HaveFlight($db,$dt,$glider)
 {
@@ -55,9 +54,12 @@ while ($row = mysqli_fetch_array($r))
      $r2 = mysqli_query($con,$q2); 
   }
 }
-echo "<p>Tracks with flights = " .$cntFlight. "</p>";
-echo "<p>Tracks with no flights = " .$cntNoFlight. "</p>";
-echo "<p>Total = " .($cntFlight+$cntNoFlight). "</p>";
+if (null == $argv)
+{
+   echo "Tracks with flights = " .$cntFlight. "<br/>";
+   echo "Tracks with no flights = " .$cntNoFlight. "<br/>";
+   echo "Total = " .($cntFlight+$cntNoFlight). "<br/>";
+}
+mysqli_close($con);
 ?>
-</body>
-</html>
+

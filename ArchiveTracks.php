@@ -1,5 +1,10 @@
 <?php
 /*
+    Used to take the tracks dataset of the gliding database and archive tracks that are greater than 3 days old to a tracks archive database.
+    This minimises the db size of the mian database.
+    
+    This routine can be called either from a web page or run using php from the command line.
+
     From apache as a web page: http://<hostname>/ArchiveTracks.php
     From a CRON Job:  php ArchiveTracks.php <route directory>
       Example: php ArchiveTracks.php /var/www/html
