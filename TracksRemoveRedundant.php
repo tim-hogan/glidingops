@@ -1,3 +1,15 @@
+<?php
+/*
+    From apache as a web page: http://<hostname>/ArchiveTracks.php
+    From a CRON Job:  php ArchiveTracks.php <route directory>
+      Example: php ArchiveTracks.php /var/www/html
+*/
+$configDir = '.';
+if (null != $argv && count($argv) > 1)
+{
+    $configDir = rtrim($argv[1],"/");
+}
+?>
 <html>
 <head></head>
 <body>
@@ -12,8 +24,8 @@ function HaveFlight($db,$dt,$glider)
      return true;
    return false;
 }
-
-$con_params = require('/var/www/html/config/database.php'); $con_params = $con_params['gliding']; 
+$db_params = require($configDir . '/config/database.php');
+$con_params = $con_params['gliding']; 
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
