@@ -1,5 +1,15 @@
 <?php
-$db_params = require('/var/www/html/config/database.php');
+/*
+    From apache as a web page: http://<hostname>/ArchiveTracks.php
+    From a CRON Job:  php ArchiveTracks.php <route directory>
+      Example: php ArchiveTracks.php /var/www/html
+*/
+$configDir = '.';
+if (null != $argv && count($argv) > 1)
+{
+    $configDir = rtrim($argv[1],"/");
+}
+$db_params = require($configDir . '/config/database.php');
 $con1_params = $db_params['gliding']; 
 $con1=mysqli_connect($con1_params['hostname'],$con1_params['username'],$con1_params['password'],$con1_params['dbname']);
 if (mysqli_connect_errno())
