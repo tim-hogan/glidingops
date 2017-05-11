@@ -83,8 +83,6 @@ $activeStatusID = getActiveStatusId($con);
  $row = mysqli_fetch_array($r);
  $billing_other_member = $row['id'];
 
-
-
 $q2 = "SELECT * FROM flights WHERE flights.org = ".$org." and localdate = " . $dateStr . " ORDER BY seq ASC";
 $r2 = mysqli_query($con,$q2);
 $row_cnt = $r2->num_rows;

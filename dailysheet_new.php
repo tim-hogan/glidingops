@@ -4,15 +4,13 @@
 <meta name="viewport" content="initial-scale=1.0">
 <head>
   <!-- Add jquery into the soup -->
-  <script src="client/lib/jquery/external/jquery/jquery.js"></script>
-  <link href="client/lib/jquery/jquery-ui.min.css" rel="stylesheet">
-  <script src="client/lib/jquery/jquery-ui.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 
-  <link href="client/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <script src="client/lib/bootstrap/js/bootstrap.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <link href="client/lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
-  <script src="client/lib/bootstrap-select/js/bootstrap-select.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" type="text/css" href="calstyle.css">
@@ -96,11 +94,6 @@ $activeStatusID = getActiveStatusId($con);
  $r = mysqli_query($con,"SELECT * FROM billingoptions WHERE bill_other = 1");
  $row = mysqli_fetch_array($r);
  $billing_other_member = $row['id'];
-
-
-// $olddate = new DateTime("now");
-// $olddate->setTimestamp($olddate->getTimestamp() - (3600*24*30));
-// $q2 = "SELECT * from members where org = ".$org." and class <> ".$shorttermclass." or (class = ".$shorttermclass." and create_time > '".$olddate->format('Y-m-d')."') order by displayname ASC";
 
 $q2 = "SELECT * FROM flights WHERE flights.org = {$org} and localdate = {$dateStr} ORDER BY seq ASC";
 $r2 = mysqli_query($con,$q2);
