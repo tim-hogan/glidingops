@@ -7,10 +7,10 @@
     From a CRON Job:  php TracksRemoveRudundant.php <route directory>
       Example: php TracksRemoveRudundant.php /var/www/html
 */
-$configDir = '.';
+$baseDir = '.';
 if (null != $argv && count($argv) > 1)
 {
-    $configDir = rtrim($argv[1],"/");
+    $baseDir = rtrim($argv[1],"/");
 }
 
 include 'timehelpers.php';
@@ -23,7 +23,7 @@ function HaveFlight($db,$dt,$glider)
      return true;
    return false;
 }
-$db_params = require($configDir . '/config/database.php');
+$db_params = require($baseDir . '/config/database.php');
 $con_params = $con_params['gliding']; 
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
