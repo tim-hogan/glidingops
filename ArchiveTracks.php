@@ -6,15 +6,15 @@
     This routine can be called either from a web page or run using php from the command line.
 
     From apache as a web page: http://<hostname>/ArchiveTracks.php
-    From a CRON Job:  php ArchiveTracks.php <route directory>
+    From a CRON Job:  php ArchiveTracks.php <base directory directory>
       Example: php ArchiveTracks.php /var/www/html
 */
-$configDir = '.';
+$baseDir = '.';
 if (null != $argv && count($argv) > 1)
 {
-    $configDir = rtrim($argv[1],"/");
+    $baseDir = rtrim($argv[1],"/");
 }
-$db_params = require($configDir . '/config/database.php');
+$db_params = require($baseDir . '/config/database.php');
 $con1_params = $db_params['gliding']; 
 $con1=mysqli_connect($con1_params['hostname'],$con1_params['username'],$con1_params['password'],$con1_params['dbname']);
 if (mysqli_connect_errno())
