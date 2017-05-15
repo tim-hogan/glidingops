@@ -53,7 +53,6 @@ class MainAppBar extends Component {
         </Drawer>
         <AppBar
           title={ title }
-          iconClassNameRight="muidocs-icon-navigation-expand-more"
           onLeftIconButtonTouchTap={this.toggleMenu}
         />
       </div>

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import FlightRow  from './FlightRow'
 import FlightEdit from './FlightEdit'
 import MainAppBar from './MainAppBar'
+import EditAppBar from './EditAppBar'
 import MainLayout from '../layouts/MainLayout'
 
 import FlightsSample     from '../samples/FlightsSample'
@@ -26,6 +27,10 @@ class DailyTimeSheet extends Component {
 
   editFlight = (flight) => {
     this.setState({editing: flight})
+  }
+
+  doneEditing = () => {
+    this.setState({editing: null})
   }
 
   renderFlights = () => {
@@ -76,17 +81,20 @@ class DailyTimeSheet extends Component {
   }
 
   render() {
-    const content = (this.state.editing) ?
-      this.renderEditFlight(this.state.editing) :
-      this.renderFlights()
+    const slots = (this.state.editing) ?
+    {
+      navigationComponent: <EditAppBar title={ `Edit flight ${this.state.editing.seq}` }
+                                      doneHandler={this.doneEditing}/>,
+      content: this.renderEditFlight(this.state.editing)
+    } :
+    {
+      navigationComponent: <MainAppBar title={ 'Daily time sheet' }/>,
+      content: this.renderFlights()
+    }
 
     return (
-      <MainLayout
-        navigationComponent={
-          <MainAppBar title={ 'Daily time sheet' }/>
-        }
-      >
-        { content }
+      <MainLayout navigationComponent={ slots.navigationComponent }>
+        { slots.content }
       </MainLayout>
     )
   }

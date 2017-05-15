@@ -9,7 +9,7 @@ class Tracker extends Component {
     return (
       <MainLayout
         navigationComponent={
-          <MainAppBar title={ 'Daily time sheet' } />
+          <MainAppBar title={ 'Flights live tracker' } />
         }
       >
         <div>Tracker</div>
