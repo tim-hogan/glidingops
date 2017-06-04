@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Route } from 'react-router-dom'
 
-import DailyTimeSheet from './DailyTimeSheet'
-import Tracker        from './Tracker'
+import DailyTimeSheetSontainer from '../containers/DailyTimeSheetContainer'
+import Tracker        from '../components/Tracker'
 
 class Main extends Component {
   static propTypes = {
@@ -17,7 +17,7 @@ class Main extends Component {
   }
 
   renderDailyTimesheet = () => {
-    return <DailyTimeSheet />
+    return <DailyTimeSheetSontainer />
   }
 
   render () {

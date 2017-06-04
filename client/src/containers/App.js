@@ -1,5 +1,7 @@
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Provider } from 'react-redux'
 
 import {
   BrowserRouter as Router,
@@ -8,17 +10,16 @@ import {
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/css/bootstrap-theme.min.css'
-import Main from './components/Main'
+import Main from './Main'
 import './App.css'
 
 // Before you do any rendering, initialize the plugin
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin()
 
-class App extends Component {
-
-  render() {
-    return (
+const App = ({store}) => {
+  return (
+    <Provider store={store}>
       <MuiThemeProvider>
         <div className="container-fluid" style={{height: '100%'}}>
           <Router>
@@ -28,8 +29,12 @@ class App extends Component {
           </Router>
         </div>
       </MuiThemeProvider>
-    )
-  }
+    </Provider>
+  )
+}
+
+App.propTypes = {
+  store: PropTypes.object.isRequired
 }
 
 export default App

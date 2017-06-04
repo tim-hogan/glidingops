@@ -1,102 +1,38 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
-import FlightRow  from './FlightRow'
 import FlightEdit from './FlightEdit'
-import MainAppBar from './MainAppBar'
 import EditAppBar from './EditAppBar'
 import MainLayout from '../layouts/MainLayout'
+import Flights    from './Flights'
 
-import FlightsSample     from '../samples/FlightsSample'
-import MembersSample     from '../samples/MembersSample'
-import LaunchTypesSample from '../samples/LaunchTypesSample'
-import AircraftsSample   from '../samples/AircraftsSample'
 // import './DailyTimeSheet.css'
 
 class DailyTimeSheet extends Component {
 
+  static propTypes = {
+    appState: PropTypes.object.isRequired,
+    actions:  PropTypes.object.isRequired,
+    // editing : PropTypes.object.isRequired
+  }
+
   constructor(props) {
-    super(props);
-    this.state = {editing: null};
-  }
-
-  renderEditFlight = (flight)  => {
-    return (
-      <FlightEdit flight={flight}/>
-    )
-  }
-
-  editFlight = (flight) => {
-    this.setState({editing: flight})
-  }
-
-  doneEditing = () => {
-    this.setState({editing: null})
-  }
-
-  renderFlights = () => {
-    const appState = {
-      flights:     FlightsSample.data,
-      members:     MembersSample.data,
-      launchTypes: LaunchTypesSample.data,
-      aircrafts:   AircraftsSample.data
-    }
-
-    let rows = []
-    appState.flights.forEach( flight => {
-      const mappedFlight = FlightRow.mapStateToProps(flight.id, appState)
-      rows.push(
-        <FlightRow flight={ mappedFlight } key={ flight.seq } onEdit={this.editFlight}/>
-      )
-    })
-
-    return (
-      <table className='DailyTimeSheet-flights'>
-        <thead style={ {
-          borderBottomColor: 'rgb(224, 224, 224)',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1px'
-        } }>
-          <tr>
-            <th></th>
-            <th>SEQ</th>
-            <th>LAUNCH</th>
-            <th>GLIDER</th>
-            <th>TOW PILOT<br/>WINCH DRIVER</th>
-            <th>PIC</th>
-            <th>P2</th>
-            <th>START</th>
-            <th>LAND</th>
-            <th>HEIGHT</th>
-            <th>TIME</th>
-            <th>BILLING</th>
-            <th>COMMENTS</th>
-            <th>DELETED</th>
-          </tr>
-        </thead>
-        <tbody>
-          { rows }
-        </tbody>
-      </table>
-    )
+    super(props)
   }
 
   render() {
-    const slots = (this.state.editing) ?
-    {
-      navigationComponent: <EditAppBar title={ `Edit flight ${this.state.editing.seq}` }
-                                      doneHandler={this.doneEditing}/>,
-      content: this.renderEditFlight(this.state.editing)
-    } :
-    {
-      navigationComponent: <MainAppBar title={ 'Daily time sheet' }/>,
-      content: this.renderFlights()
+    if(this.props.appState.editing) {
+      const navigationComponent = <EditAppBar title={ `Edit flight ${this.props.appState.editing.seq}` }
+                                        doneHandler={this.props.actions.finishEditFlight}/>
+      return (
+        <MainLayout navigationComponent={ navigationComponent }>
+          <FlightEdit flight={this.props.appState.editing} />
+        </MainLayout>
+      )
+    } else {
+      return <Flights flights={this.props.appState.flights}
+                      onEditFlight={this.props.actions.editFlight}/>
     }
-
-    return (
-      <MainLayout navigationComponent={ slots.navigationComponent }>
-        { slots.content }
-      </MainLayout>
-    )
   }
 }
 

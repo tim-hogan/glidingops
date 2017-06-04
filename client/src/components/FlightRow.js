@@ -29,36 +29,6 @@ class FlightRow extends Component {
     onEdit: PropTypes.func
   }
 
-  static mapStateToProps = (flightId, state) => {
-    const flight =  state.flights.find( flight => {
-      return flight.id === flightId
-    })
-    const launchType = state.launchTypes.find( el => {
-      return el.id === flight.launchtype
-    })
-    const towpilot = state.members.find( el => {
-      return el.id === flight.towpilot
-    })
-    const pic = state.members.find( el => {
-      return el.id === flight.pic
-    })
-    const p2 = state.members.find( el => {
-      return el.id === flight.p2
-    })
-    const towPlane = state.aircrafts.find( el => {
-      return el.id === flight.towplane
-    })
-
-    return { ...flight, relationships: {
-        launchtype: launchType,
-        towpilot: towpilot,
-        pic: pic,
-        p2: p2,
-        towplane: towPlane
-      }
-    }
-  }
-
   launchtypeLabel = (flight) => {
     if(flight.relationships.launchtype.acronym === 'A') {
       return flight.relationships.towplane.rego_short
