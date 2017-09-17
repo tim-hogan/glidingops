@@ -9,7 +9,6 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
     function buildSelect() {
         sel = document.createElement('select')
         sel.setAttribute('colname', colname)
-
         sel.onchange = function() {
             self.onValueSelected(sel.value)
             fieldchange(sel)
@@ -20,23 +19,16 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
     }
 
     function addOptionsFromXml(listxml, listtag, selvalue) {
-        var frag = document.createDocumentFragment();
-
+        //Create first null entry
         var opt = document.createElement("option");
         opt.value = "0";
-        opt.text = "--";
-        if (opt.value == selvalue) {
-            opt.setAttribute("selected", "");
-        }
-        frag.appendChild(opt);
+        opt.text = "";
+        sel.appendChild(opt);
 
         opt = document.createElement("option");
-        opt.value = "new";
+        opt.value = "99999";
         opt.text = newvalLabel;
-        if (opt.value == selvalue) {
-            opt.setAttribute("selected", "");
-        }
-        frag.appendChild(opt);
+        sel.appendChild(opt);
 
         parser = new DOMParser();
         dropDoc = parser.parseFromString(listxml, "text/xml");
@@ -45,25 +37,19 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
             for (i = 0; i < mems.length; i++) {
                 var id = mems[i].getElementsByTagName("id")[0].childNodes[0].nodeValue;
                 var name = mems[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
-
                 opt = document.createElement("option");
                 opt.value = id;
                 opt.innerHTML = name;
-                if (opt.value == selvalue) {
-                    opt.setAttribute("selected", "");
-                }
-                frag.appendChild(opt);
+                sel.appendChild(opt);
             }
         }
 
-        // //update the value to selected
-        // var optlist = sel.childNodes;
-        // for (i = 0; i < optlist.length; i++) {
-        //     if (optlist[i].value == selvalue)
-        //         optlist[i].setAttribute("selected", "");
-        // }
-
-        sel.appendChild(frag);
+        //update the value to selected
+        var optlist = sel.childNodes;
+        for (i = 0; i < optlist.length; i++) {
+            if (optlist[i].value == selvalue)
+                optlist[i].setAttribute("selected", "");
+        }
     }
 
     // ===========================================
@@ -90,40 +76,4 @@ var XMLSelect = function(colname, collid, initialListXml, initialListtag, initia
 
     buildSelect()
     self.domNode = sel
-}
-
-var LaunchOperator = function(colname, collid, xml, xmlTag, selvalue, newval, options = {}) {
-    var self = this;
-    var xmlSelect = new XMLSelect(colname, collid, xml, xmlTag, selvalue, newval)
-    $(xmlSelect.domNode).addClass('combo-search')
-
-    if (options.classes) {
-        $(xmlSelect.domNode).addClass(options.classes)
-    }
-
-    self.setXml = function(newListXML, newListTag, selectedValue) {
-        xmlSelect.setXml(newListXML, newListTag, selectedValue)
-        $(xmlSelect.domNode).selectpicker('refresh')
-    }
-
-    self.clear = function() {
-        xmlSelect.clear()
-        $(xmlSelect.domNode).selectpicker('refresh')
-    }
-
-    self.value = function() {
-        return xmlSelect.domNode.value
-    }
-
-    self.addTo = function(targetDomNode) {
-        targetDomNode.appendChild(xmlSelect.domNode)
-        $(xmlSelect.domNode).selectpicker({
-            header: colname,
-            dropupAuto: false,
-            dropdownAlignRight: false,
-            size: 10,
-            width: '100%',
-            liveSearch: true,
-        })
-    }
 }

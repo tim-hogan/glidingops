@@ -8,8 +8,6 @@ var DailySheetEntryType = function(towplanesXml, rowIndex, selected, launchTypes
     function buildSelect() {
         var sel = document.createElement('select')
         sel.setAttribute('colname', 'launch')
-        sel.setAttribute('data-width', '100%')
-
         sel.onchange = function() {
             self.onValueSelected(sel.value)
             fieldchange(sel)
@@ -60,7 +58,6 @@ var DailySheetEntryType = function(towplanesXml, rowIndex, selected, launchTypes
             opt.setAttribute("selected", "");
         sel.appendChild(opt);
 
-        $(sel).addClass('combo')
         return sel
     }
 

@@ -1,18 +1,38 @@
-#body {
+/* Make the page use up the whole viewport height
+ * and scroll its content.
+ */
+html, body {
   margin: 0px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
 #container {
   margin: 0px;
   border: px;
 }
-#final {
+div#add-line {
+  float: left;
+  clear: left;
+}
+div#final {
+  margin-left: 40px;
+  margin-right: 40px;
+  float: left;
+}
+#final button {
   background-color: #ff9191;
   height: 40px;
   font-size: 14px;
 }
 #bottomdiv {
   height: 90px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 #bookings {
   background-color: #e0e0e0;
@@ -94,6 +114,59 @@ table {
   box-shadow: 10px 10px 5px #888888;
 }
 
+td.wide {
+  min-width: 130px;
+  max-width: 200px;
+}
+
 td select {
   width: 100%;
+}
+
+.deleted span,
+.deleted {
+    text-decoration: line-through;
+    color: #c0c0c0;
+}
+
+/* Bootstrap-select customizations to make the
+ * dropdown-menu open at the top of the viewport
+ * and use the full width. This is to cope with the
+ * software keyboard on mobile devices.
+ */
+.combo-search .dropdown-menu {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+#loading-spinner {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: rgba(169, 169, 169, 0.58);
+  z-index: 1000;
+}
+
+.loader {
+  position: relative;
+  top: 50%;
+  margin-left: auto;
+  margin-right: auto;
+
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
