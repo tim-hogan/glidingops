@@ -25,6 +25,10 @@ if(isset($_SESSION['security'])){
 <script>function goBack() {window.history.back()}</script>
 <?php
 $DEBUG=0;
+$dateTimeZone = new DateTimeZone($_SESSION['timezone']);
+$dateTime = new DateTime('now', $dateTimeZone);
+$dateStr = $dateTime->format('Y-m-d');
+$timeoffset = $dateTime->getOffset();
 $pageid=25;
 $errtext="";
 $sqltext="";
@@ -57,6 +61,10 @@ $next_annual_f=$dateStr;
 $next_annual_err="";
 $next_supplementary_f=$dateStr;
 $next_supplementary_err="";
+$flarm_ICAO_f="";
+$flarm_ICAO_err="";
+$spot_id_f="";
+$spot_id_err="";
 function InputChecker($data)
 {
  $data = trim($data);
@@ -66,12 +74,12 @@ function InputChecker($data)
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
- if($_GET['id'] != "" && $_GET['id'] != null)
+ if(isset($_GET['id']))
  {
   $recid = $_GET['id'];
   if ($recid >= 0)
   {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
@@ -97,6 +105,8 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $max_perflight_charge_f = $row['max_perflight_charge'];
     $next_annual_f = $row['next_annual'];
     $next_supplementary_f = $row['next_supplementary'];
+    $flarm_ICAO_f = htmlspecialchars($row['flarm_ICAO'],ENT_QUOTES);
+    $spot_id_f = htmlspecialchars($row['spot_id'],ENT_QUOTES);
     $trantype="Update";
     mysqli_close($con);
    }
@@ -121,6 +131,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $max_perflight_charge_err = "";
  $next_annual_err = "";
  $next_supplementary_err = "";
+ $flarm_ICAO_err = "";
+ $spot_id_err = "";
  $registration_f = InputChecker($_POST["registration_i"]);
  if (empty($registration_f) )
  {
@@ -164,9 +176,11 @@ else
  if (!empty($max_perflight_charge_f ) ) {if (!is_numeric($max_perflight_charge_f ) ) {$max_perflight_charge_err = "MAX MINUTES CHARGE is not numeric";$error = 1;}}
  $next_annual_f = InputChecker($_POST["next_annual_i"]);
  $next_supplementary_f = InputChecker($_POST["next_supplementary_i"]);
+ $flarm_ICAO_f = InputChecker($_POST["flarm_ICAO_i"]);
+ $spot_id_f = InputChecker($_POST["spot_id_i"]);
  if ($error != 1)
  {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
@@ -203,11 +217,15 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
       $Q .= "'" . $next_annual_f . "'";
       $Q .= ",next_supplementary=";
       $Q .= "'" . $next_supplementary_f . "'";
+      $Q .= ",flarm_ICAO=";
+      $Q .= "'" . mysqli_real_escape_string($con, $flarm_ICAO_f)  . "'";
+      $Q .= ",spot_id=";
+      $Q .= "'" . mysqli_real_escape_string($con, $spot_id_f)  . "'";
 $Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
 $Q .= $_POST['updateid'];}
      else
      if ($_POST["tran"] == "Create"){
-       $Q = "INSERT INTO aircraft (";$Q .= "org";$Q .= ", registration";$Q .= ", rego_short";$Q .= ", type";$Q .= ", make_model";$Q .= ", seats";$Q .= ", serial";$Q .= ", club_glider";$Q .= ", bookable";$Q .= ", charge_per_minute";$Q .= ", max_perflight_charge";$Q .= ", next_annual";$Q .= ", next_supplementary";$Q .= " ) VALUES (";
+       $Q = "INSERT INTO aircraft (";$Q .= "org";$Q .= ", registration";$Q .= ", rego_short";$Q .= ", type";$Q .= ", make_model";$Q .= ", seats";$Q .= ", serial";$Q .= ", club_glider";$Q .= ", bookable";$Q .= ", charge_per_minute";$Q .= ", max_perflight_charge";$Q .= ", next_annual";$Q .= ", next_supplementary";$Q .= ", flarm_ICAO";$Q .= ", spot_id";$Q .= " ) VALUES (";
 $Q.=$_SESSION['org'];       $Q.= ",";
        $Q .= "'" . mysqli_real_escape_string($con, $registration_f) . "'";
        $Q.= ",";
@@ -232,6 +250,10 @@ $Q.=$_SESSION['org'];       $Q.= ",";
        $Q .= "'" . $next_annual_f . "'";
        $Q.= ",";
        $Q .= "'" . $next_supplementary_f . "'";
+       $Q.= ",";
+       $Q .= "'" . mysqli_real_escape_string($con, $flarm_ICAO_f) . "'";
+       $Q.= ",";
+       $Q .= "'" . mysqli_real_escape_string($con, $spot_id_f) . "'";
       $Q.= ")";
     }}
     $sqltext = $Q;
@@ -250,6 +272,8 @@ $registration_f=htmlspecialchars($registration_f,ENT_QUOTES);
 $rego_short_f=htmlspecialchars($rego_short_f,ENT_QUOTES);
 $make_model_f=htmlspecialchars($make_model_f,ENT_QUOTES);
 $serial_f=htmlspecialchars($serial_f,ENT_QUOTES);
+$flarm_ICAO_f=htmlspecialchars($flarm_ICAO_f,ENT_QUOTES);
+$spot_id_f=htmlspecialchars($spot_id_f,ENT_QUOTES);
 }
 ?>
 <div id='divform'>
@@ -285,7 +309,7 @@ echo $rego_short_err; echo "</td></tr>";
 {
 echo "<tr><td class='desc'>TYPE</td><td>*</td>";
 echo "<td><select name='type_i'>";
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
@@ -381,6 +405,24 @@ echo "<tr><td class='desc'>NEXT SUPPLEMENTARY</td><td></td>";
 echo "<td><input type='date' name='next_supplementary_i' Value='" . substr($next_supplementary_f,0,10) . "'></td>";
 echo "<td>";
 echo $next_supplementary_err; echo "</td></tr>";
+}
+?>
+<?php if (true)
+{
+echo "<tr><td class='desc'>FLARM ICAO NUMBER</td><td></td>";
+echo "<td>";
+echo "<input ";
+if (strlen($flarm_ICAO_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='flarm_ICAO_i' ";echo "Value='";echo $flarm_ICAO_f;echo "' ";echo ">";echo "</td>";echo "<td>";
+echo $flarm_ICAO_err; echo "</td></tr>";
+}
+?>
+<?php if (true)
+{
+echo "<tr><td class='desc'>SPOT KEY</td><td></td>";
+echo "<td>";
+echo "<input ";
+if (strlen($spot_id_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='spot_id_i' ";echo "Value='";echo $spot_id_f;echo "' ";echo ">";echo "</td>";echo "<td>";
+echo $spot_id_err; echo "</td></tr>";
 }
 ?>
 </table>

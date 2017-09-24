@@ -53,3 +53,8 @@ RewriteRule agc MasterDisplay.php?org=4 [L]
 RewriteRule cgc MasterDisplay.php?org=3 [L]
 RewriteRule ssb MasterDisplay.php?org=2 [L]
 RewriteRule wgc MasterDisplay.php?org=1 [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule api/v1/json/(.*)$ apiglidjsonv1.php?r=$1 [QSA,NC,L]
+
+

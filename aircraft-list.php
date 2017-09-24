@@ -73,16 +73,18 @@ if (true){echo '<th ';if ($colsort == 10) echo "class='colsel'";echo " onclick="
 if (true){echo '<th ';if ($colsort == 11) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='aircraft-list.php?col=11'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "MAX MINUTES CHARGE";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 12) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='aircraft-list.php?col=12'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "NEXT ANNUAL";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 13) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='aircraft-list.php?col=13'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "NEXT SUPPLEMENTARY";echo "</th>";}
+if (true){echo '<th ';if ($colsort == 14) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='aircraft-list.php?col=14'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "FLARM ICAO NUMBER";echo "</th>";}
+if (true){echo '<th ';if ($colsort == 15) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='aircraft-list.php?col=15'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "SPOT KEY";echo "</th>";}
 ?>
 </tr>
 <?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT aircraft.id,aircraft.registration,aircraft.rego_short,b.name,aircraft.make_model,aircraft.seats,aircraft.serial,aircraft.club_glider,aircraft.bookable,aircraft.charge_per_minute,aircraft.max_perflight_charge,aircraft.next_annual,aircraft.next_supplementary FROM aircraft LEFT JOIN aircrafttype b ON b.id = aircraft.type"; 
+$sql= "SELECT aircraft.id,aircraft.registration,aircraft.rego_short,b.name,aircraft.make_model,aircraft.seats,aircraft.serial,aircraft.club_glider,aircraft.bookable,aircraft.charge_per_minute,aircraft.max_perflight_charge,aircraft.next_annual,aircraft.next_supplementary,aircraft.flarm_ICAO,aircraft.spot_id FROM aircraft LEFT JOIN aircrafttype b ON b.id = aircraft.type"; 
 if ($_SESSION['org'] > 0){$sql .= " WHERE aircraft.org=".$_SESSION['org'];}
 $sql.=" ORDER BY ";
 switch ($colsort) {
@@ -128,6 +130,12 @@ break;
  case 13:
    $sql .= "next_supplementary";
    break;
+ case 14:
+   $sql .= "flarm_ICAO";
+   break;
+ case 15:
+   $sql .= "spot_id";
+   break;
 }
 $sql .= " ASC";
 $diagtext.= "SQL=".$sql;
@@ -149,6 +157,8 @@ if (true){echo "<td class='right'>";echo $row[9];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[10];echo "</td>";}
 if (true){echo "<td>";if ($row[11]!=0){$next_annual_d=new DateTime($row[11]); echo $next_annual_d->format('d/m/Y');}echo "</td>";}
 if (true){echo "<td>";if ($row[12]!=0){$next_supplementary_d=new DateTime($row[12]); echo $next_supplementary_d->format('d/m/Y');}echo "</td>";}
+if (true){echo "<td>";echo $row[13];echo "</td>";}
+if (true){echo "<td>";echo $row[14];echo "</td>";}
   echo "</tr>";
 }
 ?>
