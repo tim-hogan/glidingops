@@ -65,8 +65,7 @@ else
 <?php
 $DEBUG=0;
 $diagtext="";
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+$con=mysqli_connect("127.0.0.1","admin","Checkers305","gliding");
 if (mysqli_connect_errno())
 {
    echo "<p>Unable to connect to database</p>";
@@ -77,50 +76,150 @@ if (isset($_SESSION['org']))
  $org = $_SESSION['org'];
 $classignore1 = getShortTermClass($con,$org);
 $classignore2 = getNonFlyingClass($con,$org);
+$dtNow = new DateTime();
 
-
-echo "<h1>Flying members gone solo with no record of medical</h1>";
+$class = '';
+$mstatus = '';
+$done1 = false;
+echo "<h1>Members with valid Medical</h1>";
 echo "<table>";
-$q= "SELECT members.displayname, members.id FROM members where members.org = " . $org . " and members.class <> ".$classignore1."  and members.class <> ".$classignore2." and gone_solo > 0 and medical_expire = 0 order by members.surname";
+$q= "SELECT members.displayname , a.class , b.status_name , members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and b.status_name = 'Active' and medical_expire > '".$dtNow->format('Y-m-d 00:00:00') ."' order by members.surname";
 $r = mysqli_query($con,$q);
 while($row = mysqli_fetch_array($r) )
 {
-     echo "<tr><td>" .$row[0]. "</td></tr>";
+    if ($row[1] != 5 && $row[1] != 6 && $row[1] != 31 && $row[1] != 32)
+    {
+         echo "<tr><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td></tr>";
+    }
+}   
+echo "</table>";
+
+echo "<h1>Members with valid BFR</h1>";
+echo "<table>";
+$q= "SELECT members.displayname , a.class , b.status_name , members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and b.status_name = 'Active' and bfr_expire > '".$dtNow->format('Y-m-d 00:00:00') ."' order by members.surname";
+$r = mysqli_query($con,$q);
+while($row = mysqli_fetch_array($r) )
+{
+    if ($row[1] != 5 && $row[1] != 6 && $row[1] != 31 && $row[1] != 32)
+    {
+         echo "<tr><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td></tr>";
+    }
+}   
+echo "</table>";
+
+
+echo "<h1>Members gone solo with no record of medical</h1>";
+echo "<table>";
+$q= "SELECT members.displayname , a.class , b.status_name , members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and gone_solo > 0 and medical_expire = 0 order by b.status_name , a.class , members.surname";
+$r = mysqli_query($con,$q);
+while($row = mysqli_fetch_array($r) )
+{
+     if ($mstatus != $row['status_name'])
+     {
+        echo "<tr><td colspan='3'>STATUS ".$row['status_name']."</td></tr>";
+        $mstatus = $row['status_name'];
+
+     }
+     
+     if ($class != $row['class'])
+     {
+        echo "<tr><td></td><td colspan='2'>CLASS ".$row['class']."</td></tr>";
+        $class = $row['class'];
+     }
+     
+     echo "<tr><td></td><td></td><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td></tr>";
 }
 echo "</table>";
+
+
+
+
+
+$class = '';
+$mstatus = '';
 
 $dt = new DateTime('now');
-echo "<h1>Flying members with expired medical</h1>";
+echo "<h1>Members with expired medical</h1>";
 echo "<table>";
-$q= "SELECT members.displayname, medical_expire, members.id FROM members where members.org = " . $org . " and members.class <> ".$classignore1."  and members.class <> ".$classignore2." and medical_expire <> 0 and medical_expire < '".$dt->format('Y-m-d H:i:s')."' order by members.surname";
+$q= "SELECT members.displayname, medical_expire, a.class , b.status_name, members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and medical_expire <> 0 and medical_expire < '".$dt->format('Y-m-d H:i:s')."' order by b.status_name , a.class , members.surname";
 $r = mysqli_query($con,$q);
 while($row = mysqli_fetch_array($r) )
 {
    $dte = new DateTime($row[1]);
    $days = floor(($dt->getTimestamp() - $dte->getTimestamp()) / (3600*24));
-   echo "<tr><td>" .$row[0] . "</td><td>" .$dte->format('d/m/Y'). "</td><td>" .$days. " Days</td></tr>";
+   
+     if ($mstatus != $row['status_name'])
+     {
+        echo "<tr><td colspan='3'>STATUS ".$row['status_name']."</td></tr>";
+        $mstatus = $row['status_name'];
+
+     }
+     
+     if ($class != $row['class'])
+     {
+        echo "<tr><td></td><td colspan='2'>CLASS ".$row['class']."</td></tr>";
+        $class = $row['class'];
+     }
+   
+   
+     echo "<tr><td></td><td></td><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td><td>" .$dte->format('d/m/Y'). "</td><td>" .$days. " Days</td></tr>";
 }
 echo "</table>";
 
-echo "<h1>Flying members with QGP and no record of BFR</h1>";
+$class = '';
+$mstatus = '';
+
+echo "<h1>Members with QGP and no record of BFR</h1>";
 echo "<table>";
-$q= "SELECT members.displayname, members.id FROM members where members.org = " . $org . " and members.class <> ".$classignore1."  and members.class <> ".$classignore2." and qgp_number > 0 and bfr_expire = 0 order by members.surname";
+$q= "SELECT members.displayname, a.class , b.status_name, members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and qgp_number > 0 and bfr_expire = 0 order by b.status_name , a.class , members.surname";
 $r = mysqli_query($con,$q);
 while($row = mysqli_fetch_array($r) )
 {
-     echo "<tr><td>" .$row[0]. "</td></tr>";
+     if ($mstatus != $row['status_name'])
+     {
+        echo "<tr><td colspan='3'>STATUS ".$row['status_name']."</td></tr>";
+        $mstatus = $row['status_name'];
+
+     }
+     
+     if ($class != $row['class'])
+     {
+        echo "<tr><td></td><td colspan='2'>CLASS ".$row['class']."</td></tr>";
+        $class = $row['class'];
+     }
+     
+     echo "<tr><td></td><td></td><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td></tr>";
 }
 echo "</table>";
 
-echo "<h1>Flying members with expired BFR</h1>";
+$class = '';
+$mstatus = '';
+
+echo "<h1>Members with expired BFR</h1>";
 echo "<table>";
-$q= "SELECT members.displayname, bfr_expire, members.id FROM members where members.org = " . $org . " and members.class <> ".$classignore1."  and members.class <> ".$classignore2." and bfr_expire <> 0 and bfr_expire < '".$dt->format('Y-m-d H:i:s')."' order by members.surname";
+$q= "SELECT members.displayname, bfr_expire, a.class , b.status_name, members.id FROM members LEFT JOIN  membership_class a on a.id = members.class LEFT JOIN membership_status b on b.id = members.status where members.org = " . $org . " and bfr_expire <> 0 and bfr_expire < '".$dt->format('Y-m-d H:i:s')."' order by b.status_name , a.class , members.surname";
 $r = mysqli_query($con,$q);
 while($row = mysqli_fetch_array($r) )
 {
    $dte = new DateTime($row[1]);
    $days = floor(($dt->getTimestamp() - $dte->getTimestamp()) / (3600*24));
-   echo "<tr><td>" .$row[0] . "</td><td>" .$dte->format('d/m/Y'). "</td><td>" .$days. " Days</td></tr>";
+   
+     if ($mstatus != $row['status_name'])
+     {
+        echo "<tr><td colspan='3'>STATUS ".$row['status_name']."</td></tr>";
+        $mstatus = $row['status_name'];
+
+     }
+     
+     if ($class != $row['class'])
+     {
+        echo "<tr><td></td><td colspan='2'>CLASS ".$row['class']."</td></tr>";
+        $class = $row['class'];
+     }
+     
+   
+   
+   echo "<tr><td></td><td></td><td><a href='Member?id=".$row['id']."'>" .$row['displayname']. "</a></td><td>" .$dte->format('d/m/Y'). "</td><td>" .$days. " Days</td></tr>";
 }
 echo "</table>";	
 
