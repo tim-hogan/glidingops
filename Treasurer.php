@@ -39,15 +39,23 @@ table {border-collapse: collapse;}
 <script>function goBack() {window.history.back()}</script>
 <script>
 <?php
+$dateTimeZone = new DateTimeZone($_SESSION['timezone']);
+$dateForMonth = new DateTime('now', $dateTimeZone);
+$currentYear = $dateForMonth->format('Y');
+
+$dateForMonth->modify('-1 month');
+$defaultMonth = $dateForMonth->format('m');
+$defaultYear = $dateForMonth->format('Y');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-   echo "var year=" . $_POST["year"] . ";";
-   echo "var month=" . $_POST["month"] . ";";
+    $selectedYear = $_POST["year"];
+    $selectedMonth = $_POST["month"];
 }
 else
 {
-   echo "var year=0;"; 
-   echo "var month=0;"; 
+    $selectedYear = $defaultYear;
+    $selectedMonth = $defaultMonth;
 }
 ?>
 function printit(){window.print();}
@@ -55,24 +63,6 @@ function ModForm(){var d = document.getElementById('inform');if (null !=d)d.setA
 function ModForm2(){var d = document.getElementById('inform');if (null !=d)d.setAttribute("action","/Treasurer.php");}
 function s()
 {
-    if (year != 0)
-    {
-        var y=document.getElementById('yrs').childNodes;
-        for(x=0;x<y.length;x++)
-	    {
-            if (y[x].value == year)
-                y[x].selected=true;
-	    }
-	}
-	if (month != 0)
-    {
-        var y=document.getElementById('mts').childNodes;
-        for(x=0;x<y.length;x++)
-	    {
-            if (y[x].value == month)
-                y[x].selected=true;
-	   }
-	}
 }
 </script>
 </head>
@@ -95,25 +85,45 @@ else
 <form id='inform' method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <h2>Select Month and Year</h2>
 <select name='month' id='mts'>
-<option value='1'>Jan</option>
-<option value='2'>Feb</option>
-<option value='3'>Mar</option>
-<option value='4'>Apr</option>
-<option value='5'>May</option>
-<option value='6'>Jun</option>
-<option value='7'>Jul</option>
-<option value='8'>Aug</option>
-<option value='9'>Sep</option>
-<option value='10'>Oct</option>
-<option value='11'>Nov</option>
-<option value='12'>Dec</option>
+<?php
+    $months = array(
+        1  =>"Jan",
+        2  =>"Feb",
+        3  =>"Mar",
+        4  =>"Apr",
+        5  =>"May",
+        6  =>"Jun",
+        7  =>"Jul",
+        8  =>"Aug",
+        9  =>"Sep",
+        10 =>"Oct",
+        11 =>"Nov",
+        12 =>"Dec"
+    );
+    foreach ($months as $monthIndex => $monthName) {
+?>
+    <option value='<?=$monthIndex?>'
+            <?=($monthIndex == $selectedMonth) ? "selected" : ""?>>
+        <?=$monthName?>
+    </option>
+<?php
+    }
+?>
 </select>
+
 <select name='year' id='yrs'>
-<option value='2014'>2014</option>
-<option value='2015' selected>2015</option>
-<option value='2016'>2016</option>
-<option value='2017'>2017</option>
+<?php
+    for($y = $currentYear - 3; $y <= $currentYear; $y++) {
+?>
+    <option value='<?=$y?>'
+            <?=($y == $selectedYear) ? "selected" : ""?>>
+        <?=$y?>
+    </option>
+<?php
+    }
+?>
 </select>
+
 <input type='hidden' name='org' value='<?php echo $_SESSION['org'];?>'>
 <br><input type='submit' name='view' onclick='ModForm2()' value='View Report'>
 <button form='inform' type='submit' name='export' onclick='ModForm()'>Export to Excel</button>
@@ -126,7 +136,7 @@ $diagtext="";
 include 'helpers.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
-{	
+{
     $totalflights = 0;
     $totaltrials = 0;
     $totalmemflights=0;
@@ -135,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $totalRetrieveFlights=0;
     $memberincome=0.0;
 
-	
+
 	$dateStart = new DateTime();
     $dateEnd = new DateTime();
     $dateStart->setDate($_POST["year"], $_POST["month"], 1);
@@ -151,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $dateStart2 = $dateStart->format('Ymd');
     $dateEnd2 = $dateEnd->format('Ymd');
 
-	$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+	$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 	if (mysqli_connect_errno())
 	{
@@ -162,15 +172,15 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $towlaunch = getTowLaunchType($con);
     $selflaunch = getSelfLaunchType($con);
     $winchlaunch = getWinchLaunchType($con);
-        
-    $flightTypeGlider = getGlidingFlightType($con); 
-    $flightTypeCheck = getCheckFlightType($con); 
-    $flightTypeRetrieve = getRetrieveFlightType($con); 
-        
+
+    $flightTypeGlider = getGlidingFlightType($con);
+    $flightTypeCheck = getCheckFlightType($con);
+    $flightTypeRetrieve = getRetrieveFlightType($con);
+
     //find the juinor class id
 	$juniorclass = getJuniorClass($con,$org);
 
-    $towChargeType = getTowChargeType($con,$org);	
+    $towChargeType = getTowChargeType($con,$org);
 
     //find the No Charge id
 	$NoChargeId = getNoChargeOpt($con);
@@ -188,7 +198,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 	}
 
 	//We need to do the counts.
-	$q="SELECT count(id) from flights where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2  ;       
+	$q="SELECT count(id) from flights where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2  ;
 	$r = mysqli_query($con,$q);
 	$row = mysqli_fetch_array($r);
 	$totalflights = $row[0];
@@ -196,34 +206,33 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     /* ---------------
        Start of report
     */
-    
+
     /* Heading */
-    echo "<h1>TREASURERS REPORT</h1>"; 
+    echo "<h1>TREASURERS REPORT</h1>";
     echo "<h2>For " . $dateStart->format('F') . " " . $dateStart->format('Y') . "</h2>";
-    
-    
-    
+
+
+
     /* ---------------
        Tug only report
      */
-    
+
     echo "<h2>TUG ONLY CHECK FLIGHTS</h2>";
-	
+
     $q="SELECT flights.localdate,flights.location,b.rego_short, a.displayname, (flights.land-flights.start),flights.comments from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN aircraft b ON b.id = flights.towplane where flights.org = ".$_SESSION['org']." and flights.type = ".$flightTypeCheck." and flights.finalised > 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
     $r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {
-        $totMins = floor($row2[2] / 60000);
         $totalCheckFlights += 1;
         if ($totalCheckFlights == 1)
         {
 		    echo "<table>";
 		    echo "<tr><th>DATE</th><th>LOCATION</th><th>PLANE</th><th>PILOT</th><th>DURATION</th><th>NOTES</th></tr>";
-        } 
+        }
 	    $datestrflight=$row[0];
   	    $flightDate = new DateTime();
   	    $flightDate->setDate(substr($datestrflight,0,4),substr($datestrflight,4,2),substr($datestrflight,6,2));
-            
+
         echo "<tr>";
         echo "<td>";echo substr($datestrflight,6,2) . "/" . substr($datestrflight,4,2) . "/" . substr($datestrflight,0,4);echo "</td>";
 	    echo "<td>".$row[1]."</td>";
@@ -234,7 +243,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         echo "</tr>";
     }
     echo "</table>";
-	
+
     /*  ---------------
         No charge flights
     */
@@ -271,7 +280,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 		    else
                 echo "HEIGHT";
             echo "</th><th>PIC</th><th>P2</th><th>TYPE</th><th>TOW</th><th>GLIDER</th><th>".strtoupper($strNameOtherCharges)."</th><th>TOTAL</th><th>NOTES</th></tr>";
-        } 
+        }
 		$datestrflight=$row[0];
   		$flightDate = new DateTime();
   		$flightDate->setDate(substr($datestrflight,0,4),substr($datestrflight,4,2),substr($datestrflight,6,2));
@@ -288,7 +297,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 		echo "<td>";echo $row[7];echo "</td>";
 		$towcost=0.0;
         $towcost = CalcTowCharge2($_SESSION['org'],$row[8],$row[9],$row[11],$row[3],"",1,0);
-		 
+
 
         if ($towcost < 0.00)
 		    echo "<td class='right'>ERROR</td>";
@@ -305,7 +314,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         echo sprintf("%01.2f",$glidcost);
 		echo "</td>";
         $airwaycost=0.0;
-        $airwaycost=CalcOtherCharges($_SESSION['org'],$row[10],1,0,$juniorclass,$flightDate,0,$row[12]);                
+        $airwaycost=CalcOtherCharges($_SESSION['org'],$row[10],1,0,$juniorclass,$flightDate,0,$row[12]);
 		echo "<td class='right'>$";
         echo sprintf("%01.2f",$airwaycost);
 		echo "</td>";
@@ -318,12 +327,12 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 	    echo "<p class='indent1'>No flights this month</p>";
     else
 	    echo "</table>";
-    
-    
+
+
     /*  ---------------
         Trial Flights
      */
-    
+
     echo "<h2>TRIAL FLIGHTS</h2>";
     $havetrial = 0;
 
@@ -368,7 +377,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         echo "<td>";echo substr($datestrflight,6,2) . "/" . substr($datestrflight,4,2) . "/" . substr($datestrflight,0,4);echo "</td>";
 		echo "<td>";echo $row[10];echo "</td>";
         echo "<td class='right'>";echo $row[1];echo "</td>";
-        echo "<td class='right'>" . strDuration($row[2]). "</td>";       
+        echo "<td class='right'>" . strDuration($row[2]). "</td>";
         echo "<td class='right'>";echo $row[3];echo "</td>";
 		echo "<td class='right'>";echo $row[4];echo "</td>";
 		echo "<td class='right'>";echo $row[5];echo "</td>";
@@ -391,7 +400,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 		echo "</td>";
 
         $airwaycost=0.0;
-        $airwaycost=CalcOtherCharges($_SESSION['org'],$row[10],1,0,$juniorclass,$flightDate,0,$row[12]);                
+        $airwaycost=CalcOtherCharges($_SESSION['org'],$row[10],1,0,$juniorclass,$flightDate,0,$row[12]);
 		echo "<td class='right'>$";
         echo sprintf("%01.2f",$airwaycost);
 		echo "</td>";
@@ -401,7 +410,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 		echo "</td>";
 
         echo "<td>";echo $row[6];echo "</td>";
-	
+
 	}
 	if ($havetrial != 0)
 		echo "</table>";
@@ -411,23 +420,23 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     /*  ---------------
     Members Flights
      */
-    
+
 	$havememberflight=0;
 	echo "<h2>MEMBERS ACCOUNTS</h2>";
 	echo "<table>";
 
     //Main Loop for members accounts
     $q="SELECT members.id, members.class , members.displayname , a.class from members LEFT JOIN membership_class a ON a.id = members.class WHERE members.org = " .$_SESSION['org']. " order by surname,firstname ASC";
-        
+
 	$r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {
-	     
+
 	    $totamount=0.0;
         $newmember = 1;
         $tablestart = 0;
         //Now do we have any flights to be billed to thsi member
-        $q2 = "SELECT flights.localdate, flights.glider, (flights.land-flights.start),flights.height, flights.pic, flights.p2, a.name, a.bill_pic , a.bill_p2, a.bill_other, flights.comments, flights.billing_member1, flights.billing_member2 ,b.displayname , c.displayname, d.displayname, e.displayname, flights.launchtype, flights.towplane, flights.location , flights.type , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 LEFT JOIN members d ON d.id = flights.pic LEFT JOIN members e ON e.id = flights.p2 where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and localdate >= '" . $dateStart2 . "' and localdate < '" . $dateEnd2 . "' and (billing_member1 = " . $row[0] . " or billing_member2 = " . $row[0] . ") order by localdate,seq ASC"; 
+        $q2 = "SELECT flights.localdate, flights.glider, (flights.land-flights.start),flights.height, flights.pic, flights.p2, a.name, a.bill_pic , a.bill_p2, a.bill_other, flights.comments, flights.billing_member1, flights.billing_member2 ,b.displayname , c.displayname, d.displayname, e.displayname, flights.launchtype, flights.towplane, flights.location , flights.type , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 LEFT JOIN members d ON d.id = flights.pic LEFT JOIN members e ON e.id = flights.p2 where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and localdate >= '" . $dateStart2 . "' and localdate < '" . $dateEnd2 . "' and (billing_member1 = " . $row[0] . " or billing_member2 = " . $row[0] . ") order by localdate,seq ASC";
 	//0 locadate
         //1 glider
         //2 land - start
@@ -450,7 +459,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         //19 locatione
         //20 type
         //21 tow land - start
-        //22 seq    
+        //22 seq
         $r2 = mysqli_query($con,$q2);
         while ($row2 = mysqli_fetch_array($r2))
 	    {
@@ -475,21 +484,21 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 			        echo "HEIGHT";
  		        echo "</th><th>CHARGING</th><th>TOW</th><th>GLIDER</th><th>".strtoupper($strNameOtherCharges)."</th><th>TOTAL</th><th>COMMENTS</th><th>INCENTIVE SCHEME USED</th></tr>";
                 $newmember = 0;
-                $tablestart=1; 
+                $tablestart=1;
 		     }
             echo "<tr>";
 		    $strdate=$row2[0];
   		    echo "<td>";echo substr($strdate,6,2) . "/" . substr($strdate,4,2) . "/" . substr($strdate,0,4);echo "</td>";
 		    echo "<td>";echo $row2[19];echo "</td>";
             echo "<td class='right'>";echo $row2[1];echo "</td>";
-		 
+
             echo "<td>";echo $row2[15];echo "</td>";
 		    echo "<td>";echo $row2[16];echo "</td>";
 
 		    if ($towChargeType==2)
             echo "<td class='right'>" . strDuration($row2[21]) . "</td>";
 		    echo "<td class='right'>" . strDuration($row2[2]) . "</td>";
-		 
+
 		    $totMins = floor($row2[2] / 60000);
             echo "<td class='right'>";
 		    if ($row2[17] == $towlaunch && $row2[20] == $flightTypeGlider)
@@ -499,12 +508,12 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 		 	    else
 				    echo $row2[3];
 		    }
-		 
+
 		    if ($row2[17] == $selflaunch)
 			    echo "SELF";
             if ($row2[17] == $winchlaunch)
 			    echo "WINCH";
-		 
+
             echo "</td>";
 		    echo "<td class='right'>";echo $row2[6];echo "</td>";
 
@@ -515,7 +524,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
             $iChargeAirways=1;
             $iScheme = 0;
             if (MemberScheme($_SESSION['org'],$row[0],$flightDate,$row2[1],$iRateGlider,$iChargeTow,$iChargeAirways,$schemename) > 0)
-            $iScheme = 1;		
+            $iScheme = 1;
             $clubGlid=0;
             if (in_array($row2[1],$clubgliders))
                 $clubGlid=1;
@@ -524,7 +533,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
             //Is this a 50/50
             if ($row2[7] > 0 && $row2[8] > 0)
                 $is5050=1;
-		
+
             if ($is5050>0)
                 $total5050flights = $total5050flights + 1;
             $SchemeCharge = $iScheme;
@@ -539,7 +548,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
                     $iChargeAirways=1;
                 }
   		    }
-		
+
             //Calculate tow charges
             $towcost=0.0;
             if ($row2[20] == $flightTypeRetrieve)
@@ -567,13 +576,13 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 
 		    $glidcost=0.0;
    		    $airways=0.0;
-  
+
 		    //Calculate glider charges
                $glidcost=CalcGliderCharge($_SESSION['org'],$clubGlid,$row2[1],$SchemeCharge,$iRateGlider,$is5050,$totMins,$row[3]);
 		    echo "<td class='right'>$";
         	echo sprintf("%01.2f",$glidcost);
 		    //Calculate airways charges
-            $airways = CalcOtherCharges($_SESSION['org'],$row2[19],$clubGlid,$row[1],$juniorclass,$flightDate,$is5050,$row[0],$row2[22]);     		
+            $airways = CalcOtherCharges($_SESSION['org'],$row2[19],$clubGlid,$row[1],$juniorclass,$flightDate,$is5050,$row[0],$row2[22]);
 
 
             if ($iChargeAirways == 0)
@@ -598,7 +607,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
           			$comments .= $row2[14];
 		    }
        		$comments .= " " .$row2[10];
-      		 
+
             if ($row2[20] == $flightTypeRetrieve)
             {
 		        if (strlen($comments) > 0)
@@ -609,12 +618,12 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
             echo "<td>";
             echo $comments;
             echo "</td>";
-   
+
 		    echo "<td>";
 		    if ($SchemeCharge==1)
                 echo $schemename;
       		echo "</td>";
-	          
+
         }
         if ($tablestart == 1)
 	    {
@@ -624,10 +633,10 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
             echo "<th class='right'>$";
             echo sprintf("%01.2f",$totamount);
             echo "</th><th></th><th></th></tr>";
-                
+
         }
 
-	       
+
 	}
 	echo "</table>";
     if($havememberflight==0)
@@ -639,9 +648,9 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     echo "<tr><td>MEMBER INCOME</td><td class='right'>$";
     echo sprintf("%01.2f",$memberincome);
     echo "</td></tr>";
-    
+
     $totalmemflights = $totalmemflights - ($total5050flights / 2);
-    
+
     echo "<tr><td>TOTAL TUG CHECK FLIGHTS</td><td class='right'>".$totalCheckFlights."</td></tr>";
     echo "<tr><td>TOTAL NO CHARGE FLIGHTS</td><td class='right'>".$totalfree."</td></tr>";
     echo "<tr><td>TOTAL TRIAL FLIGHTS</td><td class='right'>".$totaltrials."</td></tr>";
