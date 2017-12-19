@@ -27,4 +27,9 @@ class Organisation extends Model
     {
         return $this->hasMany('App\Member', 'org');
     }
+
+    public function users()
+    {
+        return $this->hasMany('App\User', 'org');
+    }
 }
