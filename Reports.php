@@ -58,6 +58,7 @@ if(isset($_SESSION['security']))
 $dateTimeZone = new DateTimeZone($_SESSION['timezone']);
 $dateTime = new DateTime('now', $dateTimeZone);
 $dateStr = $dateTime->format('Y-m-d');
+$currentYear = $dateTime->format('Y');
 ?>
 </head>
 <body>
@@ -65,12 +66,17 @@ $dateStr = $dateTime->format('Y-m-d');
 <div id='divhdr'>
 <form id='inform' method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <h2>Select Year</h2>
+
 <select name='year' id='yrs'>
-<option value='2014'>2014</option>
-<option value='2015'>2015</option>
-<option value='2016'>2016</option>
-<option value='2017'>2017</option>
+<?php
+    for($y = 2014; $y <= $currentYear; $y++) {
+?>
+    <option value='<?=$y?>'><?=$y?></option>
+<?php
+    }
+?>
 </select>
+
 <input type='hidden' name='org' value='<?php echo $_SESSION['org'];?>'>
 <br><input type='submit' name='view' value='View Report'>
 </form>
@@ -113,7 +119,7 @@ function IsMemberInstructor2($db,$member)
  {
     while ($row = mysqli_fetch_array($r1) )
     {
-    	if (strpos($row[0],'Instructor') !== false) 
+    	if (strpos($row[0],'Instructor') !== false)
       	   $ret = true;
     }
  }
@@ -129,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
 
 
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
@@ -181,7 +187,7 @@ while ($row = mysqli_fetch_array($r))
          $totClubGlider += 1;
       else
          $totPrivGlider += 1;
-      if (strpos($row[6],'Trial') !== false) 
+      if (strpos($row[6],'Trial') !== false)
       {
           $totTrial += 1;
       }
@@ -193,7 +199,7 @@ while ($row = mysqli_fetch_array($r))
                    $totInstructorFlight += 1;
            }
       }
-  } 	
+  }
 }
 
 echo "<table>";
@@ -284,7 +290,7 @@ while ($row = mysqli_fetch_array($r))
          $totClubGlider += 1;
       else
          $totPrivGlider += 1;
-      if (strpos($row[6],'Trial') !== false) 
+      if (strpos($row[6],'Trial') !== false)
       {
           $totTrial += 1;
       }
