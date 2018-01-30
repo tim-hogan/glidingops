@@ -92,7 +92,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   $thisYear = intval($dateNow->format('Y'));
   $lastYear = $thisYear-1;
   
-  $q = "SELECT member_id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = " .$_SESSION['org']. " and role_id = " . $role1 . " order by a.surname , a.firstname ";
+  $q = "SELECT role_member.member_id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = " .$_SESSION['org']. " and role_id = " . $role1 . " order by a.surname , a.firstname ";
   $r = mysqli_query($con,$q);
   while ($row = mysqli_fetch_array($r) )
   {
