@@ -28,9 +28,9 @@ class MembersController extends Controller
         }
 
         if($role) {
-        $result = $role->members()->where(['members.org' => $org->id]);
+            $result = $role->members()->where(['members.org' => $org->id]);
         } else {
-        $result = Member::where(['org' => $org->id]);
+            $result = Member::where(['org' => $org->id]);
         }
 
         return response()->json([
