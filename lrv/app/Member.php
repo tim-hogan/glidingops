@@ -34,4 +34,9 @@ class Member extends Model
     {
         return $this->belongsToMany('App\Role', 'role_member');
     }
+
+    public function organisation()
+    {
+        return $this->belongsTo('App\Organisation', 'org');
+    }
 }
