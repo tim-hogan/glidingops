@@ -1,30 +1,30 @@
 <?php
-function orgTimezone($db,$org)
+require_once 'load_model.php';
+
+//TODO: remove $db once we update all pages to use eloquent
+function orgTimezone($db,$org_id)
 {
- $tz='UTC';
- $q="SELECT timezone from organisations where id = ".$org;
- if($r = mysqli_query($db,$q))
- {
-  if ($row = mysqli_fetch_array($r))
-   $tz=$row[0];
+ $org = App\Organisation::find($org_id);
+ if($org) {
+  return $org->timezone;
  }
- return $tz;
+ return 'UTC';
 }
 function timeLocalFormat($d,$strTimeZone,$strFormat)
 {
  if ($strTimeZone==NULL || strlen($strTimeZone)==0)
-   $strTimeZone = 'UTC';  
+   $strTimeZone = 'UTC';
  $date = new DateTime();
  $date = $d;
- $date->setTimezone(new DateTimeZone($strTimeZone)); 
+ $date->setTimezone(new DateTimeZone($strTimeZone));
  return $date->format($strFormat);
 }
 function timeLocalSQL($sql,$strTimeZone,$strFormat)
 {
  if ($strTimeZone==NULL || strlen($strTimeZone)==0)
-   $strTimeZone = 'UTC';  
+   $strTimeZone = 'UTC';
  $date = new DateTime($sql);
- $date->setTimezone(new DateTimeZone($strTimeZone)); 
+ $date->setTimezone(new DateTimeZone($strTimeZone));
  return $date->format($strFormat);
 }
 function timestampSQL($sql)

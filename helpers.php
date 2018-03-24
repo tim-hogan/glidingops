@@ -1,4 +1,6 @@
 <?php
+require_once 'load_model.php';
+
 function getOrgAircraftPrefix($db,$org)
 {
    $ret='';
@@ -38,38 +40,34 @@ function getOrgDefautLaunchLon($db,$org)
    return $ret;
 }
 
-function getFlightType($db,$strType)
+function getFlightType($strType)
 {
-   $ret=-1.0;
-   $q="SELECT id from flighttypes where name = '".$strType."'";
-   $r = mysqli_query($db,$q);
-   if (mysqli_num_rows($r) > 0)
-   {
-     $row = mysqli_fetch_array($r);
-     $ret=$row[0];
-   }
-   mysqli_free_result($r);
-   return $ret;
+  $flightType= App\FlightType::where('name', $strType)->first();
+  if($flightType) {
+    return $flightType->id;
+  }
+
+  return -1.0;
 }
 
 function getGlidingFlightType($db)
 {
-    return getFlightType($db,'Glider');
+    return getFlightType('Glider');
 }
 
 function getCheckFlightType($db)
 {
-    return getFlightType($db,'Tow plane check flight');
+    return getFlightType('Tow plane check flight');
 }
 
 function getRetrieveFlightType($db)
 {
-    return getFlightType($db,'Tow plane retrieve');
+    return getFlightType('Tow plane retrieve');
 }
 
 function getLandingFeeFlightType($db)
 {
-    return getFlightType($db,'Landing Charge');
+    return getFlightType('Landing Charge');
 }
 
 function getNoChargeOpt($db)
@@ -132,23 +130,20 @@ function getAircraftType($db,$org,$strType)
 
 function getTowPlaneType($db,$org){return getAircraftType($db,$org,'Tow Plane');}
 
-function getLaunchType($db,$strType)
+function getLaunchType($strType)
 {
-   $ret=-1.0;
-   $q="SELECT id FROM launchtypes WHERE name = '" . $strType . "'";
-   $r = mysqli_query($db,$q);
-   if (mysqli_num_rows($r) > 0)
-   {
-     $row = mysqli_fetch_array($r);
-     $ret=$row[0];
-   }
-   mysqli_free_result($r);
-   return $ret;
+  $launchType= App\LaunchType::where('name', $strType)->first();
+  if($launchType) {
+    return $launchType->id;
+  }
+
+  return -1.0;
 }
 
-function getTowLaunchType($db){return getLaunchType($db,'Tow Plane');}
-function getSelfLaunchType($db){return getLaunchType($db,'Self Launch');}
-function getWinchLaunchType($db){return getLaunchType($db,'Winch');}
+//TODO remove $db once we completely switch to eloquent
+function getTowLaunchType($db){return getLaunchType('Tow Plane');}
+function getSelfLaunchType($db){return getLaunchType('Self Launch');}
+function getWinchLaunchType($db){return getLaunchType('Winch');}
 
 function getStatusId($db, $strName) {
   $ret=-1.0;
@@ -166,25 +161,23 @@ function getActiveStatusId($db){
   return getStatusId($db, 'Active');
 }
 
-function getTowChargeType($db,$org)
+function getTowChargeType($db,$org_id)
 {
-   $ret = 0;
-   //Returns 0 (Not defined)
-   //Returns 1 (Height Based)
-   //Returns 2 (Time bases)
-   $q="SELECT tow_height_charging,tow_time_based FROM organisations WHERE id = " . $org;
-   $r = mysqli_query($db,$q);
-   if (mysqli_num_rows($r) > 0)
-   {
-     $row = mysqli_fetch_array($r);
-     if ($row[0] == 1)
-       $ret = 1;
-     else
-     if ($row[1] == 1)
-       $ret = 2;
-   }
-   mysqli_free_result($r);
-   return $ret;
+  //Returns 0 (Not defined)
+  //Returns 1 (Height Based)
+  //Returns 2 (Time bases)
+  $org = App\Organisation::find($org_id);
+  if($org) {
+    if($org->tow_height_charging == 1) {
+      return 1;
+    }
+
+    if($org->tow_time_based) {
+      return 2;
+    }
+  }
+
+  return 0;
 }
 
 function getOrganisationName($db,$org)
@@ -265,19 +258,17 @@ function strDuration($v)
   return $timeval;
 }
 
+//TODO remove $db1 once we use Eloquent all over the places
 function tracksforFlight($db1,$db2,$glider,$strStart,$strEnd)
 {
-   $ret = false;
-   if (null != $db1)
-   {
-    $q = "SELECT * from tracks where glider = '".$glider."' and point_time > '".$strStart."' and point_time < '".$strEnd."'";
-    $r = mysqli_query($db1,$q);
-    if (mysqli_num_rows($r) > 0)
-    {
-      $ret = true;
-      return $ret;
-    }
-   }
+  $tracks = App\Track::where('glider', $glider)
+              ->where('point_time', '>' , $strStart)
+              ->where('point_time', '<', $strEnd);
+
+  if(!$tracks->get()->isEmpty()) {
+    return true;
+  }
+
    if (null != $db2)
    {
     $q = "SELECT * from tracksarchive where glider = '".$glider."' and point_time > '".$strStart."' and point_time < '".$strEnd."'";
