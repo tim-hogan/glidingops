@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.18, for osx10.12 (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.50, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: gliding
 -- ------------------------------------------------------
--- Server version	5.7.18
+-- Server version 5.5.50-0ubuntu0.14.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -73,8 +73,10 @@ CREATE TABLE `aircraft` (
   `bookable` int(11) DEFAULT NULL,
   `charge_per_minute` decimal(5,2) DEFAULT NULL,
   `max_perflight_charge` decimal(6,2) DEFAULT NULL,
-  `next_annual` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `next_supplementary` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `next_annual` datetime DEFAULT NULL,
+  `next_supplementary` datetime DEFAULT NULL,
+  `flarm_ICAO` varchar(6) DEFAULT NULL,
+  `spot_id` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `registration` (`registration`),
@@ -83,7 +85,7 @@ CREATE TABLE `aircraft` (
   KEY `idx_type` (`type`),
   CONSTRAINT `aircraft_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `aircraft_ibfk_2` FOREIGN KEY (`type`) REFERENCES `aircrafttype` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +103,7 @@ CREATE TABLE `aircrafttype` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `aircrafttype_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +169,7 @@ CREATE TABLE `audit` (
   KEY `idx_memberid` (`memberid`),
   CONSTRAINT `audit_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
   CONSTRAINT `audit_ibfk_2` FOREIGN KEY (`memberid`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5986 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8582 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +221,7 @@ CREATE TABLE `bookings` (
   CONSTRAINT `bookings_ibfk_3` FOREIGN KEY (`member`) REFERENCES `members` (`id`),
   CONSTRAINT `bookings_ibfk_4` FOREIGN KEY (`aircraft`) REFERENCES `aircraft` (`id`),
   CONSTRAINT `bookings_ibfk_5` FOREIGN KEY (`instructor`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,7 +241,7 @@ CREATE TABLE `bookingtypes` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `bookingtypes_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -300,7 +302,7 @@ CREATE TABLE `duty` (
   KEY `idx_member` (`member`),
   CONSTRAINT `duty_ibfk_1` FOREIGN KEY (`type`) REFERENCES `dutytypes` (`id`),
   CONSTRAINT `duty_ibfk_2` FOREIGN KEY (`member`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=641 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=683 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,7 +316,7 @@ CREATE TABLE `dutytypes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -372,7 +374,7 @@ CREATE TABLE `flights` (
   CONSTRAINT `flights_ibfk_7` FOREIGN KEY (`p2`) REFERENCES `members` (`id`),
   CONSTRAINT `flights_ibfk_8` FOREIGN KEY (`billing_option`) REFERENCES `billingoptions` (`id`),
   CONSTRAINT `flights_ibfk_9` FOREIGN KEY (`billing_member1`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4964 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8690 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,7 +425,7 @@ CREATE TABLE `groups` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +449,7 @@ CREATE TABLE `incentive_schemes` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `incentive_schemes_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -523,7 +525,7 @@ CREATE TABLE `members` (
   CONSTRAINT `fk_members_membership_status1` FOREIGN KEY (`status`) REFERENCES `membership_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `members_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `members_ibfk_2` FOREIGN KEY (`class`) REFERENCES `membership_class` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4205 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4693 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -545,7 +547,7 @@ CREATE TABLE `membership_class` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `membership_class_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -578,22 +580,7 @@ CREATE TABLE `messages` (
   UNIQUE KEY `id` (`id`),
   KEY `idx_org` (`org`),
   CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=531 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `migrations`
---
-
-DROP TABLE IF EXISTS `migrations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `migrations` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `batch` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=658 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -653,7 +640,7 @@ CREATE TABLE `role_member` (
   CONSTRAINT `role_member_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `role_member_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
   CONSTRAINT `role_member_ibfk_3` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=154 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=263 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -669,7 +656,7 @@ CREATE TABLE `roles` (
   `name` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -694,7 +681,7 @@ CREATE TABLE `scheme_subs` (
   CONSTRAINT `scheme_subs_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `scheme_subs_ibfk_2` FOREIGN KEY (`member`) REFERENCES `members` (`id`),
   CONSTRAINT `scheme_subs_ibfk_3` FOREIGN KEY (`scheme`) REFERENCES `incentive_schemes` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -766,7 +753,7 @@ CREATE TABLE `texts` (
   KEY `idx_txt_member_id` (`txt_member_id`),
   CONSTRAINT `texts_ibfk_1` FOREIGN KEY (`txt_msg_id`) REFERENCES `messages` (`id`),
   CONSTRAINT `texts_ibfk_2` FOREIGN KEY (`txt_member_id`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4672 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6200 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -794,35 +781,7 @@ CREATE TABLE `towcharges` (
   CONSTRAINT `towcharges_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `towcharges_ibfk_2` FOREIGN KEY (`plane`) REFERENCES `aircraft` (`id`),
   CONSTRAINT `towcharges_ibfk_3` FOREIGN KEY (`member_class`) REFERENCES `membership_class` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `towcharges2`
---
-
-DROP TABLE IF EXISTS `towcharges2`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `towcharges2` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `org` int(11) DEFAULT NULL,
-  `plane` int(11) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
-  `height` int(11) DEFAULT NULL,
-  `club_glider` int(11) DEFAULT NULL,
-  `member_class` int(11) DEFAULT NULL,
-  `effective_from` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `cost` decimal(6,2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `idx_org` (`org`),
-  KEY `idx_plane` (`plane`),
-  KEY `idx_member_class` (`member_class`),
-  CONSTRAINT `towcharges2_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
-  CONSTRAINT `towcharges2_ibfk_2` FOREIGN KEY (`plane`) REFERENCES `aircraft` (`id`),
-  CONSTRAINT `towcharges2_ibfk_3` FOREIGN KEY (`member_class`) REFERENCES `membership_class` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -853,7 +812,7 @@ CREATE TABLE `tracks` (
   KEY `idx_user` (`user`),
   CONSTRAINT `tracks_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `tracks_ibfk_2` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=571903 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=126239519 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -879,7 +838,7 @@ CREATE TABLE `users` (
   KEY `idx_member` (`member`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`org`) REFERENCES `organisations` (`id`),
   CONSTRAINT `users_ibfk_2` FOREIGN KEY (`member`) REFERENCES `members` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -891,4 +850,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-17 17:22:45
+-- Dump completed on 2018-02-15  6:52:21
