@@ -1,16 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
-use DateTimeZone;
-use DateTime;
 
-use App\Organisation;
-use App\Flight;
+use App\LaunchType;
 
-class FlightsController extends Controller
+class LaunchTypesController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -19,20 +15,8 @@ class FlightsController extends Controller
      */
     public function index()
     {
-        $orgInput       = Input::get('org');
-        $localdateInput = Input::get('localdate');
-
-        $org = Organisation::find($orgInput);
-        if(! $localdateInput) {
-            $dateTimeZone = new DateTimeZone($org->timezone);
-            $dateTime     = new DateTime('now', $dateTimeZone);
-            $localdate    = $dateTime->format('Ymd');
-        } else {
-            $localdate = $localdateInput;
-        }
-
         return response()->json([
-          'data' => Flight::where(['org' => $org->id, 'localdate' => $localdate])->get()
+            'data' => LaunchType::all()
         ]);
     }
 

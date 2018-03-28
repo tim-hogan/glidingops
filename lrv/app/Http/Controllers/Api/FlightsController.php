@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use DateTimeZone;
+use DateTime;
 
 use App\Organisation;
-use App\Member;
-use App\Role;
+use App\Flight;
 
-class MemberController extends Controller
+class FlightsController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -18,26 +19,22 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $orgInput = Input::get('org');
-        $roleInput = Input::get('role');
+        $orgInput       = Input::get('org');
+        $localdateInput = Input::get('localdate');
 
         $org = Organisation::find($orgInput);
-        $role = null;
-        if($roleInput) {
-            $role = Role::where('name', $roleInput)->first();
-        }
-
-        if($role) {
-        $result = $role->members()->where(['members.org' => $org->id]);
+        if(! $localdateInput) {
+            $dateTimeZone = new DateTimeZone($org->timezone);
+            $dateTime     = new DateTime('now', $dateTimeZone);
+            $localdate    = $dateTime->format('Ymd');
         } else {
-        $result = Member::where(['org' => $org->id]);
+            $localdate = $localdateInput;
         }
 
         return response()->json([
-          'data' => $result->get()
+          'data' => Flight::where(['org' => $org->id, 'localdate' => $localdate])->get()
         ]);
     }
-
 
     /**
      * Store a newly created resource in storage.

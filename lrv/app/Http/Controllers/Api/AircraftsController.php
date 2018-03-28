@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
 use App\Organisation;
-use App\Member;
-use App\Role;
+use App\Aircraft;
 
-class MembersController extends Controller
+class AircraftsController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -19,25 +18,12 @@ class MembersController extends Controller
     public function index()
     {
         $orgInput = Input::get('org');
-        $roleInput = Input::get('role');
-
         $org = Organisation::find($orgInput);
-        $role = null;
-        if($roleInput) {
-            $role = Role::where('name', $roleInput)->first();
-        }
-
-        if($role) {
-            $result = $role->members()->where(['members.org' => $org->id]);
-        } else {
-            $result = Member::where(['org' => $org->id]);
-        }
 
         return response()->json([
-          'data' => $result->get()
+          'data' => Aircraft::where(['org' => $org->id])->get()
         ]);
     }
-
 
     /**
      * Store a newly created resource in storage.
