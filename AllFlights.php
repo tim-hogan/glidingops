@@ -104,6 +104,7 @@
   </head>
 
   <body onload='s()'>
+    <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
     <!-- Header -->
     <div id='divhdr'>
       <form id='inform' method="post" action="<?=htmlspecialchars($_SERVER["PHP_SELF"]);?>">
