@@ -53,7 +53,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::group([
-            'middleware' => 'web',
+            'middleware' => ['auth', 'web'],
             'namespace' => $this->namespace,
             'prefix' => 'app',
         ], function ($router) {
@@ -71,7 +71,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         Route::group([
-            'middleware' => 'api',
+            'middleware' => ['auth', 'api'],
             'namespace' => $this->apiNamespace,
             'prefix' => 'api',
         ], function ($router) {
