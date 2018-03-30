@@ -2,6 +2,7 @@
 DirectoryIndex home.php
 RewriteEngine On
 
+RewriteRule   ^app/(.*)    /lrv/public/app/$1  [L]
 RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
 
 RewriteRule home home.php [L]
