@@ -1,17 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BillingOption extends Model
+class Track extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'billingoptions';
+    protected $table = 'tracks';
 
     /**
      * Indicates if the model should be timestamped.
@@ -19,5 +19,4 @@ class BillingOption extends Model
      * @var bool
      */
     public $timestamps = false;
-
 }

@@ -40,7 +40,7 @@
   $dateStart2 = substr($strDateFrom,0,4) . substr($strDateFrom,5,2) . substr($strDateFrom,8,2);
   $dateEnd2 = substr($strDateTo,0,4) . substr($strDateTo,5,2) . substr($strDateTo,8,2);
 
-  $flights = App\Flight::with(['picMember', 'p2Member', 'towPilotMember'])
+  $flights = App\Models\Flight::with(['picMember', 'p2Member', 'towPilotMember'])
                         ->where('org', $_SESSION['org'])
                         ->where('localdate', '>=', $dateStart2)
                         ->where('localdate', '<=', $dateEnd2)

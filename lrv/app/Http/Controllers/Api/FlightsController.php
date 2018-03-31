@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Input;
 use DateTimeZone;
 use DateTime;
 
-use App\Organisation;
-use App\Flight;
+use App\Models\Organisation;
+use App\Models\Flight;
 
 class FlightsController extends ApiController
 {

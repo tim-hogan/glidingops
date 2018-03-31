@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,11 +32,11 @@ class Member extends Model
      */
     public function roles()
     {
-        return $this->belongsToMany('App\Role', 'role_member');
+        return $this->belongsToMany('App\Models\Role', 'role_member');
     }
 
     public function organisation()
     {
-        return $this->belongsTo('App\Organisation', 'org');
+        return $this->belongsTo('App\Models\Organisation', 'org');
     }
 }

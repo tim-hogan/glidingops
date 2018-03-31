@@ -1,17 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Aircraft extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'roles';
+    protected $table = 'aircraft';
 
     /**
      * Indicates if the model should be timestamped.
@@ -19,12 +19,4 @@ class Role extends Model
      * @var bool
      */
     public $timestamps = false;
-
-    /**
-     * The members that belong to the role.
-     */
-    public function members()
-    {
-        return $this->belongsToMany('App\Member', 'role_member');
-    }
 }

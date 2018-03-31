@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
-use App\Organisation;
-use App\Member;
-use App\Role;
+use App\Models\Organisation;
+use App\Models\Member;
+use App\Models\Role;
 
 class MembersController extends ApiController
 {

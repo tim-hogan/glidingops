@@ -42,7 +42,7 @@ function getOrgDefautLaunchLon($db,$org)
 
 function getFlightType($strType)
 {
-  $flightType= App\FlightType::where('name', $strType)->first();
+  $flightType= App\Models\FlightType::where('name', $strType)->first();
   if($flightType) {
     return $flightType->id;
   }
@@ -132,7 +132,7 @@ function getTowPlaneType($db,$org){return getAircraftType($db,$org,'Tow Plane');
 
 function getLaunchType($strType)
 {
-  $launchType= App\LaunchType::where('name', $strType)->first();
+  $launchType= App\Models\LaunchType::where('name', $strType)->first();
   if($launchType) {
     return $launchType->id;
   }
@@ -166,7 +166,7 @@ function getTowChargeType($db,$org_id)
   //Returns 0 (Not defined)
   //Returns 1 (Height Based)
   //Returns 2 (Time bases)
-  $org = App\Organisation::find($org_id);
+  $org = App\Models\Organisation::find($org_id);
   if($org) {
     if($org->tow_height_charging == 1) {
       return 1;
@@ -261,7 +261,7 @@ function strDuration($v)
 //TODO remove $db1 once we use Eloquent all over the places
 function tracksforFlight($db1,$db2,$glider,$strStart,$strEnd)
 {
-  $tracks = App\Track::where('glider', $glider)
+  $tracks = App\Models\Track::where('glider', $glider)
               ->where('point_time', '>' , $strStart)
               ->where('point_time', '<', $strEnd);
 

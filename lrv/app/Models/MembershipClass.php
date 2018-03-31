@@ -1,17 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LaunchType extends Model
+class MembershipClass extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'launchtypes';
+    protected $table = 'membership_class';
 
     /**
      * Indicates if the model should be timestamped.

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -26,7 +26,7 @@ class User extends Model implements Authenticatable
      */
     public function organisation()
     {
-        return $this->belongsTo('App\Organisation', 'org');
+        return $this->belongsTo('App\Models\Organisation', 'org');
     }
 
     // ======== Authenticatable implementation ========

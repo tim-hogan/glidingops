@@ -1,17 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Aircraft extends Model
+class FlightType extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'aircraft';
+    protected $table = 'flighttypes';
 
     /**
      * Indicates if the model should be timestamped.

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,12 +25,12 @@ class Organisation extends Model
      */
     public function members()
     {
-        return $this->hasMany('App\Member', 'org');
+        return $this->hasMany('App\Models\Member', 'org');
     }
 
     public function users()
     {
-        return $this->hasMany('App\User', 'org');
+        return $this->hasMany('App\Models\User', 'org');
     }
 
     /**
@@ -44,5 +44,24 @@ class Organisation extends Model
         }
 
         return $timezone;
+    }
+
+    function getTowChargeType()
+    {
+      //Returns 0 (Not defined)
+      //Returns 1 (Height Based)
+      //Returns 2 (Time bases)
+      $org = App\Models\Organisation::find($org_id);
+      if($org) {
+        if($org->tow_height_charging == 1) {
+          return 1;
+        }
+
+        if($org->tow_time_based) {
+          return 2;
+        }
+      }
+
+      return 0;
     }
 }

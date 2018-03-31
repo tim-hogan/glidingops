@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 
-use App\LaunchType;
+use App\Models\LaunchType;
 
 class LaunchTypesController extends ApiController
 {

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use DateTimeZone;
 use DateTime;
 
-use App\Organisation;
-use App\Flight;
+use App\Models\Organisation;
+use App\Models\Flight;
 
 class FlightsController extends Controller
 {

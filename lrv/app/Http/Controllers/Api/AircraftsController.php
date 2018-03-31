@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
-use App\Organisation;
-use App\Aircraft;
+use App\Models\Organisation;
+use App\Models\Aircraft;
 
 class AircraftsController extends ApiController
 {

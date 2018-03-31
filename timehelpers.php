@@ -4,7 +4,7 @@ require_once 'load_model.php';
 //TODO: remove $db once we update all pages to use eloquent
 function orgTimezone($db,$org_id)
 {
- $org = App\Organisation::find($org_id);
+ $org = App\Models\Organisation::find($org_id);
  if($org) {
   return $org->timezone;
  }
