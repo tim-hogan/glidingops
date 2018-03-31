@@ -32,4 +32,17 @@ class Organisation extends Model
     {
         return $this->hasMany('App\User', 'org');
     }
+
+    /**
+     * If timezone is missing we default to UTC
+     */
+    public function getTimezoneAttribute($value)
+    {
+        $timezone = trim($value);
+        if(empty($timezone)) {
+            return 'UTC';
+        }
+
+        return $timezone;
+    }
 }

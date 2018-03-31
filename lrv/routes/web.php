@@ -15,5 +15,5 @@
 //     return view('welcome');
 // });
 
-Route::get('/allFlightsReport', ['uses' => 'FlightsController@allFlightsReport']);
+Route::match(['get', 'post'], '/allFlightsReport', ['uses' => 'FlightsController@allFlightsReport'])->name('flights.allFlightsReport');
 

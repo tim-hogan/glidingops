@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Auth;
+
 use DateTimeZone;
 use DateTime;
 
@@ -17,11 +19,31 @@ class FlightsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function allFlightsReport()
+    public function allFlightsReport(Request $request)
     {
-        $orgId = Input::get('org');
-        $flights  = Flight::where(['org' => $orgId])->get();
+        $user = Auth::user();
 
-        return response()->view('allFlightsReport', ['flights' => $flights]);
+        $dateTimeZone = new DateTimeZone($_SESSION['timezone']);
+        $dateTime = new DateTime('now', $dateTimeZone);
+        $dateStr = $dateTime->format('Y-m-d');
+
+        $strDateFrom  = $request->input("fromdate", $dateStr);
+        $strDateTo    = $request->input("todate", $dateStr);
+
+        $dateStart2 = substr($strDateFrom,0,4) . substr($strDateFrom,5,2) . substr($strDateFrom,8,2);
+        $dateEnd2 = substr($strDateTo,0,4) . substr($strDateTo,5,2) . substr($strDateTo,8,2);
+
+        $flights = Flight::with(['picMember', 'p2Member', 'towPilotMember'])
+                        ->where('org', $_SESSION['org'])
+                        ->where('localdate', '>=', $dateStart2)
+                        ->where('localdate', '<=', $dateEnd2)
+                        ->orderBy('localdate')
+                        ->orderBy('seq');
+
+        return response()->view('allFlightsReport', [
+            'flights' => $flights->get(),
+            'strDateFrom' => $strDateFrom,
+            'strDateTo' => $strDateTo,
+        ]);
     }
 }
