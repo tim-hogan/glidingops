@@ -41,6 +41,7 @@ class FlightsController extends Controller
                         ->orderBy('seq');
 
         return response()->view('allFlightsReport', [
+            'user' => $user,
             'flights' => $flights->get(),
             'strDateFrom' => $strDateFrom,
             'strDateTo' => $strDateTo,

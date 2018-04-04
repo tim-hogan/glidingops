@@ -19,4 +19,21 @@ class LaunchType extends Model
      * @var bool
      */
     public $timestamps = false;
+
+    private static function getLaunchType($strType)
+    {
+      return LaunchType::where('name', $strType)->first();
+    }
+
+    public static function towLaunchType(){
+        return LaunchType::getLaunchType('Tow Plane');
+    }
+
+    public static function selfLaunchType(){
+        return LaunchType::getLaunchType('Self Launch');
+    }
+
+    public static function winchLaunchType(){
+        return LaunchType::getLaunchType('Winch');
+    }
 }

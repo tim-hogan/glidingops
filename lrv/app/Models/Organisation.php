@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Types\TowChargeType;
 
 class Organisation extends Model
 {
@@ -46,22 +47,16 @@ class Organisation extends Model
         return $timezone;
     }
 
-    function getTowChargeType()
+    public function getTowChargeType()
     {
-      //Returns 0 (Not defined)
-      //Returns 1 (Height Based)
-      //Returns 2 (Time bases)
-      $org = App\Models\Organisation::find($org_id);
-      if($org) {
-        if($org->tow_height_charging == 1) {
-          return 1;
+        if($this->tow_height_charging) {
+          return TowChargeType::heightBased();
         }
 
-        if($org->tow_time_based) {
-          return 2;
+        if($this->tow_time_based) {
+          return TowChargeType::timeBased();
         }
-      }
 
-      return 0;
+        return TowChargeType::notDefined();
     }
 }

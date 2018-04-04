@@ -37,8 +37,6 @@
 @endpush
 
 @section('content')
-  All your {{ sizeof($flights) }} flights will go here.
-
   <!-- Header -->
   <div id='divhdr'>
     {!! Form::open(['route' => 'flights.allFlightsReport', 'method'=> 'post', 'id' => 'inform']) !!}
@@ -51,6 +49,7 @@
           <td>{!! Form::label('todate', 'To:') !!}</td>
           <td>{!! Form::date('todate',    $strDateTo, ['id' => 'todate']) !!}</td></tr>
       </table>
+      <br/>
       {!! Form::submit('View Report', ['name' => 'view']) !!}
     {!! Form::close() !!}
   </div>
@@ -67,6 +66,103 @@
       <th>PIC</th>
       <th>P2</th>
       <th>TAKE OFF</th>
+    @if ($user->organisation->getTowChargeType()->isTimeBased())
+      <th>TOW LAND</th>
+    @endif
+    <th>LAND</th>
+    @if ($user->organisation->getTowChargeType()->isTimeBased())
+      <th>TOW DURATION</th>
+    @endif
+      <th>DURATION</th>
+    @if ($user->organisation->getTowChargeType()->isHeightBased())
+      <th>HEIGHT</th>
+    @endif
+      <th>CHARGE</th>
+      <th>COMMENTS</th>
+    </tr>
+
+    {{-- Render flights records --}}
+    @foreach($flights as $flight)
+    <tr>
+      <td>{{App\Helpers\DateTimeFormat::formatDateStr($flight->localdate)}}</td>
+      <td class='right'>{{$flight->seq}}</td>
+      <td>{{$flight->location}}</td>
+      <td>{{$flight->launchType->name}}</td>
+      <td class='right'>{{($flight->towPlane) ? $flight->towPlane->rego_short : ''}}</td>
+      <td class='right'>{{$flight->glider}}</td>
+      <td class='right'>{{($flight->towPilotMember) ? $flight->towPilotMember->displayname : ''}}</td>
+      <td class='right'>{{($flight->picMember) ? $flight->picMember->displayname : ''}}</td>
+      <td class='right'>{{($flight->p2Member) ? $flight->p2Member->displayname : ''}}</td>
+
+      <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getStartDate(),
+        $user->organisation->timezone,'H:i')}}</td>
+
+      @if ($user->organisation->getTowChargeType()->isTimeBased())
+        @if ( $flight->towland > 0)
+          <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getTowlandDate(),
+            $user->organisation->timezone,'H:i')}}</td>
+        @else
+          <td></td>
+        @endif
+      @endif
+
+      <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getLandDate(),
+        $user->organisation->timezone,'H:i')}}</td>
+
+      @if ($user->organisation->getTowChargeType()->isTimeBased())
+        @if (intval($flight->getTowDuration() > 0) ) {
+          <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getTowDuration())}}</td>
+        @else
+          <td></td>
+        @endif
+      @endif
+
+      <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getFlightDuration())}}</td>
+
+      @if ($user->organisation->getTowChargeType()->isHeightBased())
+        @if ($flight->launchType == App\Models\LaunchType::towLaunchType()
+              && $flight->flightType == App\Models\FlightType::glidingFlightType())
+          <td class='right'>{{$flight->height}}</td>
+        @else
+          <td></td>
+        @endif
+        <td class='right'>{{$flight->billingoption->name}}</td>
+      @endif
+
+      <td>{{$flight->getFullComments()}}</td>
+
+      {{-- link to tracks database --}}
+      @if ($flight->hasTracks())
+        <td>
+          <a href="MyFlightMap.php?glider={{$flight->glider}}&from={{$flight->getStartDate()->format('Y-m-d H:i:s')}}&to={{$flight->getLandDate()->format('Y-m-d H:i:s')}}.&flightid={{$flight->id}}">MAP</a>
+        </td>
+      @endif
+
+    </tr>
+    @endforeach
+
+    {{-- totals --}}
+    <tr>
+      <td colspan='11'>Total</td>
+    @if ($user->organisation->getTowChargeType()->isTimeBased())
+      <td></td>
+      <td class='right'>
+        {{App\Helpers\DateTimeFormat::duration(
+         $flights->reduce(function ($carry, $flight) { return $carry + $flight->getTowDuration(); }, 0)
+        )}}
+      </td>
+    @endif
+      <td class='right'>
+        {{App\Helpers\DateTimeFormat::duration(
+         $flights->reduce(function ($carry, $flight) { return $carry + $flight->getFlightDuration(); }, 0)
+        )}}
+      </td>
+    </tr>
+    <tr>
+        <td>Count</td>
+        <td class='right'>{{$flights->count()}}</td>
     </tr>
   </table>
+  <button onclick='printit()' id='print-button'>Print Report</button>
+
 @endsection

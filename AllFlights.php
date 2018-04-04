@@ -143,10 +143,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   echo "<table><tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY</th><th>PIC</th><th>P2</th><th>TAKE OFF</th>";
   if ($TowChargeType==2)
       echo "<th>TOW LAND</th>";
+
   echo "<th>LAND</th>";
 
   if ($TowChargeType==2)
       echo "<th>TOW DURATION</th>";
+
   echo "<th>DURATION</th>";
 
   if ($TowChargeType==1)
@@ -167,7 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $trDateLand->setTimestamp(intval(floor($flight->land/1000)));
     $trDateTowLand->setTimestamp(intval(floor($flight->towland/1000)));
 
-    echo "<td>";
+    echo "<tr><td>";
     echo substr($strdate,6,2) . "/" . substr($strdate,4,2) . "/" . substr($strdate,0,4);
     echo "</td>";
     echo "<td class='right'>" . $flight->seq . "</td>";
@@ -239,7 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     //$r4 = mysqli_query($con,$q4);
     //if (mysqli_num_rows($r4) > 0)
     $glider = $flight->glider;
-    if (tracksforFlight(null,$con2,$glider,$trStart->format('Y-m-d H:i:s'),$trLand->format('Y-m-d H:i:s')) )
+    if (tracksforFlight(null,null,$glider,$trStart->format('Y-m-d H:i:s'),$trLand->format('Y-m-d H:i:s')) )
     {
       echo "<td><a href='MyFlightMap.php?glider=".$glider."&from=".$trStart->format('Y-m-d H:i:s')."&to=".$trLand->format('Y-m-d H:i:s')."&flightid=".$flight->id."'>MAP</a></td>";
     }

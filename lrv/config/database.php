@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'gliding'),
 
     /*
     |--------------------------------------------------------------------------
@@ -46,13 +46,26 @@ return [
 
     'connections' => [
 
-        'mysql' => [
+        'gliding' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
             'database' => env('DB_DATABASE'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
+        'tracks' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_TRACKS_DATABASE'),
+            'username' => env('DB_TRACKS_USERNAME'),
+            'password' => env('DB_TRACKS_PASSWORD'),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',

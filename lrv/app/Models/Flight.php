@@ -49,4 +49,87 @@ class Flight extends Model
     {
         return $this->belongsTo('App\Models\LaunchType', 'launchtype');
     }
+
+    public function flightType()
+    {
+        return $this->belongsTo('App\Models\FlightType', 'type');
+    }
+
+    public function getTowlandDate()
+    {
+        $date = new \DateTime();
+        $date->setTimestamp(intval(floor($this->towland/1000)));
+        return $date;
+    }
+
+    public function getStartDate()
+    {
+        $date = new \DateTime();
+        $date->setTimestamp(intval(floor($this->start/1000)));
+        return $date;
+    }
+
+    public function getLandDate()
+    {
+        $date = new \DateTime();
+        $date->setTimestamp(intval(floor($this->land/1000)));
+        return $date;
+    }
+
+    public function getTowDuration()
+    {
+        if(empty($this->towland)) {
+            return 0;
+        }
+        return $this->towland - $this->start;
+    }
+
+    public function getFlightDuration()
+    {
+        return $this->land - $this->start;
+    }
+
+    public function getFullComments()
+    {
+        $comments = $this->comments;
+        if ($this->flightType == FlightType::checkFlightType()) {
+            if (strlen($comments) > 0 ) {
+              $comments .= " ";
+            }
+            $comments .= "Tow plane check flight";
+        }
+
+        if ($this->flightType == FlightType::retrieveFlightType()) {
+            if (strlen($comments) > 0 ) {
+              $comments .= " ";
+            }
+            $comments .= "Retrieve Flight";
+        }
+
+        return $comments;
+    }
+
+    public function hasTracks()
+    {
+        $strStart = $this->getStartDate()->format('Y-m-d H:i:s');
+        $strEnd   = $this->getLandDate()->format('Y-m-d H:i:s');
+
+        $tracks = Track::where('glider', $this->glider)
+                    ->where('point_time', '>' , $strStart)
+                    ->where('point_time', '<', $strEnd);
+
+        if(!$tracks->get()->isEmpty()) {
+            return true;
+        }
+
+        $tracks = ArchivedTrack::where('glider', $this->glider)
+                    ->where('point_time', '>' , $strStart)
+                    ->where('point_time', '<', $strEnd);
+
+        if(!$tracks->get()->isEmpty()) {
+            return true;
+        }
+
+        return false;
+    }
 }

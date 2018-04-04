@@ -269,17 +269,15 @@ function tracksforFlight($db1,$db2,$glider,$strStart,$strEnd)
     return true;
   }
 
-   if (null != $db2)
-   {
-    $q = "SELECT * from tracksarchive where glider = '".$glider."' and point_time > '".$strStart."' and point_time < '".$strEnd."'";
-    $r = mysqli_query($db2,$q);
-    if (mysqli_num_rows($r) > 0)
-    {
-      $ret = true;
-      return $ret;
-    }
-   }
-   return $ret;
+  $tracks = App\Models\ArchivedTrack::where('glider', $glider)
+              ->where('point_time', '>' , $strStart)
+              ->where('point_time', '<', $strEnd);
+
+  if(!$tracks->get()->isEmpty()) {
+    return true;
+  }
+
+  return false;
 }
 
 function isFirstPilotFlightDay($db,$org,$date,$seq,$memberid)
