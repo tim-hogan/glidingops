@@ -1,1 +1,5 @@
 config/*.php
+lrv/bootstrap
+lrv/storage
+.env.local
+.env.testing
