@@ -9,11 +9,15 @@ var DailySheet = function() {
     var launchTypes = {};
     var membersFields = [];
     var chargesFields = [];
+    var today = {};
 
-    myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId) {
+    myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId, strTodayYear, strTodayMonth, strTodayDay) {
         launchTypes.tow = launchTypeTowId;
         launchTypes.self = launchTypeSelfId;
         launchTypes.winch = launchTypeWinchId;
+        today.year  = strTodayYear;
+        today.month = strTodayMonth;
+        today.day   = strTodayDay;
     }
 
     myPublic.landbutton = function(what) {
@@ -27,7 +31,10 @@ var DailySheet = function() {
             var para = document.createElement("input");
             para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
             para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
-            var d = new Date();
+
+            var now = new Date();
+            var d = new Date(today.year, today.month, today.day, now.getHours(), now.getMinutes(), 0);
+
             para.setAttribute("onchange", "timechange(this)");
             para.setAttribute("timedata", d.getTime());
             para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
@@ -51,7 +58,10 @@ var DailySheet = function() {
         para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
         para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
         para.setAttribute("onchange", "timechange(this)");
-        var d = new Date();
+
+        var now = new Date();
+        var d = new Date(today.year, today.month, today.day, now.getHours(), now.getMinutes(), 0);
+
         para.setAttribute("timedata", d.getTime());
         para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
         para.setAttribute("prevval", para.value);

@@ -237,7 +237,10 @@ var pollcnt=0;
 // addrowdata
 DailySheet.init(<?php echo $launchTypeTow;?>,
                 <?php echo $launchTypeSelf;?>,
-                <?php echo $launchTypeWinch;?>);
+                <?php echo $launchTypeWinch;?>,
+                Number(strTodayYear),
+                Number(strTodayMonth) - 1,
+                Number(strTodayDay));
 
 function ShowCheckErrors(xml)
 {
@@ -1018,16 +1021,9 @@ function timechange(what)
   var hours = parseInt(strNew.substr(0,x));
   var mins = parseInt(strNew.substr(x+1,strNew.length-(x+1)) );
 
-
-
   var n=getseconds(strNew)-getseconds(strPrev);
   n = n * 1000;
-  var d = new Date();
   var d2 = new Date(strTodayYear,parseInt(strTodayMonth)-1,strTodayDay,hours,mins,0);
-
-  d.setTime(parseInt(what.getAttribute('timedata'))+n);
-  console.log("Old time " + what.getAttribute('timedata'));
-  console.log("New time " + d.getTime());
 
   what.setAttribute("timedata",d2.getTime());
   what.value= pad(d2.getHours(),2) + ":" + pad(d2.getMinutes(),2);
