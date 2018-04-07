@@ -58,21 +58,21 @@ class Flight extends Model
     public function getTowlandDate()
     {
         $date = new \DateTime();
-        $date->setTimestamp(intval(floor($this->towland/1000)));
+        $date->setTimestamp(intval(floor($this->towland / 1000)));
         return $date;
     }
 
     public function getStartDate()
     {
         $date = new \DateTime();
-        $date->setTimestamp(intval(floor($this->start/1000)));
+        $date->setTimestamp(intval(floor($this->start / 1000)));
         return $date;
     }
 
     public function getLandDate()
     {
         $date = new \DateTime();
-        $date->setTimestamp(intval(floor($this->land/1000)));
+        $date->setTimestamp(intval(floor($this->land / 1000)));
         return $date;
     }
 
@@ -81,12 +81,12 @@ class Flight extends Model
         if(empty($this->towland)) {
             return 0;
         }
-        return $this->towland - $this->start;
+        return intval(($this->towland - $this->start)/ 1000);
     }
 
     public function getFlightDuration()
     {
-        return $this->land - $this->start;
+        return intval(($this->land - $this->start) / 1000);
     }
 
     public function getFullComments()

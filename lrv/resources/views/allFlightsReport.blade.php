@@ -134,7 +134,7 @@
       {{-- link to tracks database --}}
       @if ($flight->hasTracks())
         <td>
-          <a href="MyFlightMap.php?glider={{$flight->glider}}&from={{$flight->getStartDate()->format('Y-m-d H:i:s')}}&to={{$flight->getLandDate()->format('Y-m-d H:i:s')}}.&flightid={{$flight->id}}">MAP</a>
+          <a href="/MyFlightMap.php?glider={{$flight->glider}}&from={{$flight->getStartDate()->format('Y-m-d H:i:s')}}&to={{$flight->getLandDate()->format('Y-m-d H:i:s')}}&flightid={{$flight->id}}">MAP</a>
         </td>
       @endif
 

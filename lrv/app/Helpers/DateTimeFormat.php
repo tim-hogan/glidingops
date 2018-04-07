@@ -19,11 +19,10 @@ class DateTimeFormat {
     return $date->format($strFormat);
   }
 
-  public static function duration($durationMilliseconds)
+  public static function duration($durationSeconds)
   {
-    $duration = intval($durationMilliseconds / 1000);
-    $hours = intval($duration / 3600);
-    $mins = intval(($duration % 3600) / 60);
+    $hours = intval($durationSeconds / 3600);
+    $mins = intval(($durationSeconds % 3600) / 60);
     $timeval = sprintf("%02d:%02d",$hours,$mins);
     return $timeval;
   }
