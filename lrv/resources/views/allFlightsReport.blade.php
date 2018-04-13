@@ -66,15 +66,15 @@
       <th>PIC</th>
       <th>P2</th>
       <th>TAKE OFF</th>
-    @if ($user->organisation->getTowChargeType()->isTimeBased())
+    @if ($organisation->getTowChargeType()->isTimeBased())
       <th>TOW LAND</th>
     @endif
     <th>LAND</th>
-    @if ($user->organisation->getTowChargeType()->isTimeBased())
+    @if ($organisation->getTowChargeType()->isTimeBased())
       <th>TOW DURATION</th>
     @endif
       <th>DURATION</th>
-    @if ($user->organisation->getTowChargeType()->isHeightBased())
+    @if ($organisation->getTowChargeType()->isHeightBased())
       <th>HEIGHT</th>
     @endif
       <th>CHARGE</th>
@@ -95,21 +95,21 @@
       <td class='right'>{{($flight->p2Member) ? $flight->p2Member->displayname : ''}}</td>
 
       <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getStartDate(),
-        $user->organisation->timezone,'H:i')}}</td>
+        $organisation->timezone,'H:i')}}</td>
 
-      @if ($user->organisation->getTowChargeType()->isTimeBased())
+      @if ($organisation->getTowChargeType()->isTimeBased())
         @if ( $flight->towland > 0)
           <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getTowlandDate(),
-            $user->organisation->timezone,'H:i')}}</td>
+            $organisation->timezone,'H:i')}}</td>
         @else
           <td></td>
         @endif
       @endif
 
       <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getLandDate(),
-        $user->organisation->timezone,'H:i')}}</td>
+        $organisation->timezone,'H:i')}}</td>
 
-      @if ($user->organisation->getTowChargeType()->isTimeBased())
+      @if ($organisation->getTowChargeType()->isTimeBased())
         @if (intval($flight->getTowDuration() > 0) ) {
           <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getTowDuration())}}</td>
         @else
@@ -119,7 +119,7 @@
 
       <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getFlightDuration())}}</td>
 
-      @if ($user->organisation->getTowChargeType()->isHeightBased())
+      @if ($organisation->getTowChargeType()->isHeightBased())
         @if ($flight->launchType == App\Models\LaunchType::towLaunchType()
               && $flight->flightType == App\Models\FlightType::glidingFlightType())
           <td class='right'>{{$flight->height}}</td>
@@ -144,7 +144,7 @@
     {{-- totals --}}
     <tr>
       <td colspan='11'>Total</td>
-    @if ($user->organisation->getTowChargeType()->isTimeBased())
+    @if ($organisation->getTowChargeType()->isTimeBased())
       <td></td>
       <td class='right'>
         {{App\Helpers\DateTimeFormat::duration(
