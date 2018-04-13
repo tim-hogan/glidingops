@@ -147,15 +147,11 @@
     @if ($organisation->getTowChargeType()->isTimeBased())
       <td></td>
       <td class='right'>
-        {{App\Helpers\DateTimeFormat::duration(
-         $flights->reduce(function ($carry, $flight) { return $carry + $flight->getTowDuration(); }, 0)
-        )}}
+        {{App\Helpers\DateTimeFormat::duration($towTotalTime)}}
       </td>
     @endif
       <td class='right'>
-        {{App\Helpers\DateTimeFormat::duration(
-         $flights->reduce(function ($carry, $flight) { return $carry + $flight->getFlightDuration(); }, 0)
-        )}}
+        {{App\Helpers\DateTimeFormat::duration($gliderTotalTime)}}
       </td>
     </tr>
     <tr>

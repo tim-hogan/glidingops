@@ -40,11 +40,21 @@ class FlightsController extends Controller
                         ->orderBy('localdate')
                         ->orderBy('seq');
 
+        $allFlights = $flights->get();
+        $towTotalTime = $allFlights->reduce(function ($carry, $flight) {
+            return $carry + $flight->getTowDuration();
+        }, 0);
+        $gliderTotalTime = $allFlights->reduce(function ($carry, $flight) {
+            return $carry + $flight->getFlightDuration();
+        }, 0);
+
         return response()->view('allFlightsReport', [
             'organisation' => $user->organisation,
-            'flights' => $flights->get(),
+            'flights' => $allFlights,
             'strDateFrom' => $strDateFrom,
             'strDateTo' => $strDateTo,
+            'towTotalTime' => $towTotalTime,
+            'gliderTotalTime' => $gliderTotalTime
         ]);
     }
 }

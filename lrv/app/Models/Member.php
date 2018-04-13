@@ -39,4 +39,14 @@ class Member extends Model
     {
         return $this->belongsTo('App\Models\Organisation', 'org');
     }
+
+    public function flightsAsPIC()
+    {
+        return $this->hasMany('App\Models\Flight', 'pic');
+    }
+
+    public function flightsAsP2()
+    {
+        return $this->hasMany('App\Models\Flight', 'p2');
+    }
 }
