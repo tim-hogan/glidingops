@@ -33,6 +33,18 @@
 
 @push('scripts')
   <script>
+    function filterByMember(memberId) {
+      var form = document.getElementById('inform');
+      form.elements["filterByMemberId"].value = memberId;
+      form.submit();
+      return false;
+    }
+
+    function clearFilterByMember() {
+      var form = document.getElementById('inform');
+      form.elements["filterByMemberId"].value = null;
+      form.submit();
+    }
   </script>
 @endpush
 
@@ -44,11 +56,20 @@
       <table>
         <tr>
           <td>{!! Form::label('fromdate', 'From:') !!}</td>
-          <td>{!! Form::date('fromdate',  $strDateFrom, ['id' => 'fmdate']) !!}</td></tr>
+          <td>{!! Form::date('fromdate',  $strDateFrom, ['id' => 'fmdate']) !!}</td>
+        </tr>
         <tr>
           <td>{!! Form::label('todate', 'To:') !!}</td>
-          <td>{!! Form::date('todate',    $strDateTo, ['id' => 'todate']) !!}</td></tr>
+          <td>{!! Form::date('todate',    $strDateTo, ['id' => 'todate']) !!}</td>
+        </tr>
       </table>
+      <input type='hidden' name='filterByMemberId' value={{($filterByMember) ? $filterByMember->id : null}}>
+      @if($filterByMember)
+        <p>
+          Filtering by member: {{$filterByMember->displayname}}
+          <button type='button' onClick='clearFilterByMember()'>Clear filter</button>
+        </p>
+      @endif
       <br/>
       {!! Form::submit('View Report', ['name' => 'view']) !!}
     {!! Form::close() !!}
@@ -66,23 +87,36 @@
       <th>PIC</th>
       <th>P2</th>
       <th>TAKE OFF</th>
-    @if ($organisation->getTowChargeType()->isTimeBased())
+    @if ($towChargeType->isTimeBased())
       <th>TOW LAND</th>
     @endif
     <th>LAND</th>
-    @if ($organisation->getTowChargeType()->isTimeBased())
+    @if ($towChargeType->isTimeBased())
       <th>TOW DURATION</th>
     @endif
       <th>DURATION</th>
-    @if ($organisation->getTowChargeType()->isHeightBased())
+    @if ($towChargeType->isHeightBased())
       <th>HEIGHT</th>
     @endif
       <th>CHARGE</th>
       <th>COMMENTS</th>
     </tr>
 
+    @php
+      $flightsCount = 0;
+      $towTotalTime = 0;
+      $gliderTotalTime = 0;
+    @endphp
+
     {{-- Render flights records --}}
     @foreach($flights as $flight)
+
+    @php
+      $flightsCount++;
+      $towTotalTime += $flight->getTowDuration();
+      $gliderTotalTime += $flight->getFlightDuration();
+    @endphp
+
     <tr>
       <td>{{App\Helpers\DateTimeFormat::formatDateStr($flight->localdate)}}</td>
       <td class='right'>{{$flight->seq}}</td>
@@ -91,25 +125,33 @@
       <td class='right'>{{($flight->towPlane) ? $flight->towPlane->rego_short : ''}}</td>
       <td class='right'>{{$flight->glider}}</td>
       <td class='right'>{{($flight->towPilotMember) ? $flight->towPilotMember->displayname : ''}}</td>
-      <td class='right'>{{($flight->picMember) ? $flight->picMember->displayname : ''}}</td>
-      <td class='right'>{{($flight->p2Member) ? $flight->p2Member->displayname : ''}}</td>
+      <td class='right'>
+        @if($flight->picMember)
+          <a href='' onClick='return filterByMember({{$flight->picMember->id}})'>{{$flight->picMember->displayname}}</a>
+        @endif
+      </td>
+      <td class='right'>
+        @if($flight->p2Member)
+          <a href='' onClick='return filterByMember({{$flight->p2Member->id}})'>{{$flight->p2Member->displayname}}</a>
+        @endif
+      </td>
 
       <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getStartDate(),
-        $organisation->timezone,'H:i')}}</td>
+        $timezone,'H:i')}}</td>
 
-      @if ($organisation->getTowChargeType()->isTimeBased())
+      @if ($towChargeType->isTimeBased())
         @if ( $flight->towland > 0)
           <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getTowlandDate(),
-            $organisation->timezone,'H:i')}}</td>
+            $timezone,'H:i')}}</td>
         @else
           <td></td>
         @endif
       @endif
 
       <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getLandDate(),
-        $organisation->timezone,'H:i')}}</td>
+        $timezone,'H:i')}}</td>
 
-      @if ($organisation->getTowChargeType()->isTimeBased())
+      @if ($towChargeType->isTimeBased())
         @if (intval($flight->getTowDuration() > 0) ) {
           <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getTowDuration())}}</td>
         @else
@@ -119,7 +161,7 @@
 
       <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getFlightDuration())}}</td>
 
-      @if ($organisation->getTowChargeType()->isHeightBased())
+      @if ($towChargeType->isHeightBased())
         @if ($flight->launchType == App\Models\LaunchType::towLaunchType()
               && $flight->flightType == App\Models\FlightType::glidingFlightType())
           <td class='right'>{{$flight->height}}</td>
@@ -144,7 +186,7 @@
     {{-- totals --}}
     <tr>
       <td colspan='11'>Total</td>
-    @if ($organisation->getTowChargeType()->isTimeBased())
+    @if ($towChargeType->isTimeBased())
       <td></td>
       <td class='right'>
         {{App\Helpers\DateTimeFormat::duration($towTotalTime)}}

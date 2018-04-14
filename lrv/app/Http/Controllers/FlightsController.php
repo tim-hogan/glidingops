@@ -11,6 +11,7 @@ use DateTime;
 
 use App\Models\Organisation;
 use App\Models\Flight;
+use App\Models\Member;
 
 class FlightsController extends Controller
 {
@@ -21,6 +22,7 @@ class FlightsController extends Controller
      */
     public function allFlightsReport(Request $request)
     {
+        set_time_limit(120);
         $user = Auth::user();
 
         $dateTimeZone = new DateTimeZone($_SESSION['timezone']);
@@ -33,28 +35,33 @@ class FlightsController extends Controller
         $dateStart2 = substr($strDateFrom,0,4) . substr($strDateFrom,5,2) . substr($strDateFrom,8,2);
         $dateEnd2 = substr($strDateTo,0,4) . substr($strDateTo,5,2) . substr($strDateTo,8,2);
 
-        $flights = Flight::with(['picMember', 'p2Member', 'towPilotMember'])
+        $flights = Flight::with(['picMember', 'p2Member', 'towPilotMember', 'towPlane', 'launchType'])
                         ->where('org', $_SESSION['org'])
                         ->where('localdate', '>=', $dateStart2)
                         ->where('localdate', '<=', $dateEnd2)
                         ->orderBy('localdate')
                         ->orderBy('seq');
 
+        $filterByMember = null;
+        if ($request->has('filterByMemberId')) {
+            $memberId = $request->input('filterByMemberId');
+            $filterByMember = Member::where('id', $memberId)->first();
+        }
+        if($filterByMember) {
+            $flights = $flights->where(function($query) use($memberId){
+                $query->where('pic', $memberId)->orWhere('p2', $memberId);
+            });
+        }
+
         $allFlights = $flights->get();
-        $towTotalTime = $allFlights->reduce(function ($carry, $flight) {
-            return $carry + $flight->getTowDuration();
-        }, 0);
-        $gliderTotalTime = $allFlights->reduce(function ($carry, $flight) {
-            return $carry + $flight->getFlightDuration();
-        }, 0);
 
         return response()->view('allFlightsReport', [
-            'organisation' => $user->organisation,
+            'filterByMember' => $filterByMember,
             'flights' => $allFlights,
             'strDateFrom' => $strDateFrom,
             'strDateTo' => $strDateTo,
-            'towTotalTime' => $towTotalTime,
-            'gliderTotalTime' => $gliderTotalTime
+            'towChargeType' => $user->organisation->getTowChargeType(),
+            'timezone' => $user->organisation->timezone
         ]);
     }
 }
