@@ -113,70 +113,82 @@
 
     @php
       $flightsCount++;
-      $towTotalTime += $flight->getTowDuration();
-      $gliderTotalTime += $flight->getFlightDuration();
+      $towTotalTime += App\Helpers\FlightHelper::towDuration($flight);
+      $gliderTotalTime += App\Helpers\FlightHelper::flightDuration($flight);
     @endphp
 
     <tr>
       <td>{{App\Helpers\DateTimeFormat::formatDateStr($flight->localdate)}}</td>
       <td class='right'>{{$flight->seq}}</td>
       <td>{{$flight->location}}</td>
-      <td>{{$flight->launchType->name}}</td>
-      <td class='right'>{{($flight->towPlane) ? $flight->towPlane->rego_short : ''}}</td>
+      <td>{{$flight->launchtype_name}}</td>
+      <td class='right'>{{$flight->towplane_rego_short}}</td>
       <td class='right'>{{$flight->glider}}</td>
-      <td class='right'>{{($flight->towPilotMember) ? $flight->towPilotMember->displayname : ''}}</td>
+      <td class='right'>{{$flight->towpilot_displayname}}</td>
       <td class='right'>
-        @if($flight->picMember)
-          <a href='' onClick='return filterByMember({{$flight->picMember->id}})'>{{$flight->picMember->displayname}}</a>
+        @if($flight->pic)
+          <a href='' onClick='return filterByMember({{$flight->pic}})'>{{$flight->pic_displayname}}</a>
         @endif
       </td>
       <td class='right'>
-        @if($flight->p2Member)
-          <a href='' onClick='return filterByMember({{$flight->p2Member->id}})'>{{$flight->p2Member->displayname}}</a>
+        @if($flight->p2)
+          <a href='' onClick='return filterByMember({{$flight->p2}})'>{{$flight->p2_displayname}}</a>
         @endif
       </td>
 
-      <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getStartDate(),
-        $timezone,'H:i')}}</td>
+      <td class='right'>
+        {{
+          App\Helpers\DateTimeFormat::timeLocalFormat(
+            App\Helpers\FlightHelper::startDate($flight),$timezone,'H:i')
+        }}
+      </td>
 
       @if ($towChargeType->isTimeBased())
-        @if ( $flight->towland > 0)
-          <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getTowlandDate(),
-            $timezone,'H:i')}}</td>
+        @if ( App\Helpers\FlightHelper::towDuration($flight) > 0)
+          <td class='right'>
+          {{
+            App\Helpers\DateTimeFormat::timeLocalFormat(
+              App\Helpers\FlightHelper::towLandDate($flight), $timezone,'H:i')
+          }}
+          </td>
         @else
           <td></td>
         @endif
       @endif
 
-      <td class='right'>{{App\Helpers\DateTimeFormat::timeLocalFormat($flight->getLandDate(),
-        $timezone,'H:i')}}</td>
+      <td class='right'>
+        {{
+          App\Helpers\DateTimeFormat::timeLocalFormat(
+            App\Helpers\FlightHelper::landDate($flight),$timezone,'H:i')
+        }}
+      </td>
 
       @if ($towChargeType->isTimeBased())
-        @if (intval($flight->getTowDuration() > 0) ) {
-          <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getTowDuration())}}</td>
+        @if (App\Helpers\FlightHelper::towDuration($flight) > 0 ) {
+          <td class='right'>{{App\Helpers\DateTimeFormat::duration(App\Helpers\FlightHelper::towDuration($flight))}}</td>
         @else
           <td></td>
         @endif
       @endif
 
-      <td class='right'>{{App\Helpers\DateTimeFormat::duration($flight->getFlightDuration())}}</td>
+      <td class='right'>{{App\Helpers\DateTimeFormat::duration(App\Helpers\FlightHelper::flightDuration($flight))}}</td>
 
       @if ($towChargeType->isHeightBased())
-        @if ($flight->launchType == App\Models\LaunchType::towLaunchType()
-              && $flight->flightType == App\Models\FlightType::glidingFlightType())
+        @if ($flight->launchtype == App\Models\LaunchType::towLaunchType()->id
+              && $flight->type == App\Models\FlightType::glidingFlightType()->id)
           <td class='right'>{{$flight->height}}</td>
         @else
           <td></td>
         @endif
-        <td class='right'>{{$flight->billingoption->name}}</td>
+        <td class='right'>{{$flight->billingoption_name}}</td>
       @endif
 
-      <td>{{$flight->getFullComments()}}</td>
+      <td>{{App\Helpers\FlightHelper::fullComments($flight)}}</td>
 
       {{-- link to tracks database --}}
-      @if ($flight->hasTracks())
+      @if (App\Helpers\FlightHelper::hasTracks($flight))
         <td>
-          <a href="/MyFlightMap.php?glider={{$flight->glider}}&from={{$flight->getStartDate()->format('Y-m-d H:i:s')}}&to={{$flight->getLandDate()->format('Y-m-d H:i:s')}}&flightid={{$flight->id}}">MAP</a>
+          <a href="{{App\Helpers\FlightHelper::trackURI($flight)}}">MAP</a>
         </td>
       @endif
 

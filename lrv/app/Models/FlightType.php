@@ -13,12 +13,22 @@ class FlightType extends Model
      */
     protected $table = 'flighttypes';
 
+    protected static $types = null;
+
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
     public $timestamps = false;
+
+    private static function getCachedTypes()
+    {
+        if(static::$types == null) {
+           static::$types = collect([]);
+        }
+        return static::$types;
+    }
 
     private static function getFlightType($strType)
     {
@@ -27,22 +37,37 @@ class FlightType extends Model
 
     public static function glidingFlightType()
     {
-        return FlightType::getFlightType('Glider');
+        $name = 'Glider';
+        if(!static::getCachedTypes()->has($name)) {
+            static::getCachedTypes()[$name] = FlightType::getFlightType($name);
+        }
+        return static::getCachedTypes()[$name];
     }
 
     public static function checkFlightType()
     {
-        return FlightType::getFlightType('Tow plane check flight');
+        $name = 'Tow plane check flight';
+        if(!static::getCachedTypes()->has($name)) {
+            static::getCachedTypes()[$name] = FlightType::getFlightType($name);
+        }
+        return static::getCachedTypes()[$name];
     }
 
     public static function retrieveFlightType()
     {
-        return FlightType::getFlightType('Tow plane retrieve');
+        $name = 'Tow plane retrieve';
+        if(!static::getCachedTypes()->has($name)) {
+            static::getCachedTypes()[$name] = FlightType::getFlightType($name);
+        }
+        return static::getCachedTypes()[$name];
     }
 
     public static function landingFeeFlightType()
     {
-        return FlightType::etFlightType('Landing Charge');
+        $name = 'Landing Charge';
+        if(!static::getCachedTypes()->has($name)) {
+            static::getCachedTypes()[$name] = FlightType::getFlightType($name);
+        }
+        return static::getCachedTypes()[$name];
     }
-
 }
