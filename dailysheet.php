@@ -568,8 +568,8 @@ function newassociate(field)
 
  var sur = document.getElementById("naa").value;
  var fir = document.getElementById("nab").value;
- var mob = document.getElementById("nac").value;
- var em = document.getElementById("nad").value;
+ var mob = "";
+ var em = "";
 
  //We need to check that fields have been filled out
  if (sur.length == 0 || fir.length == 0)
@@ -671,8 +671,6 @@ function createAssociateMember(field)
 "<table>" +
 "<tr><td>FIRSTNAME * </td><td><input class='in1' type = 'text' name='Name' id='nab' size='30' autofocus required></td></tr>" +
 "<tr><td>SURNAME * </td><td><input class='in1' type = 'text' name='Name' id='naa' size='30' required></td></tr>" +
-"<tr><td>MOBILE</td><td><input class='in1' type = 'text' name='mobile' id='nac'size='20'></td></tr>" +
-"<tr><td>EMAIL</td><td><input class='in1' type = 'text' name='email' id='nad' size='40'></td></tr>" +
 "<tr><td><button class='in1' onclick='newassociate(\"" + field + "\")'>Enter</button></td><td><button class='in1' onclick='newassociatecancel(\"" + field + "\")'>Cancel</button></td></tr>" +
 "</table>";
   win.innerHTML = codeHTML;
@@ -1195,6 +1193,7 @@ function AddNewLine()
 </script>
 </head>
 <body id="body" onload="StartUp()">
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
 <?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
 <div id="container">

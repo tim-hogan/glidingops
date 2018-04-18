@@ -3,7 +3,7 @@ include 'timehelpers.php';
 include 'helpers.php';
 $org=0;
 $strdtnow='';
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
@@ -52,7 +52,7 @@ function CheckChange(id)
       document.getElementById("dt1").disabled = true;
       document.getElementById("dt1").style.display="none";
    }
-   
+
 }
 </script>
 </head>
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
     $r = mysqli_query($con,$q);
     $row_cnt = $r->num_rows;
     if ($row_cnt > 0)
-    {    
+    {
         $row = mysqli_fetch_array($r);
         $defval=$row[0];
     }
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    $loc = $_POST['location'];
    if (strlen($loc) > 0)
    {
-        //Check to see if we have a different date specifed.   	
+        //Check to see if we have a different date specifed.
         $v = $_POST['specdate'];
         if ($v == 'on')
         {
@@ -104,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 }
 ?>
 <body>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php $inc = "./orgs/" . $org . "/heading1.txt"; include $inc; ?>
 <div id='container'>
 <div id='entry'>
