@@ -48,6 +48,7 @@ table.tbl1 {width: 100%;table-layout: fixed;}
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </head>
 <body>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
 <div id='container'>
 <div id='messagearea'>
