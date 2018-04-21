@@ -156,9 +156,7 @@ if ($_SESSION['security'] >= 1)
   if (($_SESSION['security'] & 8))
      echo "<p class='u'><a href='Treasurer.php'>Treasurer Report</a></p>";
   if (($_SESSION['security'] & 1))
-     echo "<p class='u'><a href='AllFlights.php'>All Flights Report</a></p>";
-  if (($_SESSION['security'] & 1))
-     echo "<p class='u'><a href='/app/allFlightsReport'><strong>All Flights Report NEW</strong></a></p>";
+     echo "<p class='u'><a href='/app/allFlightsReport'>All Flights Report</a></p>";
   if (($_SESSION['security'] & 24))
      echo "<p class='u'><a href='Instructors.php'>Instructors Report</a></p>";
   if (($_SESSION['security'] & 24))
