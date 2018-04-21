@@ -8,11 +8,11 @@ use App\Models\ArchivedTrack;
 
 class FlightHelper {
   public static function towDuration($flight) {
-    return intval($flight->towDuration / 1000);
+    return static::durationRoundedToMinutes($flight->towDuration);
   }
 
   public static function flightDuration($flight) {
-    return intval($flight->flightDuration / 1000);
+    return static::durationRoundedToMinutes($flight->flightDuration);
   }
 
   public static function startDate($flight) {
@@ -82,5 +82,11 @@ class FlightHelper {
       $landDate = FlightHelper::landDate($flight)->format('Y-m-d H:i:s');
 
       return "/MyFlightMap.php?glider={$flight->glider}&from={$startDate}&to={$landDate}&flightid={$flight->id}";
+    }
+
+    private static function durationRoundedToMinutes($durationInMillies) {
+      $durationInSeconds = intval($durationInMillies / 1000);
+      $durationRoundedToMinutes  = ($durationInSeconds - $durationInSeconds%60);
+      return $durationRoundedToMinutes;
     }
 }

@@ -81,12 +81,12 @@ class Flight extends Model
         if(empty($this->towland)) {
             return 0;
         }
-        return intval(($this->towland - $this->start)/ 1000);
+        return self::durationRoundedToMinutes($this->towland - $this->start);
     }
 
     public function getFlightDuration()
     {
-        return intval(($this->land - $this->start) / 1000);
+        return self::durationRoundedToMinutes($this->land - $this->start);
     }
 
     public function getFullComments()
@@ -131,5 +131,11 @@ class Flight extends Model
         }
 
         return false;
+    }
+
+    private function durationRoundedToMinutes($durationInMillies) {
+      $durationInSeconds = intval($durationInMillies / 1000);
+      $durationRoundedToMinutes  = ($durationInSeconds - $durationInSeconds%60);
+      return $durationRoundedToMinutes;
     }
 }
