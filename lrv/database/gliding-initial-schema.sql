@@ -19,7 +19,7 @@
 -- Table structure for table `address`
 --
 
-DROP TABLE IF EXISTS `address`;
+-- DROP TABLE IF EXISTS `address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `address` (
@@ -42,7 +42,7 @@ CREATE TABLE `address` (
 -- Table structure for table `address_type`
 --
 
-DROP TABLE IF EXISTS `address_type`;
+-- DROP TABLE IF EXISTS `address_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `address_type` (
@@ -56,7 +56,7 @@ CREATE TABLE `address_type` (
 -- Table structure for table `aircraft`
 --
 
-DROP TABLE IF EXISTS `aircraft`;
+-- DROP TABLE IF EXISTS `aircraft`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `aircraft` (
@@ -92,7 +92,7 @@ CREATE TABLE `aircraft` (
 -- Table structure for table `aircrafttype`
 --
 
-DROP TABLE IF EXISTS `aircrafttype`;
+-- DROP TABLE IF EXISTS `aircrafttype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `aircrafttype` (
@@ -110,7 +110,7 @@ CREATE TABLE `aircrafttype` (
 -- Table structure for table `airspace`
 --
 
-DROP TABLE IF EXISTS `airspace`;
+-- DROP TABLE IF EXISTS `airspace`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `airspace` (
@@ -130,7 +130,7 @@ CREATE TABLE `airspace` (
 -- Table structure for table `airspacecoords`
 --
 
-DROP TABLE IF EXISTS `airspacecoords`;
+-- DROP TABLE IF EXISTS `airspacecoords`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `airspacecoords` (
@@ -154,7 +154,7 @@ CREATE TABLE `airspacecoords` (
 -- Table structure for table `audit`
 --
 
-DROP TABLE IF EXISTS `audit`;
+-- DROP TABLE IF EXISTS `audit`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `audit` (
@@ -176,7 +176,7 @@ CREATE TABLE `audit` (
 -- Table structure for table `billingoptions`
 --
 
-DROP TABLE IF EXISTS `billingoptions`;
+-- DROP TABLE IF EXISTS `billingoptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `billingoptions` (
@@ -193,7 +193,7 @@ CREATE TABLE `billingoptions` (
 -- Table structure for table `bookings`
 --
 
-DROP TABLE IF EXISTS `bookings`;
+-- DROP TABLE IF EXISTS `bookings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bookings` (
@@ -228,7 +228,7 @@ CREATE TABLE `bookings` (
 -- Table structure for table `bookingtypes`
 --
 
-DROP TABLE IF EXISTS `bookingtypes`;
+-- DROP TABLE IF EXISTS `bookingtypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bookingtypes` (
@@ -248,7 +248,7 @@ CREATE TABLE `bookingtypes` (
 -- Table structure for table `charges`
 --
 
-DROP TABLE IF EXISTS `charges`;
+-- DROP TABLE IF EXISTS `charges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `charges` (
@@ -273,7 +273,7 @@ CREATE TABLE `charges` (
 -- Table structure for table `diag`
 --
 
-DROP TABLE IF EXISTS `diag`;
+-- DROP TABLE IF EXISTS `diag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `diag` (
@@ -288,7 +288,7 @@ CREATE TABLE `diag` (
 -- Table structure for table `duty`
 --
 
-DROP TABLE IF EXISTS `duty`;
+-- DROP TABLE IF EXISTS `duty`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `duty` (
@@ -309,7 +309,7 @@ CREATE TABLE `duty` (
 -- Table structure for table `dutytypes`
 --
 
-DROP TABLE IF EXISTS `dutytypes`;
+-- DROP TABLE IF EXISTS `dutytypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dutytypes` (
@@ -323,7 +323,7 @@ CREATE TABLE `dutytypes` (
 -- Table structure for table `flights`
 --
 
-DROP TABLE IF EXISTS `flights`;
+-- DROP TABLE IF EXISTS `flights`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `flights` (
@@ -381,7 +381,7 @@ CREATE TABLE `flights` (
 -- Table structure for table `flighttypes`
 --
 
-DROP TABLE IF EXISTS `flighttypes`;
+-- DROP TABLE IF EXISTS `flighttypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `flighttypes` (
@@ -396,7 +396,7 @@ CREATE TABLE `flighttypes` (
 -- Table structure for table `group_member`
 --
 
-DROP TABLE IF EXISTS `group_member`;
+-- DROP TABLE IF EXISTS `group_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_member` (
@@ -413,7 +413,7 @@ CREATE TABLE `group_member` (
 -- Table structure for table `groups`
 --
 
-DROP TABLE IF EXISTS `groups`;
+-- DROP TABLE IF EXISTS `groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `groups` (
@@ -432,7 +432,7 @@ CREATE TABLE `groups` (
 -- Table structure for table `incentive_schemes`
 --
 
-DROP TABLE IF EXISTS `incentive_schemes`;
+-- DROP TABLE IF EXISTS `incentive_schemes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `incentive_schemes` (
@@ -456,7 +456,7 @@ CREATE TABLE `incentive_schemes` (
 -- Table structure for table `launchtypes`
 --
 
-DROP TABLE IF EXISTS `launchtypes`;
+-- DROP TABLE IF EXISTS `launchtypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `launchtypes` (
@@ -472,7 +472,7 @@ CREATE TABLE `launchtypes` (
 -- Table structure for table `members`
 --
 
-DROP TABLE IF EXISTS `members`;
+-- DROP TABLE IF EXISTS `members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `members` (
@@ -532,7 +532,7 @@ CREATE TABLE `members` (
 -- Table structure for table `membership_class`
 --
 
-DROP TABLE IF EXISTS `membership_class`;
+-- DROP TABLE IF EXISTS `membership_class`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `membership_class` (
@@ -554,7 +554,7 @@ CREATE TABLE `membership_class` (
 -- Table structure for table `membership_status`
 --
 
-DROP TABLE IF EXISTS `membership_status`;
+-- DROP TABLE IF EXISTS `membership_status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `membership_status` (
@@ -568,7 +568,7 @@ CREATE TABLE `membership_status` (
 -- Table structure for table `messages`
 --
 
-DROP TABLE IF EXISTS `messages`;
+-- DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `messages` (
@@ -587,7 +587,7 @@ CREATE TABLE `messages` (
 -- Table structure for table `organisations`
 --
 
-DROP TABLE IF EXISTS `organisations`;
+-- DROP TABLE IF EXISTS `organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `organisations` (
@@ -623,7 +623,7 @@ CREATE TABLE `organisations` (
 -- Table structure for table `role_member`
 --
 
-DROP TABLE IF EXISTS `role_member`;
+-- DROP TABLE IF EXISTS `role_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `role_member` (
@@ -647,7 +647,7 @@ CREATE TABLE `role_member` (
 -- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roles`;
+-- DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `roles` (
@@ -663,7 +663,7 @@ CREATE TABLE `roles` (
 -- Table structure for table `scheme_subs`
 --
 
-DROP TABLE IF EXISTS `scheme_subs`;
+-- DROP TABLE IF EXISTS `scheme_subs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `scheme_subs` (
@@ -688,7 +688,7 @@ CREATE TABLE `scheme_subs` (
 -- Table structure for table `spots`
 --
 
-DROP TABLE IF EXISTS `spots`;
+-- DROP TABLE IF EXISTS `spots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `spots` (
@@ -713,7 +713,7 @@ CREATE TABLE `spots` (
 -- Table structure for table `testy`
 --
 
-DROP TABLE IF EXISTS `testy`;
+-- DROP TABLE IF EXISTS `testy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `testy` (
@@ -735,7 +735,7 @@ CREATE TABLE `testy` (
 -- Table structure for table `texts`
 --
 
-DROP TABLE IF EXISTS `texts`;
+-- DROP TABLE IF EXISTS `texts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `texts` (
@@ -760,7 +760,7 @@ CREATE TABLE `texts` (
 -- Table structure for table `towcharges`
 --
 
-DROP TABLE IF EXISTS `towcharges`;
+-- DROP TABLE IF EXISTS `towcharges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `towcharges` (
@@ -788,7 +788,7 @@ CREATE TABLE `towcharges` (
 -- Table structure for table `tracks`
 --
 
-DROP TABLE IF EXISTS `tracks`;
+-- DROP TABLE IF EXISTS `tracks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tracks` (
@@ -819,7 +819,7 @@ CREATE TABLE `tracks` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
+-- DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
