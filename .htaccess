@@ -1,6 +1,16 @@
 # .htaccess
 DirectoryIndex home.php
 RewriteEngine On
+
+# if maintenance.trigger exists, then reply with
+# 503 Temporarily Unavailable
+RewriteCond %{ENV:REDIRECT_STATUS} !=503
+RewriteCond "/var/www/html/maintenance.trigger" -f
+RewriteRule ^(.*)$ /$1 [R=503,L]
+
+RewriteRule   ^app/(.*)    /lrv/public/app/$1  [L]
+RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
+
 RewriteRule home home.php [L]
 RewriteRule AssignRoles role_member-list.php [L]
 RewriteRule AssignRole role_member.php [L]

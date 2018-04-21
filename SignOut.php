@@ -1,4 +1,4 @@
-<?php session_start(); 
-unset($_SESSION['security']);
+<?php session_start();
+session_destroy();
 header('Location: Login.php');
 ?>
