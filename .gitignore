@@ -3,3 +3,4 @@ lrv/bootstrap
 lrv/storage
 .env.local
 .env.testing
+maintenance.trigger
