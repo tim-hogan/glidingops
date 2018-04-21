@@ -45,6 +45,10 @@
       form.elements["filterByMemberId"].value = null;
       form.submit();
     }
+
+    function printit(){
+      window.print();
+    }
   </script>
 @endpush
 
