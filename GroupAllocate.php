@@ -124,6 +124,7 @@ xmlhttp.onreadystatechange = function ()
 </script>
 </head>
 <body id="body" onload="StartUp()">
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
