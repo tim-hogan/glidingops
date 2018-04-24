@@ -25,7 +25,7 @@ class Member extends Model
      *
      * @var array
      */
-    protected $visible = ['id', 'member_id', 'org', 'firstname', 'surname', 'displayname'];
+    // protected $visible = ['id', 'member_id', 'org', 'firstname', 'surname', 'displayname'];
 
     /**
      * The roles that belong to the meber.
@@ -48,5 +48,10 @@ class Member extends Model
     public function flightsAsP2()
     {
         return $this->hasMany('App\Models\Flight', 'p2');
+    }
+
+    public function membershipStatus()
+    {
+        return $this->belongsTo('App\Models\MembershipStatus', 'status');
     }
 }

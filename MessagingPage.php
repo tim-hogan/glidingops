@@ -1,21 +1,12 @@
-<?php session_start(); ?>
 <?php
-$org=0;
-if(isset($_SESSION['security']))
-{
- if (!($_SESSION['security'] & 4))
- {
-  die("Secruity level too low for this page");
- }
- if (isset($_SESSION['org']) )
-     $org = $_SESSION['org'];
-}
-else
-{
- header('Location: Login.php');
- die("Please logon");
-}
+  include '../helpers/session_helpers.php';
+  session_start();
+  require_security_level(4);
 
+  $org = current_org();
+?>
+
+<?php
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
@@ -28,7 +19,6 @@ $row = mysqli_fetch_array($r);
 $strOrgName = $row[0];
 $consumerKey= $row[1];
 ?>
-
 
 <!DOCTYPE HTML>
 <html>
