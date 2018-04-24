@@ -6,6 +6,7 @@
   require_security_level(4);
 
   $org = current_org();
+  $membershipStatusActive = App\Models\MembershipStatus::activeStatus();
 ?>
 
 <?php
@@ -155,7 +156,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             {
 	        if(in_array((string)$row['id'],$_POST["group"]) )
                 {
-			$q1 = "SELECT gm_member_id FROM group_member WHERE gm_group_id = " . $row['id'];
+			$q1 = "SELECT gm_member_id FROM group_member
+                                INNER JOIN members ON members.id = group_member.gm_member_id
+                                WHERE gm_group_id = {$row['id']} AND members.status = {$membershipStatusActive->id}";
 			$r1 = mysqli_query($con,$q1);
 			while ($row2 = mysqli_fetch_array($r1) )
             		{
@@ -184,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     //Do we send to twitter
     if(in_array("twitter",$_POST["member"]))
     {
-	require_once '../src/twitter.class.php';
+	require_once './twitter.class.php';
 
 	// ENTER HERE YOUR CREDENTIALS (see readme.txt)
 	//$consumerKey="KUeT6uiFJibrAAOFHly5fJJqH";
@@ -316,14 +319,11 @@ for ($roleidx=0;$roleidx<3;$roleidx++)
  echo "<table>";
   $colm = 0;
 
-$membershipStatusActive = App\Models\MembershipStatus::activeStatus();
-
 $sql2 = "SELECT members.id,members.displayname,members.surname,membership_class.disp_message_broadcast
         FROM members
           LEFT JOIN membership_class  ON membership_class.id = members.class
-          LEFT JOIN membership_status ON membership_status.id = members.status
         WHERE members.org = {$org} AND membership_class.disp_message_broadcast = 1
-                                   AND membership_status.id = {$membershipStatusActive->id}
+                                   AND members.status = {$membershipStatusActive->id}
         ORDER BY surname,firstname ASC";
 
 $r2 = mysqli_query($con,$sql2);

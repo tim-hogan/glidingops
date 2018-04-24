@@ -1,18 +1,13 @@
-<?php session_start(); ?>
 <?php
-if(isset($_SESSION['security']))
-{
- if (!($_SESSION['security'] & 6))
- {
-  die("Secruity level too low for this page");
- }
-}
-else
-{
- header('Location: Login.php');
- die("Please logon");
-}
+  include './helpers/session_helpers.php';
+  include 'helpers.php';
+
+  session_start();
+  require_security_level(6);
+
+  $org = current_org();
 ?>
+
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
@@ -54,7 +49,7 @@ function xml2Str(xmlNode) {
         // Internet Explorer.
         return xmlNode.xml;
      }
-     catch (e) {  
+     catch (e) {
         //Other browsers without XML Serializer
         alert('Xmlserializer not supported');
      }
@@ -65,7 +60,7 @@ function xml2Str(xmlNode) {
 function GetGroups(id)
 {
 	  var v = "GroupXML.php?org=" + g_org + "&groupid=" + id;
-	  console.log (v);	
+	  console.log (v);
           xmlhttp.open("GET", v, true);
           xmlhttp.send();
 }
@@ -81,17 +76,17 @@ function whatGroup(val)
    GetGroups(val);
 }
 
-xmlhttp.onreadystatechange = function () 
+xmlhttp.onreadystatechange = function ()
 {
-    if (xmlhttp.readyState == 4) 
+    if (xmlhttp.readyState == 4)
     {
         div = document.createElement('div');
 	var bd = "<table>";
         var rowcnt = 0;
 	var columns = 6;
-	console.log ("XML Returned");	
+	console.log ("XML Returned");
         xmlDoc = xmlhttp.responseXML;
-        console.log (xml2Str(xmlDoc));	
+        console.log (xml2Str(xmlDoc));
 	grplist = xmlDoc.getElementsByTagName("grouplist")[0].childNodes;
         for (i=0; i<grplist.length; i++)
 	{
@@ -111,7 +106,7 @@ xmlhttp.onreadystatechange = function ()
 		rowcnt++;
 		if (((rowcnt -columns ) % columns ) == 0)
 			bd += "</tr>";
-		
+
 	    }
 	}
 	if (((rowcnt -columns ) % columns ) != 0)
@@ -132,7 +127,7 @@ xmlhttp.onreadystatechange = function ()
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-	$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+	$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
         if (mysqli_connect_errno())
 	{
@@ -179,7 +174,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 </div>
 <div id="nav_bar">
 <ul>
-<li><a href = '/'>Home</li>
+<li><a href = '/'>Home</a></li>
 <li><a href = 'groups.php'>Define</a></li>
 <li class='right'>Help</li>
 </ul>
@@ -187,7 +182,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 <div id="selectarea">
 <select onchange="whatGroup(this.value)" name="group">
 <?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (!mysqli_connect_errno())
 {

@@ -16,7 +16,7 @@ else
  die("Please logon");
 }
 
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
@@ -58,9 +58,9 @@ li.right {float:right; width:100px; background-color: #f0f0f0; text-align:center
 </style>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 <script>
-function textCounter(field, cnt, maxlimit) 
-{         
- var cntfield = document.getElementById(cnt) 
+function textCounter(field, cnt, maxlimit)
+{
+ var cntfield = document.getElementById(cnt)
  if (field.value.length > maxlimit) // if too long...trim it!
     field.value = field.value.substring(0, maxlimit);
     // otherwise, update 'characters left' counter
@@ -83,38 +83,38 @@ function InputChecker($data)
 
 function CreateTextRecord($msgid,$memberid,$phonenum)
 {
-  $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+  $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
   if (!mysqli_connect_errno())
   {
     $q2 = "SELECT * FROM texts WHERE txt_msg_id = " . $msgid . " and txt_to = " . $phonenum ;
-    $r2 = mysqli_query($con,$q2);				    
+    $r2 = mysqli_query($con,$q2);
     if ($r2->num_rows == 0)
     {
       $q1 = "INSERT INTO texts (txt_msg_id,txt_member_id,txt_to,txt_status) VALUES ('" .	$msgid ."','" . $memberid . "','" . $phonenum . "','0')" ;
       mysqli_query($con,$q1);
     }
-    mysqli_close($con);		
+    mysqli_close($con);
   }
 }
 
 function CreateMsgRecord($msg)
 {
    $msgid = 0;
-   $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+   $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (!mysqli_connect_errno())
    {
         $msg2 = htmlspecialchars_decode($msg);
-        $msg2 = mysqli_real_escape_string($con, $msg2);        
+        $msg2 = mysqli_real_escape_string($con, $msg2);
 
         $sqlmsg = "INSERT INTO messages (org,msg) VALUES (".$_SESSION['org'].",'" . $msg2 ."')";
 	if (mysqli_query($con,$sqlmsg) )
 	{
-	    $msgid=mysqli_insert_id($con);			
+	    $msgid=mysqli_insert_id($con);
 	}
         mysqli_close($con);
-   }	
+   }
    return $msgid;
 }
 
@@ -130,8 +130,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     else
     {
         //Loop here checking what members have been checked
-        {  
-            
+        {
+
 	    $bHaveMember = 0;
 	    //Loop here for all members
 	    $sql= "SELECT * FROM members WHERE org=" . $_SESSION['org'];
@@ -148,12 +148,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                      }
 		     $bHaveMember = 1;
 		     //Create a text message linking to this message
-		     
+
 		     if ($lastmsgid != 0)
 		     {
 			CreateTextRecord($lastmsgid,$row['id'],$row['phone_mobile']);
 		     }
-		     
+
                 }
             }
 	    //Loop here for all groupds
@@ -179,20 +179,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 				     if ($lastmsgid != 0)
 				     	CreateTextRecord($lastmsgid,$row3['id'],$row3['phone_mobile']);
 				}
-				
+
 			}
 		}
 	    }
 
 
-           
+
         }
     }
-    
+
     //Do we send to twitter
     if(in_array("twitter",$_POST["member"]))
     {
-	require_once '../src/twitter.class.php';
+	require_once './twitter.class.php';
 
 	// ENTER HERE YOUR CREDENTIALS (see readme.txt)
 	//$consumerKey="KUeT6uiFJibrAAOFHly5fJJqH";
@@ -204,22 +204,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
 		$twitter = new Twitter($consumerKey, $consumerSecret, $accessToken, $accessTokenSecret);
 	}
-	catch (TwitterException $e) 
+	catch (TwitterException $e)
 	{
    		echo 'Error: ' . $e->getMessage();
 	}
         if ($lastmsgid == 0)
             $lastmsgid = CreateMsgRecord($msg_f);
 
-	try 
+	try
 	{
    		$tweetmsg=htmlspecialchars_decode($msg_f);
 		if (strlen($tweetmsg) > 140)
 			$tweetmsg = substr($tweetmsg,0,140);
 		$tweet = $twitter->send($tweetmsg); // you can add $imagePath as second argument
- 
-	} 
-	catch (TwitterException $e) 
+
+	}
+	catch (TwitterException $e)
 	{
    		$errtxt =  "Twitter Error: " . $e->getMessage();
 	}
@@ -235,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	}
     }
     else
-    {	
+    {
 	header('Location: SendTxt.php');
     }
 }
@@ -284,17 +284,17 @@ $roles[2] = getRoleId($con,$rolename[2]);
 
 for ($roleidx=0;$roleidx<3;$roleidx++)
 {
- echo "<h2>"; 
+ echo "<h2>";
  echo $rolename[$roleidx];
  echo "s";
  echo "</h2>";
  echo "<table>";
   $colm = 0;
-  
-  
-  $sql2= "SELECT a.id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and role_id = " .$roles[$roleidx] . " order by a.surname,a.firstname"; 
 
-  
+
+  $sql2= "SELECT a.id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and role_id = " .$roles[$roleidx] . " order by a.surname,a.firstname";
+
+
   $r2 = mysqli_query($con,$sql2);
   while ($row2 = mysqli_fetch_array($r2) )
   {
@@ -319,12 +319,12 @@ for ($roleidx=0;$roleidx<3;$roleidx++)
 
 }
 
- echo "<h2>Members</h2>"; 
+ echo "<h2>Members</h2>";
  echo "</h2>";
  echo "<table>";
   $colm = 0;
-  
-  
+
+
 $sql2= "SELECT members.id,members.displayname,members.surname,membership_class.disp_message_broadcast FROM members LEFT JOIN membership_class ON membership_class.id = members.class left join membership_status b on b.id = members.status WHERE members.org = ".$org." and membership_class.disp_message_broadcast = 1 and b.status_name = 'Active' ORDER BY surname,firstname ASC";
 $r2 = mysqli_query($con,$sql2);
 while ($row2 = mysqli_fetch_array($r2) )
@@ -349,14 +349,14 @@ while ($row2 = mysqli_fetch_array($r2) )
   echo "</table>";
 
 
-echo "<h2>Groups</h2>"; 
+echo "<h2>Groups</h2>";
 echo "<table>";
 $colm = 0;
 $sql= "SELECT * FROM groups where org = " . $org;
 $r = mysqli_query($con,$sql);
 while ($row = mysqli_fetch_array($r) )
 {
-    
+
     if ($colm == 0)
         echo "<tr>";
     echo "<td class='td1'>";
