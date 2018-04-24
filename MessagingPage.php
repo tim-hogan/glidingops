@@ -1,5 +1,7 @@
 <?php
-  include '../helpers/session_helpers.php';
+  include './helpers/session_helpers.php';
+  include 'helpers.php';
+
   session_start();
   require_security_level(4);
 
@@ -62,7 +64,6 @@ function textCounter(field, cnt, maxlimit)
 <body id="body">
 <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php
-include 'helpers.php';
 $errtxt="";
 function InputChecker($data)
 {
@@ -315,8 +316,16 @@ for ($roleidx=0;$roleidx<3;$roleidx++)
  echo "<table>";
   $colm = 0;
 
+$membershipStatusActive = App\Models\MembershipStatus::activeStatus();
 
-$sql2= "SELECT members.id,members.displayname,members.surname,membership_class.disp_message_broadcast FROM members LEFT JOIN membership_class ON membership_class.id = members.class WHERE members.org = ".$org." and membership_class.disp_message_broadcast = 1 ORDER BY surname,firstname ASC";
+$sql2 = "SELECT members.id,members.displayname,members.surname,membership_class.disp_message_broadcast
+        FROM members
+          LEFT JOIN membership_class  ON membership_class.id = members.class
+          LEFT JOIN membership_status ON membership_status.id = members.status
+        WHERE members.org = {$org} AND membership_class.disp_message_broadcast = 1
+                                   AND membership_status.id = {$membershipStatusActive->id}
+        ORDER BY surname,firstname ASC";
+
 $r2 = mysqli_query($con,$sql2);
 while ($row2 = mysqli_fetch_array($r2) )
 {
