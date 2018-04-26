@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Aircraft extends Model
+class MembershipStatus extends Model
 {
   /**
    * The table associated with the model.
    *
    * @var string
    */
-  protected $table = 'aircraft';
+  protected $table = 'membership_status';
 
   /**
    * Indicates if the model should be timestamped.
@@ -19,4 +19,9 @@ class Aircraft extends Model
    * @var bool
    */
   public $timestamps = false;
+
+  public static function activeStatus()
+  {
+    return MembershipStatus::where('status_name', 'Active')->firstOrFail();
+  }
 }

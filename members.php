@@ -20,6 +20,7 @@ if(isset($_SESSION['security'])){
 <link rel="stylesheet" type="text/css" href="styleform1.css">
 </head>
 <body>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
 <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
 <script>function goBack() {window.history.back()}</script>

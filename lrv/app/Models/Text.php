@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Aircraft extends Model
+class Text extends Model
 {
   /**
    * The table associated with the model.
    *
    * @var string
    */
-  protected $table = 'aircraft';
+  protected $table = 'texts';
+  protected $primaryKey = 'txt_id';
 
   /**
    * Indicates if the model should be timestamped.
