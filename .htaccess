@@ -9,7 +9,8 @@ RewriteCond "/var/www/html/maintenance.trigger" -f
 RewriteRule ^(.*)$ /$1 [R=503,L]
 
 RewriteRule   ^app/(.*)    /lrv/public/app/$1  [L]
-RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
+# TODO find another way to map laravel /api as gops has already implemented /api/v1/json/
+# RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
 
 RewriteRule home home.php [L]
 RewriteRule AssignRoles role_member-list.php [L]
