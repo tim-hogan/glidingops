@@ -92,7 +92,8 @@ var DailySheet = function() {
         if (null == check) {
             var tp = "d" + iRow;
             var strtp = document.getElementById(tp).value;
-            myPublic.addrowdata(nextRow, 'l' + launchTypes.winch, "", strtp, "", "", "0", "0", "0", "", "", "", "0");
+            var vector = document.getElementById(`vector-${iRow}`).value;
+            myPublic.addrowdata(nextRow, 'l' + launchTypes.winch, "", vector, strtp, "", "", "0", "0", "0", "", "", "", "0");
             nextRow++;
         }
     }
@@ -115,7 +116,7 @@ var DailySheet = function() {
         }, 0);
     }
 
-    myPublic.addrowdata = function(id, plane, glider, towy, p1, p2, start, towland, land, height, charges, comments, del) {
+    myPublic.addrowdata = function(id, plane, glider, vector, towy, p1, p2, start, towland, land, height, charges, comments, del) {
         console.log("Add row data plane = " + plane);
         var sel;
         var table = document.getElementById("t1");
@@ -133,6 +134,11 @@ var DailySheet = function() {
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
+        var vectorCell = row.insertCell(3);
+        vectorCell.innerHTML = "<input type='text' name='vector[]' class='upper ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' maxlength='3' size='4' onchange='fieldchange(this)'>";
+        vectorCell.firstChild.setAttribute("id", "vector-" + nextRow);
+        vectorCell.firstChild.setAttribute("value", vector);
+
         //New towpilot code
 
         var isWinch = (plane == 'l' + launchTypes.winch)
@@ -140,17 +146,17 @@ var DailySheet = function() {
         var rootTag = isWinch ? 'wdrivers' : 'tpilots'
 
         var launchOperatorSelect = new LaunchOperator("towpilot", "d" + nextRow, xml, rootTag, towy, "new")
-        addComboCell(row, 3, launchOperatorSelect, {classes: 'wide'});
+        addComboCell(row, 4, launchOperatorSelect, {classes: 'wide'});
 
         pic = new MemberSelect("pic", "e" + nextRow, p1, "new");
-        addComboCell(row, 4, pic, {classes: 'wide'});
+        addComboCell(row, 5, pic, {classes: 'wide'});
         membersFields.push(pic)
 
         p2  = new MemberSelect("p2",  "f" + nextRow, p2, "Trial");
-        addComboCell(row, 5, p2,  {classes: 'wide'});
+        addComboCell(row, 6, p2,  {classes: 'wide'});
         membersFields.push(p2)
 
-        var r6 = row.insertCell(6);
+        var r6 = row.insertCell(7);
         if (parseInt(start) == 0) {
             r6.innerHTML = "<button name='start[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='DailySheet.startbutton(this)'>Start</button>";
             r6.firstChild.setAttribute("id", "g" + nextRow);
@@ -169,7 +175,7 @@ var DailySheet = function() {
             r6.firstChild.setAttribute("id", "g" + nextRow);
         }
 
-        var nextCol = 7;
+        var nextCol = 8;
         //Tow charging based on time code follows
         if (towChargeType == 2) {
             var r13 = row.insertCell(nextCol);

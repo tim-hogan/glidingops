@@ -1061,6 +1061,7 @@ function StartUp()
   setInterval(poll,1000);
 
   var bUpdServer = 0;
+  var lastVector = "";
   var lastTowPilot="";
   var lxml=null;
   if(typeof(Storage) !== "undefined")
@@ -1129,6 +1130,8 @@ function StartUp()
     var vplane = strNodeValue(grplist[k].getElementsByTagName("plane")[0].childNodes[0]);
 
     var vglider = strNodeValue(grplist[k].getElementsByTagName("glider")[0].childNodes[0]);
+    var vVector = "03";
+    lastVector = vVector;
     var vtow = strNodeValue(grplist[k].getElementsByTagName("towpilot")[0].childNodes[0]);
     lastTowPilot=vtow;
     var vp1 = strNodeValue(grplist[k].getElementsByTagName("p1")[0].childNodes[0]);
@@ -1140,12 +1143,12 @@ function StartUp()
                 var vcharge = grplist[k].getElementsByTagName("charges")[0].childNodes[0].nodeValue;
     var vcomments = strNodeValue(grplist[k].getElementsByTagName("comments")[0].childNodes[0]);
     var vdel = strNodeValue(grplist[k].getElementsByTagName("del")[0].childNodes[0]);
-    DailySheet.addrowdata(vid,vplane,vglider,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
+    DailySheet.addrowdata(vid,vplane,vglider,vVector,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
     nextRow++
 
       }
   }
-  DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastTowPilot,"","","0","0","0","","","","0");
+  DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastVector,lastTowPilot,"","","0","0","0","","","","0");
   nextRow++;
 
   if (bUpdServer == 1)
@@ -1186,7 +1189,8 @@ function AddNewLine()
 {
    var iRow = (nextRow-1);
    var strtp = document.getElementById("d" + iRow).value;
-   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",strtp,"","","0","0","0","","","","0");
+   var vector = document.getElementById(`vector-${iRow}`).value;
+   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",vector,strtp,"","","0","0","0","","","","0");
    nextRow++;
 }
 
@@ -1207,6 +1211,7 @@ function AddNewLine()
 <th>SEQ</th>
 <th>LAUNCH</th>
 <th>GLIDER</th>
+<th>VECTOR</th>
 <th>TOW PILOT<br/>WINCH DRIVER</th>
 <th>PIC</th>
 <th>P2</th>
