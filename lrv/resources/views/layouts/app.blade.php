@@ -4,9 +4,11 @@
   <meta name="viewport" content="initial-scale=1.0">
 
   <head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     {{-- styles --}}
     @stack('styles')
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     {{-- scripts --}}
     @stack('scripts')
   </head>
