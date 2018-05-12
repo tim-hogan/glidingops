@@ -223,6 +223,10 @@ mysqli_close($con);
 
 echo "var updseq=" . $udpver . ";";
 echo "var server_updseq = updseq;";
+$allVectors = App\Models\Vector::forLocation('Papawai')->get()->map(function ($vector) {
+  return $vector->designation;
+})
+
 ?>
 var datestring = "<?php echo $dateTime->format('Ymd');?>";
 <?php $tnow=time()*1000;$strnow =(string)$tnow;?>
@@ -230,6 +234,7 @@ var fxml="<timesheet><newassocs></newassocs><date>" + "<?php echo $dateStr;?>" +
 var towpilotxml = "<tpilots>" + "<?php echo $pilots;?>" + "</tpilots>";
 var winchdriverxml = "<wdrivers>" + "<?php echo $winchdrivers;?>" + "</wdrivers>";
 var allmembers = "<allmembers>" + "<?php echo $members;?>" + "</allmembers>";
+var allVectors = [<?=$allVectors->map(function ($v) { return "\"{$v}\""; })->implode(",")?>];
 var chargeopts = "<?php echo $chargeopts;?>";
 var towplanes = "<?php echo $towplanes;?>";
 var pollcnt=0;
