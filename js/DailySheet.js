@@ -141,18 +141,21 @@ var DailySheet = function() {
         }
         var vectorCell = row.insertCell(3);
         var id = `vector-${nextRow}`
+        var menu = (allVectors.length !== 0) ?
+`<div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-th-list"></span></button>
+    <ul class="dropdown-menu">
+        ${options}
+    </ul>
+</div><!-- /btn-group -->` : ''
+
         vectorCell.innerHTML =
 `<div class="input-group">
   <input type='text' id='${id}'
         class='form-control upper ui-corner-all ui-widget ui-widget-content'
         style='padding: 4px; min-width: 30px' maxlength='3'
         name='vector[]' size='3' onchange='fieldchange(this, ${nextRow})' value='${vector}'>
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
-    <ul class="dropdown-menu">
-      ${options}
-    </ul>
-  </div><!-- /btn-group -->
+  ${menu}
 </div><!-- /input-group -->`
         $(vectorCell).find('li > a').click(function(e) {
             var newVector = $(e.target).data('value')

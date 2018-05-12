@@ -230,7 +230,7 @@ mysqli_close($con);
 
 echo "var updseq=" . $udpver . ";";
 echo "var server_updseq = updseq;";
-$allVectors = App\Models\Vector::forLocation('Papawai')->get()->map(function ($vector) {
+$allVectors = App\Models\Vector::forLocation($location)->get()->map(function ($vector) {
   return $vector->designation;
 })
 

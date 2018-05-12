@@ -3,18 +3,18 @@
 include 'helpers.php';
 include 'timehelpers.php';
 $org=0;
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
     echo "<p>Unable to connect to database</p>";
     exit();
-} 
+}
 $DEBUG=0;
 $diagtext="";
-$flightTypeGlider = getGlidingFlightType($con); 
-$flightTypeCheck = getCheckFlightType($con); 
-$flightTypeRetrieve = getRetrieveFlightType($con); 
+$flightTypeGlider = getGlidingFlightType($con);
+$flightTypeCheck = getCheckFlightType($con);
+$flightTypeRetrieve = getRetrieveFlightType($con);
 
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
@@ -92,10 +92,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   echo "<h1>Daily Time Sheet for: ";
   echo $dateTime->format('d/m/Y');
   echo "</h1>";
-  
 
-  echo "<table><tr><th>SEQ</th><th>TOWPLANE</th><th>GLIDER</th><th>TOW PILOT</th><th>PIC</th><th>P2</th><th>DURATION</th><th>TOW HEIGHT</th><th>CHARGE</th><th>COMMENTS</th>";
-  $sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.location , flights.type, flights.start, flights.land from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f ON f.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " order by flights.seq ASC";
+
+  echo "<table><tr><th>SEQ</th><th>TOWPLANE</th><th>GLIDER</th><th>Vector</th><th>TOW PILOT</th><th>PIC</th><th>P2</th><th>DURATION</th><th>TOW HEIGHT</th><th>CHARGE</th><th>COMMENTS</th>";
+  $sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.location , flights.type, flights.start, flights.land, flights.vector from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f ON f.id = flights.launchtype where flights.org = ".$org." and flights.localdate=" . $dateStr . " order by flights.seq ASC";
   $diagtext .= $sql . "<br>";
   $r = mysqli_query($con,$sql);
   $rownum = 0;
@@ -115,15 +115,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	     echo "<td>";echo $row[12];echo "</td>";
    }
    echo "<td>";echo $row[2];echo "</td>";
+   echo "<td>";echo $row[18];echo "</td>";
    echo "<td>";echo $row[3];echo "</td>";
    echo "<td>";echo $row[4];echo "</td>";
    echo "<td>";echo $row[5];echo "</td>";
    $duration = intval($row[6] / 1000);
    $hours = intval($duration / 3600);
    $mins = intval(($duration % 3600) / 60);
-   $timeval = sprintf("%02d:%02d",$hours,$mins);    
+   $timeval = sprintf("%02d:%02d",$hours,$mins);
    echo "<td class='right'>";echo $timeval;echo "</td>";
-   
+
    if ($towluanch == $row[13] && $row[15] == $flightTypeGlider)
    {
       echo "<td class='right'>";echo $row[7];echo "</td>";
@@ -141,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    {     $q1 = "SELECT name FROM billingoptions where id = " . $row[8];
   	$r1 = mysqli_query($con,$q1);
         $row2 = mysqli_fetch_array($r1);
-        if ($row2) 
+        if ($row2)
            echo $row2[0];
    }
    echo "</td>";
@@ -159,7 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
          echo " ";
      echo "Retrieve";
   }     echo "</td>";
- } 
+ }
  echo "</table>";
  echo "<p></p>";
  echo "<button onclick='printit()' id='print-button'>Print Sheet</button>";

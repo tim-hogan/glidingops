@@ -32,7 +32,7 @@ $org=0;
 $diagtext="";
 $dateStr = '';
 $dateStr2='';
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
@@ -51,8 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
  $dateTimeZone = new DateTimeZone(orgTimezone($con,$org));
  $dateTime = new DateTime("now", $dateTimeZone);
  $dateStr = $dateTime->format('Ymd');
- $dateStr2=$dateTime->format('d/m/Y'); 
- 
+ $dateStr2=$dateTime->format('d/m/Y');
+
  if(isset($_GET['date']))
  {
   $dateStr=$_GET['date'];
@@ -63,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
 <?php
 
 $towlaunch = getTowLaunchType($con);
-$flightTypeGlider = getGlidingFlightType($con); 
-$flightTypeCheck = getCheckFlightType($con); 
-$flightTypeRetrieve = getRetrieveFlightType($con); 
+$flightTypeGlider = getGlidingFlightType($con);
+$flightTypeCheck = getCheckFlightType($con);
+$flightTypeRetrieve = getRetrieveFlightType($con);
 $orgname = getOrganisationName($con,$org);
 $towChargeType = getTowChargeType($con,$org);
 
@@ -155,7 +155,7 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
           $start_time = ($start_ts == 0) ? "" : $start->format('G:i:s');
           $land_time = ($land_ts == 0) ? "" : $land->format('G:i:s');
           $tr .= "<td class='right' style='padding-left:5px;'>".$start_time."</td>";
-          $tr .= "<td class='right' style='padding-left:5px;'>".$land_time."</td>";          
+          $tr .= "<td class='right' style='padding-left:5px;'>".$land_time."</td>";
 
 	  if ($towChargeType==1)
           {
@@ -166,7 +166,7 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
           }
 	  $tr .= "<td class='right'>".$row2[5]."</td>";
           $tr .= "<td class='right'>";
-          if ($row2[6] == $row[0])         
+          if ($row2[6] == $row[0])
           {
               if ($row2[7] > 0)
               {
@@ -209,6 +209,7 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
 <th>SEQ</th>
 <th>TOWPLANE</th>
 <th>GLIDER</th>
+<th>VECTOR</th>
 <th>TOW PILOT</th>
 <th>PIC</th>
 <th>P2</th>
@@ -217,7 +218,7 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
 <th>CHARGE</th>
 <th>COMMENTS</th>
 <?php
-$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
+$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type, flights.vector from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
 $diagtext .= $sql . "<br>";
 $r = mysqli_query($con,$sql);
 $rownum = 0;
@@ -235,13 +236,14 @@ while ($row = mysqli_fetch_array($r) )
      echo "<td>";echo $row[12];echo "</td>";
   }
   echo "<td>";echo $row[2];echo "</td>";
+  echo "<td>";echo $row[15];echo "</td>";
   echo "<td>";echo $row[3];echo "</td>";
   echo "<td>";echo $row[4];echo "</td>";
   echo "<td>";echo $row[5];echo "</td>";
   $duration = intval($row[6] / 1000);
   $hours = intval($duration / 3600);
   $mins = intval(($duration % 3600) / 60);
-  $timeval = sprintf("%02d:%02d",$hours,$mins);    
+  $timeval = sprintf("%02d:%02d",$hours,$mins);
   echo "<td class='right'>";echo $timeval;echo "</td>";
   if ($row[13] == $towlaunch && $row[14] == $flightTypeGlider)
   {
@@ -260,7 +262,7 @@ while ($row = mysqli_fetch_array($r) )
   {     $q1 = "SELECT name FROM billingoptions where id = " . $row[8];
   	$r1 = mysqli_query($con,$q1);
         $row2 = mysqli_fetch_array($r1);
-        if ($row2) 
+        if ($row2)
            echo $row2[0];
   }
   echo "</td>";
@@ -277,7 +279,7 @@ while ($row = mysqli_fetch_array($r) )
      if (strlen($row[11]) > 0)
          echo " ";
      echo "Retrieve";
-  }  
+  }
   echo "</td>";
 }
 ?>
