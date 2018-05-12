@@ -150,6 +150,7 @@ $role_tow = getRoleId($con,'Tow Pilot');
    $launchtype = $flight->getElementsByTagName('launchtype')->item(0)->nodeValue;
    $plane = $flight->getElementsByTagName('plane')->item(0)->nodeValue;
    $glid = $flight->getElementsByTagName('glider')->item(0)->nodeValue;
+   $vector = $flight->getElementsByTagName('vector')->item(0)->nodeValue;
    $towp = $flight->getElementsByTagName('towpilot')->item(0)->nodeValue;
    $townum = tranlateid($flight->getElementsByTagName('towpilot')->item(0)->nodeValue);
    $p1num = tranlateid($flight->getElementsByTagName('p1')->item(0)->nodeValue);
@@ -242,7 +243,7 @@ $role_tow = getRoleId($con,'Tow Pilot');
    if ($row_cnt > 0)
    {
 
-      //We all ready have a record so need to update it
+      //We already have a record so need to update it
       $q3= "UPDATE flights SET org=" . $org . ",localdate='" . $dateStr . "',location='" . $location . "',seq='" . $seq . "',type='" . $flightType . "',launchtype=";
 
       if ($launchtype == '0' || $launchtype == 0)
@@ -257,7 +258,7 @@ $role_tow = getRoleId($con,'Tow Pilot');
       else
          $q3 .= $plane;
 
-      $q3 .= ",glider='" . $glid  . "',towpilot=";
+      $q3 .= ",glider='${glid}',vector='${vector}',towpilot=";
 
       if ($townum =="null")
         $q3 .= "null";
@@ -309,13 +310,13 @@ $role_tow = getRoleId($con,'Tow Pilot');
    {
 
       //We create the record
-      $q3 = "INSERT INTO flights (org,localdate,location,seq,type,updseq,launchtype,towplane,glider,towpilot,pic,p2,start,towland,land,height,billing_option,billing_member1,billing_member2,comments,deleted) VALUES (".$org.",'" . $dateStr . "','" . $location . "','" . $seq . "','" . $flightType . "','" . $updseq  . "'," . $launchtype  . ",";
+      $q3 = "INSERT INTO flights (org,localdate,location,seq,type,updseq,launchtype,towplane,glider,vector,towpilot,pic,p2,start,towland,land,height,billing_option,billing_member1,billing_member2,comments,deleted) VALUES (".$org.",'" . $dateStr . "','" . $location . "','" . $seq . "','" . $flightType . "','" . $updseq  . "'," . $launchtype  . ",";
       if ($plane=='0' || $plane == 0)
           $q3 .= "null";
       else
         $q3 .= $plane ;
 
-      $q3 .= ",'" . $glid  . "',";
+      $q3 .= ",'${glid}', '${vector}',";
 
      if ($townum =="null")
         $q3 .= "null";
