@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -44,6 +45,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof AuthorizationException) {
+            return $this->unauthorized($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 
@@ -61,5 +66,14 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest('/Login.php');
+    }
+
+    protected function unauthorized($request, AuthorizationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Unauthorized.'], 403);
+        }
+
+        return redirect()->guest('/app/notAllowed');
     }
 }

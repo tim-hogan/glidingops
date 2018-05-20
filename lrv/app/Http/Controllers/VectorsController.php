@@ -19,6 +19,8 @@ class VectorsController extends Controller
      */
     public function index()
     {
+        $this->authorize('index', Vector::class);
+
         $user = Auth::user();
         $vectors = $user->organisation->vectors();
         $locationFilter = Input::get('location');
@@ -47,6 +49,8 @@ class VectorsController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store', Vector::class);
+
         $user = Auth::user();
 
         // validate
@@ -109,6 +113,8 @@ class VectorsController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('destroy', Vector::class);
+
         // delete
         $vector = Vector::find($id);
         $vector->delete();
