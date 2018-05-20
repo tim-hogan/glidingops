@@ -19,7 +19,7 @@
       DEVELOPMENT MODE
     </div>
 @endif
-
+  <a href='/home'>HOME</a>
   @yield('content')
 
   </body>
