@@ -412,8 +412,24 @@ xmlhttp.onreadystatechange = function ()
             nnam.appendChild(memDoc.createTextNode(disp));
             member.appendChild(nnam);
             allmembers = xml2Str(memDoc);
-            console.log("Update allmembers list " + allmembers);
+            DailySheet.refreshMembers()
 
+            // update the flights in the xmlDoc
+            let flights = xmlDoc.getElementsByTagName("flights")[0].childNodes
+            flights.forEach(function(flight) {
+              let p1 = flight.getElementsByTagName("p1")[0]
+              let p2 = flight.getElementsByTagName("p2")[0]
+
+              if(p1.childNodes[0] && p1.childNodes[0].nodeValue === tid) {
+                updatenode(xmlDoc, p1, id)
+              }
+              if(p2.childNodes[0] && p2.childNodes[0].nodeValue === tid) {
+                updatenode(xmlDoc, p2, id)
+              }
+            })
+            if (locstore ==1){
+              localStorage.setItem(datestring, xml2Str(xmlDoc))
+            }
 
             //Delete this node form the update required
             var newassocnode = xmlDoc.getElementsByTagName("newassocs")[0].childNodes;
