@@ -94,7 +94,7 @@
     @if ($towChargeType->isTimeBased())
       <th>TOW LAND</th>
     @endif
-    <th>LAND</th>
+      <th>LAND</th>
     @if ($towChargeType->isTimeBased())
       <th>TOW DURATION</th>
     @endif

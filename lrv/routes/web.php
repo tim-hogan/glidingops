@@ -16,6 +16,7 @@
 // });
 
 Route::match(['get', 'post'], '/allFlightsReport', ['uses' => 'FlightsController@allFlightsReport'])->name('flights.allFlightsReport');
+Route::match(['get'], '/userRolesStatsReport', ['uses' => 'UsersController@userRolesStatsReport'])->name('users.userRolesStatsReport');
 
 Route::resources([
   'vectors' => 'VectorsController'
