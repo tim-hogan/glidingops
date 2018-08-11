@@ -158,6 +158,8 @@ if ($_SESSION['security'] >= 1)
   if (($_SESSION['security'] & 1))
      echo "<p class='u'><a href='/app/allFlightsReport'>All Flights Report</a></p>";
   if (($_SESSION['security'] & 24))
+     echo "<p class='u'><a href='/app/reports/membersRolesStatsReport'>Members roles Report</a></p>";
+  if (($_SESSION['security'] & 24))
      echo "<p class='u'><a href='Instructors.php'>Instructors Report</a></p>";
   if (($_SESSION['security'] & 24))
      echo "<p class='u'><a href='MedicalBfr.php'>Medical/BFR Report</a></p>";

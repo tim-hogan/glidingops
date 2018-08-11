@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MembershipStatus extends Model
 {
+  const STATUS_NAME_ACTIVE = 'Active';
+
   /**
    * The table associated with the model.
    *
@@ -22,6 +24,6 @@ class MembershipStatus extends Model
 
   public static function activeStatus()
   {
-    return MembershipStatus::where('status_name', 'Active')->firstOrFail();
+    return MembershipStatus::where('status_name', self::STATUS_NAME_ACTIVE)->firstOrFail();
   }
 }

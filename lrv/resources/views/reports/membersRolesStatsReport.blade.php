@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
-  <style>
-  </style>
+  <link href="{{ asset('app/css/report.css') }}" rel="stylesheet">
 @endpush
 
 
@@ -14,12 +13,14 @@
 @section('content')
   <h2>Roles/Roster report</h2>
   <table>
-    <tr>
-      <th>User/Role</th>
-      @foreach(array_values($roleNames) as $roleName)
-        <th>{{$roleName}}</th>
-      @endforeach
-    </tr>
+    <thead>
+      <tr>
+        <th>User/Role</th>
+        @foreach(array_values($roleNames) as $roleName)
+          <th>{{$roleName}}</th>
+        @endforeach
+      </tr>
+    </thead>
 
     @php
       $currentMember = new stdClass();
