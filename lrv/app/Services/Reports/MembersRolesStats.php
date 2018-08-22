@@ -14,7 +14,7 @@ use stdClass;
 class MembersRolesStats
 {
   public static function build($user, $org) {
-    $roleNames = [
+    $roleNames = new Collection([
       Role::ROLE_AB_CAT_INSTRUCTOR,
       Role::ROLE_C_CAT_INSTRUCTOR,
       Role::ROLE_WINCH_DRIVER,
@@ -22,13 +22,16 @@ class MembersRolesStats
       Role::ROLE_ENGINEER,
       Role::ROLE_TOW_PILOT,
       Role::ROLE_CMT
-    ];
+    ]);
 
     $roleCountSql = DB::table('members')
       ->select('members.id AS memberId', DB::raw('count(member_roles.id) as roleCount'))
       ->leftJoin('role_member AS member_roles', 'member_roles.member_id', '=', 'members.id')
       ->leftJoin('roles AS roles', 'roles.id', '=', 'member_roles.role_id')
-      ->whereIn('roles.name', $roleNames)
+      ->where(function($query) use ($roleNames) {
+        $query->whereIn('roles.name', $roleNames)
+              ->orWhere('roles.name', NULL);
+      })
       ->where('members.org', $org)
       ->groupBy('members.id');
 
@@ -49,10 +52,10 @@ class MembersRolesStats
     $membersWithRoles = $byMemberId->map(function($rows, $id){
       $member = new stdClass();
       $member->id = $id;
-      $member->roles = [];
+      $member->roles = new Collection([]);
       $rows->each(function($item) use ($member) {
         $member->displayname = $item->displayname;
-        $member->roles[] = $item->roleName;
+        $member->roles->push($item->roleName);
       });
 
       $member->roles = self::regroupRoles($member->roles);
@@ -65,8 +68,8 @@ class MembersRolesStats
     ];
   }
 
-  private static function regroupRoles($roles) {
-    return (new Collection($roles))->map(function ($roleName) {
+  private static function regroupRoles($rolesCollection) {
+    return $rolesCollection->map(function ($roleName) {
       switch ($roleName) {
         case Role::ROLE_AB_CAT_INSTRUCTOR:
         case Role::ROLE_C_CAT_INSTRUCTOR:
