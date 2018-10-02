@@ -87,13 +87,14 @@ else
  die("Please logon");
 }
 ?>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <div id='divhdr'>
 <form id='inform' method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <h2>Engineers Report</h2>
 <table>
 <tr><td>Choose Aircraft</td><td>
 <select name='glider' id='glider'>
-<?php 
+<?php
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
@@ -104,7 +105,7 @@ $q="SELECT id,rego_short from aircraft where aircraft.org = ".$_SESSION['org']."
 $r = mysqli_query($con,$q);
 while ($row = mysqli_fetch_array($r))
 {
-   echo "<option value='" .$row[1]."'>".$row[1]."</option>";	
+   echo "<option value='" .$row[1]."'>".$row[1]."</option>";
 }
 mysqli_close($con);
 ?>
@@ -121,8 +122,8 @@ mysqli_close($con);
 $DEBUG=1;
 $diagtext="";
 if ($_SERVER["REQUEST_METHOD"] == "POST")
-{	
-  
+{
+
   $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
   if (mysqli_connect_errno())
   {
@@ -136,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   $dateEnd2 = substr($strDateTo,0,4) . substr($strDateTo,5,2) . substr($strDateTo,8,2);
 
   echo "<h2>Flight Data For " .$_POST['glider'] . "</h2>";
-  
+
   echo "<table><tr><th>DATE</th><th>FLIGHT DURATION</th><th>LAUNCH TYPE</th></tr>";
   $totalcnt = 0;
   $totaltime = 0;
@@ -158,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   	  $timeval = sprintf("%02d:%02d",$hours,$mins);
           echo "<td class='right'>";
 	  echo $timeval;
-          
+
           echo "</td>";
           echo "<td>" . $row[2] . "</td>";
           echo "</tr>";
@@ -173,7 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   echo $totalcnt;
   echo "</td></tr>";
   echo "</table>";
-  
+
   echo "<button onclick='printit()' id='print-button'>Print Report</button>";
 
   mysqli_close($con);

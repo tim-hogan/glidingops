@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+class MemberTest extends TestCase
+{
+    public function testBirthdayDate()
+    {
+        $member = factory(App\Models\Member::class)->make([
+            'date_of_birth' => '1915-05-30',
+        ]);
+
+        $now = new DateTime('1920-05-29 00:00:00', new DateTimeZone('UTC'));
+        $this->assertEquals(4, $member->age($now));
+
+        $now = new DateTime('1920-05-30 00:00:00', new DateTimeZone('UTC'));
+        $this->assertEquals(5, $member->age($now));
+    }
+
+    public function testIsJunior()
+    {
+        $member = factory(App\Models\Member::class)->make([
+            'date_of_birth' => '1915-05-30',
+        ]);
+
+        $now = new DateTime('1935-05-29 00:00:00', new DateTimeZone('UTC'));
+        $this->assertTrue($member->isJunior($now), 'Should be junior until 26 years of age');
+
+        $now = new DateTime('1945-05-30 00:00:00', new DateTimeZone('UTC'));
+        $this->assertFalse($member->isJunior($now), 'Should not be junior after 26 years of age');
+    }
+}

@@ -67,6 +67,7 @@ function s()
 </script>
 </head>
 <body onload='s()'>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php
 if(isset($_SESSION['security']))
 {
