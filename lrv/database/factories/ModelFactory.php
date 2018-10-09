@@ -29,15 +29,75 @@ $factory->define(App\Models\Member::class, function(Faker\Generator $faker) {
     'displayname' => 'test user',
     'date_of_birth' => '1915-05-30',
     'email' => $faker->safeEmail,
-    'organisation' => function() {
-      return factory(App\Models\Organisation::class)->make();
-    }
   ];
 });
 
-$factory->define((App\Models\Organisation::class), function(Faker\Generator $faker){
+$factory->define(App\Models\Organisation::class, function(Faker\Generator $faker){
   return [
     'name' => 'Wellington Gliding Club',
     'timezone' => 'Pacific/Auckland',
+  ];
+});
+
+$factory->define(App\Models\Aircraft::class, function(Faker\Generator $faker){
+  return [
+    // 'org' => int(11) DEFAULT NULL,
+    'registration' => 'ZK-GGR',
+    'rego_short' => 'GGR',
+    // 'type' => 1,
+    'make_model' => 'DG-1000',
+    'seats' => 2,
+    'serial' => '10-95 S 67',
+    'club_glider' => 1,
+    'bookable' => 1,
+    'charge_per_minute' => 1.0,
+    'max_perflight_charge' => 120.,
+    'next_annual' => '2000-01-01 00:00:00',
+    'next_supplementary' => '2000-01-01 00:00:00',
+    'flarm_ICAO' => 'DD51CE',
+    'spot_id' => '',
+  ];
+});
+
+$factory->define(App\Models\Flight::class, function(Faker\Generator $faker){
+  return [
+    'date' => "2018-07-07 22:38:12",
+    'localdate' => 20180708,
+    'location' => 'Papawai',
+    'towplane' => null,
+    'glider' => 'GGR',
+    'towpilot' => null,
+    'start' => 1531019640000,
+    'towland' => null,
+    'land' => 1531019760000,
+    'height' => null,
+    'billing_member1' => null,
+    'billing_member2' => null,
+    'comments' => null,
+    'finalised' => true,
+    'deleted' => false,
+    'vector' => '',
+  ];
+});
+
+$factory->define(App\Models\FlightType::class, function(Faker\Generator $faker){
+  return [
+    'name' => 'Glider',
+  ];
+});
+
+$factory->define(App\Models\LaunchType::class, function(Faker\Generator $faker){
+  return [
+    'name' => "Winch",
+    'acronym' => "W",
+  ];
+});
+
+$factory->define(App\Models\BillingOption::class, function(Faker\Generator $faker){
+  return [
+    'name' => "Charge P2",
+    'bill_pic' => 0,
+    'bill_p2' => 1,
+    'bill_other' => 0,
   ];
 });

@@ -1,14 +1,32 @@
 <?php
 
+namespace App\Models;
+
+use TestCase;
+use DateTime;
+use DateTimeZone;
+
+use App\Models\Member;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MemberTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    private $organisation;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->organisation = factory(Organisation::class)->create();
+    }
+
     public function testBirthdayDate()
     {
-        $member = factory(App\Models\Member::class)->make([
+        $member = factory(Member::class)->create([
+            'org' => $this->organisation->id,
             'date_of_birth' => '1915-05-30',
         ]);
 
@@ -21,7 +39,8 @@ class MemberTest extends TestCase
 
     public function testIsJunior()
     {
-        $member = factory(App\Models\Member::class)->make([
+        $member = factory(Member::class)->create([
+            'org' => $this->organisation->id,
             'date_of_birth' => '1915-05-30',
         ]);
 

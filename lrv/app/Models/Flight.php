@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Aircraft;
 
 class Flight extends Model
 {
@@ -40,9 +41,14 @@ class Flight extends Model
         return $this->belongsTo('App\Models\BillingOption', 'billing_option');
     }
 
-    public function towPlane()
+    public function towAircraft()
     {
         return $this->belongsTo('App\Models\Aircraft', 'towplane');
+    }
+
+    public function gliderAircraft()
+    {
+        return Aircraft::where(['rego_short' => $this->glider, 'org' => $this->org])->first();
     }
 
     public function launchType()
@@ -53,6 +59,11 @@ class Flight extends Model
     public function flightType()
     {
         return $this->belongsTo('App\Models\FlightType', 'type');
+    }
+
+    public function organisation()
+    {
+        return $this->belongsTo('App\Models\Organisation', 'org');
     }
 
     public function getTowlandDate()
