@@ -44,6 +44,11 @@ class Organisation extends Model
         return new DateTimeZone($this->timezone);
     }
 
+    public function charges()
+    {
+        return $this->hasMany('App\Models\Charge', 'org');
+    }
+
     /**
      * If timezone is missing we default to UTC
      */

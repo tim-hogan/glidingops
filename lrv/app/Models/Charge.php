@@ -14,15 +14,19 @@ class Charge extends Model
       return $this->belongsTo('App\Models\Organisation', 'org');
     }
 
-    public static function findByName($chargeName, $location, $organisation, $now = null) {
-      if(is_null($now)) {
-        $now = new DateTime('now', $organisation->timeZone());
+    public function scopeValidAt($query, $dateTime) {
+      return $query->orderBy('validfrom', 'desc')->where('validfrom', '<=', $dateTime);
+    }
+
+    public static function findByName($chargeName, $location, $organisation, $dateTime = null) {
+      if(is_null($dateTime)) {
+        $dateTime = new DateTime('now', $organisation->timeZone());
       }
 
       return Charge::where([
         'name' => $chargeName,
         'location' => $location,
         'org' => $organisation->id,
-      ])->orderBy('validfrom', 'desc')->where('validfrom', '<=', $now)->first();
+      ])->validAt($dateTime)->first();
     }
 }

@@ -66,21 +66,21 @@ class Flight extends Model
         return $this->belongsTo('App\Models\Organisation', 'org');
     }
 
-    public function getTowlandDate()
+    public function getTowlandDateTime()
     {
         $date = new \DateTime();
         $date->setTimestamp(intval(floor($this->towland / 1000)));
         return $date;
     }
 
-    public function getStartDate()
+    public function getStartDateTime()
     {
         $date = new \DateTime();
         $date->setTimestamp(intval(floor($this->start / 1000)));
         return $date;
     }
 
-    public function getLandDate()
+    public function getLandDateTime()
     {
         $date = new \DateTime();
         $date->setTimestamp(intval(floor($this->land / 1000)));
@@ -122,8 +122,8 @@ class Flight extends Model
 
     public function hasTracks()
     {
-        $strStart = $this->getStartDate()->format('Y-m-d H:i:s');
-        $strEnd   = $this->getLandDate()->format('Y-m-d H:i:s');
+        $strStart = $this->getStartDateTime()->format('Y-m-d H:i:s');
+        $strEnd   = $this->getLandDateTime()->format('Y-m-d H:i:s');
 
         $tracks = Track::where('glider', $this->glider)
                     ->where('point_time', '>' , $strStart)

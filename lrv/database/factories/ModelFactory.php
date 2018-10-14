@@ -41,7 +41,6 @@ $factory->define(App\Models\Organisation::class, function(Faker\Generator $faker
 
 $factory->define(App\Models\Aircraft::class, function(Faker\Generator $faker){
   return [
-    // 'org' => int(11) DEFAULT NULL,
     'registration' => 'ZK-GGR',
     'rego_short' => 'GGR',
     // 'type' => 1,
