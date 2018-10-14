@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Types\TowChargeType;
 
@@ -37,6 +38,10 @@ class Organisation extends Model
     public function vectors()
     {
         return $this->hasMany(Vector::class);
+    }
+
+    public function timeZone() {
+        return new DateTimeZone($this->timezone);
     }
 
     /**

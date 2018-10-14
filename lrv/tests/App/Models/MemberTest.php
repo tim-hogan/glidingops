@@ -7,8 +7,6 @@ use DateTime;
 use DateTimeZone;
 
 use App\Models\Member;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MemberTest extends TestCase

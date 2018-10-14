@@ -23,6 +23,7 @@ class AccountingTest extends TestCase
   private $glider;
   private $launchtype;
   private $billingOption;
+  private $flight;
 
   protected function setUp()
   {
@@ -43,10 +44,8 @@ class AccountingTest extends TestCase
       'bill_p2' => 1,
       'bill_other' => 0
     ]);
-  }
 
-  public function testChargeP2() {
-    $flight = factory(Flight::class)->create([
+    $this->flight = factory(Flight::class)->create([
       'org' => $this->organisation->id,
       'glider' => 'GGR',
       'launchtype' => $this->launchtype->id,
@@ -58,20 +57,27 @@ class AccountingTest extends TestCase
         return factory(Member::class)->create()->id;
       },
     ]);
+  }
 
-    $charges = Accounting::calcFlightCharges($flight);
+  public function testChargeP2() {
+
+    $charges = Accounting::calcFlightCharges($this->flight);
 
     $this->assertEquals(1, count($charges));
     $this->assertEquals(2, count($charges[0]));
-    $this->assertEquals($flight->p2Member, $charges[0]['member']);
+    $this->assertEquals($this->flight->p2Member, $charges[0]['member']);
     $this->assertEquals(['glider' => 120, 'winchLaunch' => 45], $charges[0]['charges']);
 
-    $flight->land = ($flight->land - 60 * 60);
-    $flight->save();
+    $this->flight->land = ($this->flight->land - 60 * 60);
+    $this->flight->save();
 
-    $flight = $flight->fresh();
+    $this->flight = $this->flight->fresh();
 
-    $charges = Accounting::calcFlightCharges($flight);
+    $charges = Accounting::calcFlightCharges($this->flight);
     $this->assertEquals(['glider' => 60, 'winchLaunch' => 45], $charges[0]['charges']);
+  }
+
+  public function testChargeP2Junior() {
+
   }
 }

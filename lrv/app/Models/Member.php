@@ -59,7 +59,7 @@ class Member extends Model
 
     public function timeZone()
     {
-        return new DateTimeZone($this->organisation->timezone);
+        return $this->organisation->timeZone();
     }
 
     public function birthdayDate()

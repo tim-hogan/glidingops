@@ -101,3 +101,16 @@ $factory->define(App\Models\BillingOption::class, function(Faker\Generator $fake
     'bill_other' => 0,
   ];
 });
+
+$factory->define(App\Models\Charge::class, function(Faker\Generator $faker){
+  return [
+    'name' => "Winch",
+    'location' => "Papawai",
+    'validfrom' => "2016-01-01 00:00:00",
+    'amount' => "45",
+    'every_flight' => 0,
+    'max_once_per_day' => 0,
+    'monthly' => 0,
+    'comments' => "",
+  ];
+});

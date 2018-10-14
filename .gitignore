@@ -4,3 +4,6 @@ lrv/storage
 .env.local
 .env.testing
 maintenance.trigger
+.DS_Store
+vendor/*
+dump.rdb
