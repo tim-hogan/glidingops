@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 
 use App\Services\Reports\MembersRolesStats;
+use App\Services\Reports\Treasurer;
+use App\Models\Organisation;
+use DateTime;
 
 class ReportsController extends Controller
 {
@@ -21,6 +24,24 @@ class ReportsController extends Controller
       $org = $_SESSION['org'];
 
       $report = MembersRolesStats::build($user, $org);
-      return response()->view('reports/membersRolesStatsReport', $report);
+      return response()->view('reports/membersRolesStats', $report);
+    }
+
+    public function treasurerReport(Request $request)
+    {
+      $user = Auth::user();
+      $orgId = $_SESSION['org'];
+      $organisation = Organisation::find($orgId);
+
+      if($request->has('monthYear')){
+        $monthYearDate = new DateTime($request->input("monthYear"));
+      } else {
+        $monthYearDate = (new DateTime('now'))->modify('-1 month');
+      }
+
+      $report = Treasurer::build($user, $organisation, $monthYearDate);
+      $report['monthYear'] = $monthYearDate->format('Y-m');
+
+      return response()->view('reports/treasurer', $report);
     }
 }

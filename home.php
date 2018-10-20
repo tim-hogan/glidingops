@@ -153,12 +153,14 @@ if ($_SESSION['security'] >= 1)
 if ($_SESSION['security'] >= 1)
 {
   echo "<td><h2 class='u'>REPORTS</h2>";
-  if (($_SESSION['security'] & 8))
-     echo "<p class='u'><a href='Treasurer.php'>Treasurer Report</a></p>";
+  if (($_SESSION['security'] & 8)) {
+    echo "<p class='u'><a href='Treasurer.php'>Treasurer Report</a></p>";
+    echo "<p class='u'><a href='/app/reports/treasurer'>Treasurer Report New</a></p>";
+  }
   if (($_SESSION['security'] & 1))
      echo "<p class='u'><a href='/app/allFlightsReport'>All Flights Report</a></p>";
   if (($_SESSION['security'] & 24))
-     echo "<p class='u'><a href='/app/reports/membersRolesStatsReport'>Members roles Report</a></p>";
+     echo "<p class='u'><a href='/app/reports/membersRolesStats'>Members roles Report</a></p>";
   if (($_SESSION['security'] & 24))
      echo "<p class='u'><a href='Instructors.php'>Instructors Report</a></p>";
   if (($_SESSION['security'] & 24))
