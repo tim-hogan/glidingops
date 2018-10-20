@@ -50,7 +50,7 @@ $factory->define(App\Models\Aircraft::class, function(Faker\Generator $faker){
     'club_glider' => 1,
     'bookable' => 1,
     'charge_per_minute' => 1.0,
-    'max_perflight_charge' => 120.,
+    'max_perflight_charge' => 120,
     'next_annual' => '2000-01-01 00:00:00',
     'next_supplementary' => '2000-01-01 00:00:00',
     'flarm_ICAO' => 'DD51CE',

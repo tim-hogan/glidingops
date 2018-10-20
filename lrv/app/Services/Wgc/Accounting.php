@@ -15,8 +15,7 @@ class Accounting
 
   public static function calcFlightCharges($flight)
   {
-    $charges = [
-    ];
+    $charges = [];
 
     $gliderAircraft = $flight->gliderAircraft();
     if(!$gliderAircraft) {

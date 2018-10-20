@@ -150,4 +150,13 @@ class AccountingTest extends TestCase
     $this->assertEquals(2, count($charges[0]));
     $this->assertEquals(40, $charges[0]['charges']['winchLaunch']);
   }
+
+  public function testItCapsFlyingTimeToMaxPerFlightCharge() {
+    $this->glider->max_perflight_charge = 30;
+    $this->glider->save();
+    $this->glider = $this->glider->fresh();
+
+    $charges = Accounting::calcFlightCharges($this->flight);
+    $this->assertEquals(30, $charges[0]['charges']['glider']);
+  }
 }
