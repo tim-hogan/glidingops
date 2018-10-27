@@ -15,26 +15,36 @@ class Accounting
 
   public static function calcFlightCharges($flight)
   {
-    $charges = [];
-
-    $gliderAircraft = $flight->gliderAircraft();
-    if(!$gliderAircraft) {
-      throw new \Exception("Glider {$flight->glider} not found.");
-    }
+    $result = [
+      'warnings' => [],
+      'flight' => $flight,
+      'memberCharges' => []
+    ];
 
     $memberToCharge = $flight->p2Member;
     if($flight->billingOption->name == BillingOption::CHARGE_PIC) {
       $memberToCharge = $flight->picMember;
     }
 
-    $charges['glider'] = self::calcGliderCharge($flight, $gliderAircraft, $memberToCharge);
+    if(!$memberToCharge) {
+      $result['warnings'][] = "Could not decide on which member to charge for billing option: {$flight->billingOption->name}";
+      return $result;
+    }
+
+    $charges = [];
+
+    $gliderAircraft = $flight->gliderAircraft();
+    if($gliderAircraft && $gliderAircraft->isClubGlider()) {
+      $charges['glider'] = self::calcGliderCharge($flight, $gliderAircraft, $memberToCharge);
+    }
+
     if($flight->launchType == LaunchType::winchLaunchType()) {
       $charges['winchLaunch'] = self::calcWinchCharge($flight, $memberToCharge);
     }
 
-    return [
-      ['member' => $flight->p2Member, 'charges' => $charges]
-    ];
+    $result['memberCharges'][] = ['member' => $flight->p2Member, 'charges' => $charges];
+
+    return $result;
   }
 
   private static function calcWinchCharge($flight, $memberToCharge)
@@ -55,7 +65,7 @@ class Accounting
     }
     $gliderCharge = self::fetchCharge($chargeName, $flight);
 
-    $flightDuration = $flight->getFlightDuration();
+    $flightDuration = $flight->getFlightDuration() / 60.0;
     $minutes = min($flightDuration, $gliderAircraft->max_perflight_charge);
 
     return $minutes * $gliderCharge->amount;

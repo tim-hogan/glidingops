@@ -68,7 +68,7 @@ $factory->define(App\Models\Flight::class, function(Faker\Generator $faker){
     'towpilot' => null,
     'start' => 1531019640000,
     'towland' => null,
-    'land' => 1531019760000,
+    'land' => 1531026840000,
     'height' => null,
     'billing_member1' => null,
     'billing_member2' => null,

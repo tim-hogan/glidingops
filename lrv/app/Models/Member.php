@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DateTime;
 use DateTimeZone;
+use App\Exceptions\InvalidPropertyException;
 
 class Member extends Model
 {
@@ -65,6 +66,10 @@ class Member extends Model
     public function birthdayDate()
     {
         $birth_date = DateTime::createFromFormat('Y-m-d', $this->date_of_birth);
+        if(!$birth_date) {
+            throw new InvalidPropertyException('birthdayDate');
+        }
+
         $birth_date->setTime(0,0,0);
         $birth_date->setTimeZone($this->timeZone());
 
@@ -83,6 +88,13 @@ class Member extends Model
 
     public function isJunior($now = null)
     {
-        return ($this->age($now) < 26);
+        try {
+            return ($this->age($now) < 26);
+        } catch(InvalidPropertyException $pe) {
+            if($pe->getPropertyName() == 'birthdayDate') {
+                return false;
+            }
+            throw $pe;
+        }
     }
 }

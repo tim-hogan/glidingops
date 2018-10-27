@@ -111,19 +111,19 @@ class AccountingTest extends TestCase
     $this->assertFalse($this->flight->p2Member->isJunior($this->dateTime));
     $charges = Accounting::calcFlightCharges($this->flight);
 
-    $this->assertEquals(1, count($charges));
-    $this->assertEquals(2, count($charges[0]));
-    $this->assertEquals($this->flight->p2Member, $charges[0]['member']);
-    $this->assertEquals(['glider' => 120, 'winchLaunch' => 45], $charges[0]['charges']);
+    $this->assertEquals(1, count($charges['memberCharges']));
+    $this->assertEquals(2, count($charges['memberCharges'][0]));
+    $this->assertEquals($this->flight->p2Member, $charges['memberCharges'][0]['member']);
+    $this->assertEquals(['glider' => 120, 'winchLaunch' => 45], $charges['memberCharges'][0]['charges']);
 
-    $this->flight->land = ($this->flight->land - 60 * 60);
+    $this->flight->land = ($this->flight->land - 60 * 60 * 1000);
     $this->flight->save();
 
     $this->flight = $this->flight->fresh();
 
     $charges = Accounting::calcFlightCharges($this->flight);
-    $this->assertEquals($this->flight->p2Member, $charges[0]['member']);
-    $this->assertEquals(['glider' => 60, 'winchLaunch' => 45], $charges[0]['charges']);
+    $this->assertEquals($this->flight->p2Member, $charges['memberCharges'][0]['member']);
+    $this->assertEquals(['glider' => 60, 'winchLaunch' => 45], $charges['memberCharges'][0]['charges']);
   }
 
   public function testChargeP2Junior() {
@@ -135,10 +135,10 @@ class AccountingTest extends TestCase
 
     $charges = Accounting::calcFlightCharges($this->flight);
 
-    $this->assertEquals(1, count($charges));
-    $this->assertEquals(2, count($charges[0]));
-    $this->assertEquals($this->flight->p2Member, $charges[0]['member']);
-    $this->assertEquals(['glider' => 60, 'winchLaunch' => 25], $charges[0]['charges']);
+    $this->assertEquals(1, count($charges['memberCharges']));
+    $this->assertEquals(2, count($charges['memberCharges'][0]));
+    $this->assertEquals($this->flight->p2Member, $charges['memberCharges'][0]['member']);
+    $this->assertEquals(['glider' => 60, 'winchLaunch' => 25], $charges['memberCharges'][0]['charges']);
   }
 
   public function testUsesWinchCharge() {
@@ -146,9 +146,9 @@ class AccountingTest extends TestCase
     $this->winchCharge->save();
 
     $charges = Accounting::calcFlightCharges($this->flight);
-    $this->assertEquals(1, count($charges));
-    $this->assertEquals(2, count($charges[0]));
-    $this->assertEquals(40, $charges[0]['charges']['winchLaunch']);
+    $this->assertEquals(1, count($charges['memberCharges']));
+    $this->assertEquals(2, count($charges['memberCharges'][0]));
+    $this->assertEquals(40, $charges['memberCharges'][0]['charges']['winchLaunch']);
   }
 
   public function testItCapsFlyingTimeToMaxPerFlightCharge() {
@@ -157,6 +157,6 @@ class AccountingTest extends TestCase
     $this->glider = $this->glider->fresh();
 
     $charges = Accounting::calcFlightCharges($this->flight);
-    $this->assertEquals(30, $charges[0]['charges']['glider']);
+    $this->assertEquals(30, $charges['memberCharges'][0]['charges']['glider']);
   }
 }

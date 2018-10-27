@@ -19,4 +19,8 @@ class Aircraft extends Model
    * @var bool
    */
   public $timestamps = false;
+
+  public function isClubGlider(){
+    return $this->club_glider > 0;
+  }
 }

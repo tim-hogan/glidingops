@@ -27,21 +27,29 @@ class ReportsController extends Controller
       return response()->view('reports/membersRolesStats', $report);
     }
 
-    public function treasurerReport(Request $request)
-    {
-      $user = Auth::user();
-      $orgId = $_SESSION['org'];
-      $organisation = Organisation::find($orgId);
-
+    public function treasurerReportNew(Request $request) {
       if($request->has('monthYear')){
         $monthYearDate = new DateTime($request->input("monthYear"));
       } else {
         $monthYearDate = (new DateTime('now'))->modify('-1 month');
       }
 
-      $report = Treasurer::build($user, $organisation, $monthYearDate);
-      $report['monthYear'] = $monthYearDate->format('Y-m');
+      return response()->view('reports/treasurer', ['monthYear' => $monthYearDate->format('Y-m')]);
+    }
 
-      return response()->view('reports/treasurer', $report);
+    public function treasurerReport(Request $request)
+    {
+      $user = Auth::user();
+      $orgId = $_SESSION['org'];
+      $organisation = Organisation::find($orgId);
+
+      $monthYearDate = new DateTime($request->input("monthYear"));
+
+      $report = Treasurer::build($user, $organisation, $monthYearDate);
+
+      return response()->view('reports/treasurer', [
+        'monthYear' => $monthYearDate->format('Y-m'),
+        'report' => $report
+      ]);
     }
 }
