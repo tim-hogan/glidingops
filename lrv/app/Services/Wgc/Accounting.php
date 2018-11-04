@@ -17,8 +17,7 @@ class Accounting
   {
     $result = [
       'warnings' => [],
-      'flight' => $flight,
-      'memberCharges' => []
+      'chargedMembers' => []
     ];
 
     $memberToCharge = $flight->p2Member;
@@ -42,7 +41,7 @@ class Accounting
       $charges['winchLaunch'] = self::calcWinchCharge($flight, $memberToCharge);
     }
 
-    $result['memberCharges'][] = ['member' => $flight->p2Member, 'charges' => $charges];
+    $result['chargedMembers'][] = ['member' => $memberToCharge, 'charges' => $charges];
 
     return $result;
   }

@@ -20,13 +20,43 @@ class Treasurer
       ->where('localdate', '<=', $dateEndStr)
       ->where('deleted', 0);
 
-    $rows = $flights->get()->map(function($flight){
-      return Accounting::calcFlightCharges($flight);
+    $rows = $flights->get()->flatMap(function($flight){
+      $flightCharges = Accounting::calcFlightCharges($flight);
+      $warnings = $flightCharges['warnings'];
+
+      $result = collect($flightCharges['chargedMembers'])->map(function($charges) use ($warnings, $flight){
+        return array_merge([
+          'warnings' => $warnings,
+          'flight' => $flight,
+        ], $charges);
+      });
+
+      if($result->isEmpty()) {
+        $result = collect([[
+          'warnings' => $warnings,
+          'flight' => $flight,
+          'member' => null,
+          'charges' => []
+        ]]);
+      }
+
+      return $result;
+    });
+
+    $unchargedFlights = $rows->filter(function($row){
+      return empty($row['charges']);
+    });
+
+    $chargedFlights = $rows->filter(function($row){
+      return !empty($row['charges']);
+    })->groupBy(function($row){
+      return $row['member']->displayname;
     });
 
     return [
       'count' => $flights->count(),
-      'rows' => $rows
+      'unchargedFlights' => $unchargedFlights,
+      'chargedFlights' => $chargedFlights
     ];
   }
 }
