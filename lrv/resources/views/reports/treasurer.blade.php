@@ -25,7 +25,7 @@
   @if (isset($report))
   <div>
     <h2>Treasurer's report - {{(new DateTime($monthYear))->format('F Y')}}</h2>
-    <table>
+    <table class='table table-bordered table-condensed table-striped'>
       <thead>
         <tr>
           <td>ID</td>
@@ -38,6 +38,7 @@
           <td>GHARGE</td>
           <td>COMMENTS</td>
           <td>CHARGES</td>
+          <td>TOTAL</td>
           <td>WARNINGS</td>
         </tr>
       </thead>
@@ -45,8 +46,13 @@
         @foreach($report['rows'] as $row)
           @php
             $flight = $row['flight'];
+            $warnings = collect($row['warnings']);
+            $rowClass = ($warnings->isEmpty()) ? '' : 'danger';
+
+            $memberCharges = collect($row['memberCharges']);
+            $charges = ($memberCharges->isEmpty()) ? collect([]) : collect($memberCharges->first()['charges']);
           @endphp
-          <tr>
+          <tr class='{{$rowClass}}'>
             <td>{{$flight->id}}</td>
             <td>{{(new DateTime($flight->localdate))->format('d/m/Y')}}</td>
             <td>{{$flight->location}}</td>
@@ -59,18 +65,17 @@
             <td>
               <table>
                 <tbody>
-                @foreach($row['memberCharges'] as $memberCharge)
-                  @foreach($memberCharge['charges'] as $key => $value)
+                  @foreach($charges as $key => $value)
                     <tr>
                       <td>{{$key}}</td>
-                      <td>{{$value}}</td>
+                      <td>${{$value}}</td>
                     </tr>
                   @endforeach
-                @endforeach
                 </tbody>
               </table>
             </td>
-            <td>{{join('\n',$row['warnings'])}}</td>
+            <td>${{$charges->sum()}}</td>
+            <td>{{$warnings->implode('\n')}}</td>
           </tr>
         @endforeach
       </tbody>
