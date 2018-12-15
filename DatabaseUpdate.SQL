@@ -14,6 +14,7 @@ ADD COLUMN `aircraft_track_debug` TINYINT(1) NULL DEFAULT 0 AFTER `aircraft_trac
 ADD COLUMN `aircraft_track_last_status` ENUM('nofix','pos','hello') NULL DEFAULT NULL AFTER `aircraft_track_debug`,
 ADD COLUMN `aircraft_track_status_timestamp` DATETIME NULL DEFAULT NULL AFTER `aircraft_track_last_status`,
 ADD COLUMN `aircraft_track_battery` FLOAT(11) NULL DEFAULT NULL AFTER `aircraft_track_status_timestamp`,
+ADD COLUMN `aircraft_track_battery_timestamp` DATETIME NULL DEFAULT NULL AFTER `aircraft_track_battery`,
 ADD UNIQUE INDEX `aircraft_particle_id_UNIQUE` (`aircraft_particle_id` ASC);
 
 
