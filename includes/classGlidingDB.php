@@ -80,5 +80,30 @@ class GlidingDB extends SQLPlus
     {
         return $this->singlequery("select * from aircraft where rego_short = '" . $reg . "'");
     }
+    
+    public function getAircraftByParticleId($pid)
+    {
+        return $this->singlequery("SELECT * from aircraft where aircraft_particle_id = '" . $pid . "'");    
+    }
+    
+    public function updateAircraftTrackStatus($aid,$status)
+    {
+        $d = new DateTime('now');
+        return $this->update("UPDATE aircraft set aircraft_track_last_status = '".$status."', aircraft_track_status_timestamp = '".$d->format('Y-m-d H:i:s')."' where id = " . intval($aid));
+    }
+    
+    public function updateAircraftTrackBattery($aid,$level)
+    {
+        $d = new DateTime('now');
+        return $this->update("UPDATE aircraft set aircraft_track_battery = ".$level.", aircraft_track_battery_timestamp = '".$d->format('Y-m-d H:i:s')."' where id = " . intval($aid));
+    }
+    
+    //*********************************************************************
+    // Tracks
+    //*********************************************************************
+    public function createTrack($org,$rego,$gpstime,$gpstimemilli,$lat,$lon,$alt)
+    {
+        return $this->create("INSERT into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude) values (".$org.",'".$rego."','".$gpstime."',".intval($gpstimemilli).",".$lat.",".$lon.",".$alt.")");
+    }
 }
 ?>
