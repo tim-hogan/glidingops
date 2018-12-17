@@ -12,7 +12,7 @@ You will need to have created or use an existing directroy for the execuatble.
 You will also need to know:
 1. The host name of the logging host:  e.g. **glidingops.com**
 1. The api name on that host for position information.
-1. The porrt number if different from 80 for the http api posts.
+1. The port number if different from 80 for the http api posts.
 1. The udp port number that the dawemon listens on.
 
 ### Installtion Instructions
@@ -20,6 +20,7 @@ You will also need to know:
 1. Open install.conf file
 1. Edit **DESTDIR** with the directory name specified above
 1. Edit **LOGHOST** with the name of the tracking host
+1. Edit **LOGHTTPPORT** with api http port isf other than 80
 1. Edit **LOGAPI** with
 1. Edit **UDPPORT** with the UDP port the daemon is listening on.
 1. Run the install script by entering `sudo ./install.sh`
