@@ -166,6 +166,50 @@ function getFlarmCode($glider)
     exit();
 }
 
+function getFlightData($flightid)
+{
+    global $DB;
+    global $req;
+
+    $ret = array();
+    $data = array();
+    
+    if ($flight = $DB->getFlight($flightid) )
+    {
+        $ret['meta'] = newOKMetaHdr($req);
+        //Get flight start and end times
+        $st = new DateTime();
+        $ed = new DateTime();
+        
+        $st->setTimestamp($flight['start'] / 1000);
+        $ed->setTimestamp($flight['land'] / 1000);
+        
+        $data['aircraft'] = $flight['glider'];
+        //Look for map data
+        $tracks = array();
+        
+        $r = $DB->getTracksForFlight($st,$ed,$flight['glider']);
+        while ($track = $r->fetch_array())
+        {
+            $ts = new DateTime($track['point_time']);
+            $pos = array();
+            $pos['lat'] = $track['lattitude'];
+            $pos['lng'] = $track['longitude'];
+            $pos['alt'] = $track['altitude'];
+            $pos['time'] = $ts->getTimestamp();
+            array_push($tracks,$pos);
+        }
+        $data['tracks'] = $tracks;
+        $ret['data'] = $data;
+        
+        echo json_encode($ret);
+        exit();
+
+    }
+    else
+        returnError($req,1006,"No Flight");
+}
+
 /*
 ***********************************************************************
 PUT AND POST FUNCTIONS
@@ -325,6 +369,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     case 'flarmcode':
         getFlarmCode($reqValue1);
         break;
+    case 'flightdata':
+        getFlightData($reqValue1);
+        break;
+
     default:
         returnError($req,1002,"Invalid parameter");
         break;
