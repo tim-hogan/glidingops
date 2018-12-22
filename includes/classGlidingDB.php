@@ -69,6 +69,14 @@ class GlidingDB extends SQLPlus
     }
     
     //*********************************************************************
+    // Flight
+    //*********************************************************************
+    public function getFlight($fid)
+    {
+        return $this->singlequery("select * from flights where id = " . intval($fid));    
+    }
+    
+    //*********************************************************************
     // Aircraft
     //*********************************************************************
     public function getAircraft($id)
@@ -104,6 +112,14 @@ class GlidingDB extends SQLPlus
     public function createTrack($org,$rego,$gpstime,$gpstimemilli,$lat,$lon,$alt)
     {
         return $this->create("INSERT into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude) values (".$org.",'".$rego."','".$gpstime."',".intval($gpstimemilli).",".$lat.",".$lon.",".$alt.")");
+    }
+    
+    public function getTracksForFlight($start,$end,$aircraft)
+    {
+        $q = "SELECT * from tracks where glider = '".$aircraft."' and point_time >= '".$start->format('Y-m-d H:i:s')."' and point_time <= '".$end->format('Y-m-d H:i:s')."' order by point_time";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
     }
 }
 ?>
