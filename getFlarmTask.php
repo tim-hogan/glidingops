@@ -80,7 +80,9 @@ if (count($gliderlist) > 0)
     
     foreach ($gliderlist as $gld)
     {
-        $ICAO = $flarmCode[$gld];
+        $ICAO = '';
+        if (array_key_exists($flarmCode,$gld))
+            $ICAO = $flarmCode[$gld];
         if (strlen($ICAO) > 0)
         {
             echo "Have flarm code for " . $gld . " of ". $ICAO ." \n";
