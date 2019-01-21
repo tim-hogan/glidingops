@@ -81,7 +81,7 @@ if (count($gliderlist) > 0)
     foreach ($gliderlist as $gld)
     {
         $ICAO = '';
-        if (array_key_exists($flarmCode,$gld))
+        if (array_key_exists($gld,$flarmCode))
             $ICAO = $flarmCode[$gld];
         if (strlen($ICAO) > 0)
         {
