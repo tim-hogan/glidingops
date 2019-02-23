@@ -147,7 +147,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
  
  $strJSON = "{\"id\":0,\"tripid\":".$tripid.",".$strJSONPoints."\"valid\":true";
  if ($getTripURL == "1")
-     $strJSON .= ",\"tripurl\":\"http%3a%2f%2fglidingops%2ecom%2f\"";
+     $strJSON .= ",\"tripurl\":\"https%3a%2f%2fglidingops%2ecom%2f\"";
  if ($err==1)
      $strJSON .=  ",\"message\":\"".$messsage."\"";
  $strJSON .= "}"; 
