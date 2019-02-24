@@ -1,6 +1,6 @@
 <?php
-require './includes/classGlidingDB.php';
-$con_params = require('./config/database.php'); 
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+$con_params = require( dirname(__FILE__) . '/config/database.php'); 
 $DB = new GlidingDB($con_params['gliding']);
 
 $r = $DB->allTracks('order by point_time');
