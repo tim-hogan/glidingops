@@ -106,6 +106,17 @@ class GlidingDB extends SQLPlus
         return $this->update("UPDATE aircraft set aircraft_track_battery = ".$level.", aircraft_track_battery_timestamp = '".$d->format('Y-m-d H:i:s')."' where id = " . intval($aid));
     }
     
+    public function haveFlight($ts,$glider) 
+    {
+        $d = new DateTime($ts);
+        $ts = $d->getTimestamp();
+        $q = "Select * from flights where flights.glider = '".$glider."' and (flights.start/1000) <= ".$ts." and (flights.land/1000) >= " .$ts;
+        $r = $this->query($q);
+        if ($r->num_rows > 0)
+            return true;
+        return false;
+    }
+    
     //*********************************************************************
     // Tracks
     //*********************************************************************
@@ -130,12 +141,25 @@ class GlidingDB extends SQLPlus
         return $r;
     }
     
+    public function allTracks($order)
+    {
+        $q = "SELECT * from tracks " . $order;
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+    
     public function allTracksOlderThan($strdate)
     {
         $q = "SELECT * from tracks where point_time < '".$strdate."' order by point_time";
         $r = $this->query($q);
         if (!$r) {$this->sqlError($q); return null;}
         return $r;
+    }
+    
+    public function deleteTrack($id)
+    {
+        return $this->delete("DELETE from tracks where id = " . intval($id));
     }
     
     public function deleteTracksOlderThan($strdate)
