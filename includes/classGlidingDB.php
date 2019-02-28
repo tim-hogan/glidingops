@@ -20,6 +20,29 @@ class GlidingDB extends SQLPlus
         return $tz;
     }
     
+    public function getOrgAircraftPrefix($org)
+    {
+        $o = $this->singlequery("SELECT aircraft_prefix from organisations where id = " . intval($org));
+        if ($o)
+            return $o['aircraft_prefix'];
+        else
+            return null;
+    }
+    
+    public function getOrgLaunchCoords($org) 
+    {
+        $o = $this->singlequery("SELECT * from organisations where id = ".intval($org));
+        if ($o)
+        {
+            $c = array();
+            $c['lat'] = floatval($o['def_launch_lat']);
+            $c['lon'] = floatval($o['def_launch_lon']);
+            return $c;
+        }
+        else
+            return null;
+    }
+    
     //*********************************************************************
     // Flight Types
     //*********************************************************************
@@ -74,6 +97,11 @@ class GlidingDB extends SQLPlus
     public function getFlight($fid)
     {
         return $this->singlequery("select * from flights where id = " . intval($fid));    
+    }
+    
+    public function getFlightWithNames($fid)
+    {
+        return $this->singlequery("select * , a.displayname as namePIC , b.displayname as nameP2 from flights LEFT JOIN members a ON a.id = flights.pic LEFT JOIN members b ON b.id = flights.p2 where flights.id = " . intval($fid)); 
     }
     
     //*********************************************************************
