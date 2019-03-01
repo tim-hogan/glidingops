@@ -1,37 +1,25 @@
 <?php
-$db_params = require dirname(__FILE__).'/config/database.php';
-$con1_params = $db_params['gliding'];
-$con1=mysqli_connect($con1_params['hostname'],$con1_params['username'],$con1_params['password'],$con1_params['dbname']);
-if (mysqli_connect_errno())
-{
- error_log("Unable to connect to database gliding");
- exit();
-}
-
-$con2_params = $db_params['tracks'];
-$con2=mysqli_connect($con2_params['hostname'],$con2_params['username'],$con2_params['password'],$con2_params['dbname']);
-if (mysqli_connect_errno())
-{
- mysqli_close($con1);
- error_log("Unable to connect to database glidingtracks");
- exit();
-}
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+require dirname(__FILE__) . '/includes/classTracksDB.php';
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$DB = new GlidingDB($con_params['gliding']);
+$DBArchive = new TracksDB($con_params['tracks']);
 
 $dtNow = new DateTime('now');
 // Go back 3 days
 $dtPrev = new DateTime();
 $dtPrev->setTimestamp($dtNow->getTimestamp() - (3600*24*3));
 
-
-$q = "SELECT org,glider,point_time,point_time_milli,lattitude,longitude,altitude,accuracy from tracks where point_time < '" . $dtPrev->format('Y-m-d') . "'";
-$r = mysqli_query($con1,$q);
-while ($row = mysqli_fetch_array($r))
+$r = $DB->allTracksOlderThan($dtPrev->format('Y-m-d'));
+while ($t = $r->fetch_array()) 
 {
-   $q1 = "INSERT INTO tracksarchive (org,glider,point_time,point_time_milli,lattitude,longitude,altitude,accuracy) VALUES (".$row[0].",'".$row[1]."','".$row[2]."',".$row[3].",".$row[4].",".$row[5].",".$row[6].",".$row[7].")";
-   $r1 = mysqli_query($con2,$q1);
+    unset($t['id']);
+    unset($t['user']);
+    unset($t['create_time']);
+    unset($t['trip_id']);
+    unset($t['point_id']);
+    $DBArchive->create_from_array('tracksarchive',$t); 
+    
 }
-$q = "DELETE from tracks where point_time < '" . $dtPrev->format('Y-m-d') . "'";
-$r = mysqli_query($con1,$q);
-mysqli_close($con1);
-mysqli_close($con2);
+$DB->deleteTracksOlderThan($dtPrev->format('Y-m-d'));
 ?>

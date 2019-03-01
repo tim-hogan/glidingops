@@ -258,28 +258,6 @@ function strDuration($v)
   return $timeval;
 }
 
-//TODO remove $db1 once we use Eloquent all over the places
-function tracksforFlight($db1,$db2,$glider,$strStart,$strEnd)
-{
-  $tracks = App\Models\Track::where('glider', $glider)
-              ->where('point_time', '>' , $strStart)
-              ->where('point_time', '<', $strEnd);
-
-  if(!$tracks->get()->isEmpty()) {
-    return true;
-  }
-
-  $tracks = App\Models\ArchivedTrack::where('glider', $glider)
-              ->where('point_time', '>' , $strStart)
-              ->where('point_time', '<', $strEnd);
-
-  if(!$tracks->get()->isEmpty()) {
-    return true;
-  }
-
-  return false;
-}
-
 function isFirstPilotFlightDay($db,$org,$date,$seq,$memberid)
 {
   $q = "SELECT id from flights where flights.org = " .$org. " and flights.localdate = ".$date." and flights.seq < ".$seq." and (flights.billing_member1 = ".$memberid." or flights.billing_member2 = ".$memberid.")";

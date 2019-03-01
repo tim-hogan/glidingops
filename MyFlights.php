@@ -85,6 +85,15 @@ if (mysqli_connect_errno())
   error_log("Cannot open tracksarchive database"); 
   $con2 = null;
 }
+
+//Duplicate to above but in transition to newer database scheme
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+require dirname(__FILE__) . '/includes/classTracksDB.php';
+$db_params = require( dirname(__FILE__) .'/config/database.php'); 
+$DB = new GlidingDB($db_params['gliding']);
+$DBArchive = new TracksDB($db_params['tracks']);
+
+
 $towlaunch = getTowLaunchType($con);
 $selflaunch = getSelfLaunchType($con);
 $winchlaunch = getWinchLaunchType($con);
@@ -287,7 +296,7 @@ while ($row = mysqli_fetch_array($r) )
   $trDateStart->setTimestamp(intval(floor($row[9])));
   $trDateLand->setTimestamp(intval(floor($row[10])));
 
-  if (tracksforFlight($con,$con2,$row[1],$trDateStart->format('Y-m-d H:i:s'),$trDateLand->format('Y-m-d H:i:s')) )
+  if ($DB->numTracksForFlight($trDateStart,$trDateLand,$row[1]) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$row[1]) > 0)
   {
      echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$row[1]."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$row[11]."'>MAP</a></td>";
      echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$row[11]."'>IGC FILE</a></td>";
