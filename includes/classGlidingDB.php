@@ -11,6 +11,11 @@ class GlidingDB extends SQLPlus
     //*********************************************************************
     // Organistaion
     //*********************************************************************
+    public function getOrganisation($org)
+    {
+        return $this->singlequery("SELECT * from organisations where id = ".intval($org));    
+    }
+    
     public function getOrgTimezone($org)
     {
         $tz='UTC';
@@ -102,6 +107,15 @@ class GlidingDB extends SQLPlus
     public function getFlightWithNames($fid)
     {
         return $this->singlequery("select * , a.displayname as namePIC , b.displayname as nameP2 from flights LEFT JOIN members a ON a.id = flights.pic LEFT JOIN members b ON b.id = flights.p2 where flights.id = " . intval($fid)); 
+    }
+    
+    public function getFlightOrg($fid)
+    {
+        $f = $this->singlequery("select org from flights where id = " . intval($fid));
+        if ($f)
+            return intval($f['org']);
+        else
+            return null;
     }
     
     //*********************************************************************
