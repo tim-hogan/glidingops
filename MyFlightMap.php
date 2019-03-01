@@ -23,41 +23,47 @@ h1 {font-size:20px;}
 include 'timehelpers.php';
 include 'geohelpers.php';
 include 'helpers.php';
+
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+require dirname(__FILE__) . '/includes/classTracksDB.php';
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$DB = new GlidingDB($con_params['gliding']);
+$DBArchive = new TracksDB($con_params['tracks']);
+
+$flightid=0;
 $diag="";
 $org=1;
 
-$db_params = require('./config/database.php'); 
-$con_params = $db_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
-if (mysqli_connect_errno())
+
+if (isset($_GET['flightid']))
 {
-   echo "<p>Unable to connect to database</p>";
-   exit();
-}
-$con2_params = $db_params['tracks'];
-$con2=mysqli_connect($con2_params['hostname'],$con2_params['username'],$con2_params['password'],$con2_params['dbname']);
-if (mysqli_connect_errno())
-{
-  error_log("Cannot open tracksarchive database"); 
-  $con2 = null;
+    $flightid=$_GET['flightid'];
 }
 
+$flight = $DB->getFlightWithNames($flightid);
+if (!$flight)
+{
+    echo "Invalid flight id";
+    exit();
+}
 
+$organisation = $DB->getOrganisation($DB->getFlightOrg($flightid));
+if (!$organisation)
+{
+    echo "Internal error, invalid organisation";
+    exit();
+}
 
+$orgLat=$organisation['def_launch_lat'];
+$orgLon=$organisation['def_launch_lon'];
+$strTimeZone=$organisation['timezone'];
 
-
-
-$q="SELECT def_launch_lat,def_launch_lon, timezone from organisations where id = ".$org;
-$r = mysqli_query($con,$q);
-$row = mysqli_fetch_array($r);
-$orgLat=$row[0];
-$orgLon=$row[1];
-$strTimeZone=$row[2];
 ?>
 var map;
 var centreLat=<?php echo $orgLat;?>;
 var centreLon=<?php echo $orgLon;?>;
 var markers = [];
+
 <?php
 $bDone=0;
 $totdist = 0.0;
@@ -71,53 +77,36 @@ $speeddist = 0;
 $glider=$_GET['glider'];
 $from=$_GET['from'];
 $to=$_GET['to'];
-$flightid=0;
-$pic = '';
-$p2 = '';
-if (isset($_GET['flightid']))
-{
-  $flightid=$_GET['flightid'];
-}
-if ($flightid > 0)
-{
 
- $q="SELECT a.displayname, b.displayname from flights LEFT JOIN members a ON a.id = flights.pic LEFT JOIN members b ON b.id = flights.p2 where flights.id = " . $flightid;
- $r = mysqli_query($con,$q);
- if (mysqli_num_rows($r) > 0)
- {
-  $row = mysqli_fetch_array($r);
-  $pic = $row[0];
-  $p2 = $row[1];
- }
-}
+$pic = $flight['namePIC'];
+$p2 = $flight['nameP2'];
 
-//Determine whcih source
-if (tracksforFlight($con,null,$glider,$from,$to) )
-{
- $q="SELECT lattitude,longitude,altitude, point_time from tracks where glider = '".$glider."' and point_time > '".$from."' and point_time < '".$to."' order by point_time ASC";
- $r = mysqli_query($con,$q);
-}
+
+$trDateStart = new DateTime($from);
+$trDateLand = new DateTime($to);
+
+$r = null;
+if ($DB->numTracksForFlight($trDateStart,$trDateLand,$glider) > 0)
+    $r = $DB->getTracksForFlight($trDateStart,$trDateLand,$glider);
 else
-if (tracksforFlight(null,$con2,$glider,$from,$to) )
-{
- $q="SELECT lattitude,longitude,altitude, point_time from tracksarchive where glider = '".$glider."' and point_time > '".$from."' and point_time < '".$to."' order by point_time ASC";
- $r = mysqli_query($con2,$q);
-}
+if ($DBArchive->numTracksForFlight($trDateStart,$trDateLand,$glider) > 0)
+    $r = $DBArchive->getTracksForFlight($trDateStart,$trDateLand,$glider);
+
 $alts=array();
 $pttimes=array();
 $idx=0;
 
 echo "var flightCoordinates = [";
-while ($row = mysqli_fetch_array($r))
+while ($track = $r->fetch_array())
 {
- $altft = 3.281*$row[2];
+ $altft = 3.281 * $track['altitude'];
  if ($maxalt < $altft)
     $maxalt = $altft;
  if ($bDone>0)
  {
-      $dist = DistKM($row[0],$row[1],$lastlat,$lastlon);
+      $dist = DistKM($track['lattitude'],$track['longitude'],$lastlat,$lastlon);
       $totdist = $totdist + $dist;
-      $ts = timestampSQL($row[3]);
+      $ts = timestampSQL($track['point_time']);
       $speeddist = $speeddist + $dist;
       if (($ts - $lastts) > 5)
       {
@@ -127,21 +116,21 @@ while ($row = mysqli_fetch_array($r))
       	if ($maxspeed < $speed)
       	{
 	   $maxspeed = $speed;
-           $maxspeedtm = $row[3];
+           $maxspeedtm = $track['point_time'];
       	}
       }
       echo ",";
  }
  else
  {
-     $totdist = $totdist + DistKM($row[0],$row[1],$orgLat,$orgLon);	   
+     $totdist = $totdist + DistKM($track['lattitude'],$track['longitude'],$orgLat,$orgLon);	   
  }
- echo "new google.maps.LatLng(".$row[0].", ".$row[1].")";
- $alts[$idx]=$row[2];
- $pttimes[$idx]=timeLocalSQL($row[3],$strTimeZone,"H:i:s");
+ echo "new google.maps.LatLng(".$track['lattitude'].", ".$track['longitude'].")";
+ $alts[$idx]=$track['altitude'];
+ $pttimes[$idx]=timeLocalSQL($track['point_time'],$strTimeZone,"H:i:s");
  $idx++;
- $lastlat = $row[0];
- $lastlon = $row[1];
+ $lastlat = $track['lattitude'];
+ $lastlon = $track['longitude'];
  $bDone=1;
 }
 $totdist = $totdist + DistKM($lastlat,$lastlon,$orgLat,$orgLon);	  
