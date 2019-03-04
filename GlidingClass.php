@@ -14,7 +14,7 @@ class Gliding
             $this->key = $key;
         else
             $this->key = "1234567890123456";
-        $this->pest  = new Pest( "http://" . $this->controller . "/api/v1/json/" . $this->key . "/");
+        $this->pest  = new Pest( "https://" . $this->controller . "/api/v1/json/" . $this->key . "/");
     }
    
    public function getFlyingToday($club)
