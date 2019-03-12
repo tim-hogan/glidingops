@@ -89,6 +89,11 @@ if (strlen($strxml) > 0)
  $getTripURL= $travel->getElementsByTagName('getTripUrl')->item(0)->nodeValue;
  $tripdesc= $travel->getElementsByTagName('description')->item(0)->nodeValue;
  
+ //Find organistaion for aircraft
+ $org = 0;
+ if ($aircraft = $DB->getAircraftByRegShort($tripid) )
+    $org = intval($aircraft['org']);
+ 
  /* Remove the need to validate user, causes more problems for end user getting data from their phone. */  
  
  $list = $travel->getElementsByTagName ('point'); 

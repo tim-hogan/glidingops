@@ -7,6 +7,7 @@ $con_params = require( dirname(__FILE__) .'/config/database.php');
 $con_params = $con_params['gliding'];
 $DB = new GlidingDB($con_params);
 
+$diagMsg = '';
 
 function GetAllSpots($key)
 {
@@ -45,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
     }
  
     echo "<getspotdata>";
-    echo "<diag><org>".$org."</org></diag>";
+    $diagMsg .= "<org>{$org}</org>";
  
     $dtNow = new DateTime('now');
 
@@ -53,9 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
     $r4 = $DB->allFlightsToday($org);
     while ($flight = $r4->fetch_array())
     {
+        $diagMsg .= "<flying>{$flight['glider']}</flying>";
         $spot = $DB->getSpotByReg($org,$flight['glider']);
         if ($spot)
         {
+            $diagMsg .= "<spotkey>{$spot['spotkey']}</spotkey>";
             $rxml = '';
             $doc = new DOMDocument();
             $dNow = new DateTime("now");
@@ -100,5 +103,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
         }
     } 
 }
+echo "<diag>{$diagMsg}</diag>";
 echo "</getspotdata>";
 ?>
