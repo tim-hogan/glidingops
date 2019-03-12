@@ -186,6 +186,8 @@ function getFlightData($flightid)
         $ed->setTimestamp($flight['land'] / 1000);
         
         $data['aircraft'] = $flight['glider'];
+        $data['start'] = $st->format('Y-m-d H:i:s');
+        $data['land'] = $ed->format('Y-m-d H:i:s');
         //Look for map data
         $tracks = array();
         
@@ -194,10 +196,24 @@ function getFlightData($flightid)
         //Glider tracks
         $DBArchive = new TracksDB($con_params['tracks']);
         $r = null;
-        if ($DB->numTracksForFlight($st,$ed,$flight['glider'] > 0) )
+        $data['track_count'] = 0;
+        $numtracks = $DB->numTracksForFlight($st,$ed,$flight['glider']);
+        if ($numtracks > 0)
+        {
+            $data['source'] = "gliding";
+            $data['track_count'] = $numtracks;
             $r = $DB->getTracksForFlight($st,$ed,$flight['glider']);
+        }
         else
+        {
             $r = $DBArchive->getTracksForFlight($st,$ed,$flight['glider']);
+            if ($r->num_rows > 0)
+            {
+                $data['source'] = "archive";
+                $data['track_count'] = $r->num_rows;
+            }
+        }
+        
         while ($track = $r->fetch_array())
         {
             $ts = new DateTime($track['point_time']);
@@ -286,7 +302,7 @@ function parseUDP($params)
                     if ($dgps->getTimestamp() > ($d->getTimestamp() + 300))  // We recevied this udp packet from capture to receive over UTC day change so back it up a day, allow 5 minutes for click sync issues.
                         $dgps->setTimestamp($dgps->getTimestamp() - (3600*24)  );  
                    
-                    $DB->createTrack($aircraft['org'],$aircraft['rego_short'],$dgps->format('Y-m-d H:i:s'),sprintf("%03d",$tm % 1000),$lat,$lon,$alt);    
+                    $DB->createTrack($aircraft['org'],$aircraft['rego_short'],$dgps->format('Y-m-d H:i:s'),sprintf("%03d",$tm % 1000),$lat,$lon,$alt,'Particle');    
               
                 }
             }
@@ -337,7 +353,7 @@ function parseLoc($params)
                 if ($dgps->getTimestamp() > ($d->getTimestamp() + 300))  // We recevied this udp packet from capture to receive over UTC day change so back it up a day, allow 5 minutes for click sync issues.
                      $dgps->setTimestamp($dgps->getTimestamp() - (3600*24)  );  
                 
-                $DB->createTrack($aircraft['org'],$aircraft['rego_short'],$dgps->format('Y-m-d H:i:s'),sprintf("%03d",intval($p['t'])%1000),$p['a'],$p['b'],$p['c']);                
+                $DB->createTrack($aircraft['org'],$aircraft['rego_short'],$dgps->format('Y-m-d H:i:s'),sprintf("%03d",intval($p['t'])%1000),$p['a'],$p['b'],$p['c'],'Particle');                
             }
             if (isset($input['h'])) 
             {
@@ -376,7 +392,7 @@ function createTrack($params)
     if (isset($params['lon'])) $lon = floatval($params['lon']);
     if (isset($params['alt'])) $alt = floatval($params['alt']);
     
-    $DB->createTrack($org,$glider,$gpstime,0.0,$lat,$lon,$alt);  
+    $DB->createTrack($org,$glider,$gpstime,0.0,$lat,$lon,$alt,'Particle');  
     
     echo "0";
     exit();

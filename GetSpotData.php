@@ -1,6 +1,13 @@
 <?php
 include 'timehelpers.php';
 header('Content-type: text/xml');
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$con_params = $con_params['gliding'];
+$DB = new GlidingDB($con_params);
+
+
 function GetAllSpots($key)
 {
   $ch = curl_init();
@@ -31,87 +38,67 @@ function GetLastSpot($key)
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
- $org=$_GET['org'];
- if ($org < 1)
- {
-    die("<getspotdata><error>No organisation specified</error></getspotdata>");
- }
- 
- 
-
- $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
- if (mysqli_connect_errno())
- {
-  echo "<getspotdata><error>Unable to connect to database</error></getspotdata>";
-  exit();
- }
- echo "<getspotdata>";
- echo "<diag><org>".$org."</org></diag>";
- 
- $dtNow = new DateTime('now');
- $strDate = timeLocalFormat($dtNow,orgTimezone($con,$org),'Ymd');
-
- //Who is flying today
- $q4="SELECT glider from flights where org = ".$org." and localdate = " . $strDate ;
- echo "<diag><sql>".$q4."</sql></diag>";
- $r4 = mysqli_query($con,$q4);
- 
- while ($row4 = mysqli_fetch_array($r4))
- {
-  $q="SELECT spotkey, polltimelast , polltimeall , lastreq , lastlistreq, rego_short from spots WHERE org = ".$org . " and rego_short = '" .$row4[0]. "'";
-  $r = mysqli_query($con,$q);
-  if (mysqli_num_rows($r) > 0)
-  {
-    $row = mysqli_fetch_array($r);
-  
-    echo "<diag>Got spot key for glider ".$row[5]."</diag>";
-    $rxml = '';
-    $doc = new DOMDocument();
-    $dNow = new DateTime("now");
-    $dLast = new DateTime($row[3]);
-    $dLastFull = new DateTime($row[4]);
-    if (($dNow->getTimestamp() - $dLastFull->getTimestamp()) >  $row[2])
+    $org=$_GET['org'];
+    if ($org < 1)
     {
-       //Get full list
-       $rxml = GetAllSpots($row[0]);
-       $q1 = "UPDATE spots set lastlistreq = '".$dNow->format('Y-m-d H:i:s')."' WHERE org = ".$org." and rego_short = '".$row[5]."'";
-       $r1 = mysqli_query($con,$q1);
-    }else
-    if (($dNow->getTimestamp() - $dLast->getTimestamp()) >  $row[1])
-    {
-       //Get last
-       $rxml = GetLastSpot($row[0]);
-       $q1 = "UPDATE spots set lastreq = '".$dNow->format('Y-m-d H:i:s')."' WHERE org = ".$org." and rego_short = '".$row[5]."'";
-       $r1 = mysqli_query($con,$q1);
+        die("<getspotdata><error>No organisation specified</error></getspotdata>");
     }
-    if (strlen($rxml) > 0)
-    {
-      if (!$doc->loadXML($rxml))
-      {
-       echo "<error>XML Parse Error</error></getspotdata>";
-       exit();
-      }
-      $list = $doc->getElementsByTagName('message');
-      foreach ($list as $message) 
-      {
-        $id = $message->getElementsByTagName ('id')->item(0)->nodeValue;
-        $type = $message->getElementsByTagName ('messageType')->item(0)->nodeValue;
-        $timenum = $message->getElementsByTagName ('unixTime')->item(0)->nodeValue;
-        $lat = $message->getElementsByTagName ('latitude')->item(0)->nodeValue;
-        $lon = $message->getElementsByTagName ('longitude')->item(0)->nodeValue;
-        if ($type == "TRACK" || $type == "OK")
-        {
-           $dt = new DateTime();
-           $dt->setTimestamp($timenum);
-           $q2="INSERT INTO tracks (org,glider,point_id,point_time,lattitude,longitude,altitude,accuracy) VALUES (".$org.", '".$row[5]."',".$id.",'".$dt->format('Y-m-d H:i:s')."',".$lat.",".$lon.",-1,-1)";
-           $r2 = mysqli_query($con,$q2);        
-        }
+ 
+    echo "<getspotdata>";
+    echo "<diag><org>".$org."</org></diag>";
+ 
+    $dtNow = new DateTime('now');
 
-      } 
-    }   
-   }
- } 
+    //Who is flying today
+    $r4 = $DB->allFlightsToday($org);
+    while ($flight = $r4->fetch_array())
+    {
+        $spot = $DB->getSpotByReg($org,$flight['glider']);
+        if ($spot)
+        {
+            $rxml = '';
+            $doc = new DOMDocument();
+            $dNow = new DateTime("now");
+            $dLast = new DateTime($spot['lastreq']);
+            $dLastFull = new DateTime($spot['lastlistreq']);
+            if (($dNow->getTimestamp() - $dLastFull->getTimestamp()) >  $spot['polltimeall'])
+            {
+                //Get full list
+                $rxml = GetAllSpots($spot['spotkey']);
+                $DB->updateSpotLastListReq($org,$spot['rego_short']);
+            }
+            else
+            if (($dNow->getTimestamp() - $dLast->getTimestamp()) >  $spot['polltimelast'])
+            {
+                //Get last
+                $rxml = GetLastSpot($spot['spotkey']);
+                $DB->updateSpotLastReq($org,$spot['rego_short']);
+            }
+            if (strlen($rxml) > 0)
+            {
+                if (!$doc->loadXML($rxml))
+                {
+                echo "<error>XML Parse Error</error></getspotdata>";
+                exit();
+                }
+                $list = $doc->getElementsByTagName('message');
+                foreach ($list as $message) 
+                {
+                    $id = $message->getElementsByTagName ('id')->item(0)->nodeValue;
+                    $type = $message->getElementsByTagName ('messageType')->item(0)->nodeValue;
+                    $timenum = $message->getElementsByTagName ('unixTime')->item(0)->nodeValue;
+                    $lat = $message->getElementsByTagName ('latitude')->item(0)->nodeValue;
+                    $lon = $message->getElementsByTagName ('longitude')->item(0)->nodeValue;
+                    if ($type == "TRACK" || $type == "OK")
+                    {
+                        $dt = new DateTime();
+                        $dt->setTimestamp($timenum);
+                        $DB->createTrack($org,$flight['glider'],$dt->format('Y-m-d H:i:s'),0.0,$lat,$lon,0.0,'SPOT');
+                    }
+                } 
+            }   
+        }
+    } 
 }
 echo "</getspotdata>";
 ?>

@@ -1,26 +1,24 @@
 <?php
+/*
+    This task is spawned off from cron to look for tracking data of glders with flarms.
+    All flarm data should be available from glidernet.org
+    This task also checks Gliding New Zealand for any additional flarm data.
+*/
 require 'GlidingClass.php';
 require 'ognClass.php';
 require 'GlidingGNZClass.php';
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
 
-
-$dt = new DateTime();
-echo "Start " . $dt->format('H:i:s d/m/Y') . "\n";
-echo "Get ready\n";
-
-//This task runs every minute
-$con_params = require('/var/www/html/config/database.php'); 
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
 $con_params = $con_params['gliding'];
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+$DB = new GlidingDB($con_params);
 
-echo "Database Open\n";
+//Curret time
+$dt = new DateTime();
 
 //Find out who is flying today
 $myGlide = new Gliding('glidingops.com');
 $flyingToday = $myGlide->getFlyingToday(1);
-
-
-echo "Build list of gliders flying today\n";
 
 //Build a list of gliders
 $gliderlist = array();
@@ -89,15 +87,17 @@ if (count($gliderlist) > 0)
             if (array_key_exists($ICAO,$rogn) )
             {
                 $p = $rogn[$ICAO];
-                
-                $q = "insert into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude) values (1,'".$gld."','".$dt->format('Y-m-d') . " " . $p['time']."',0,".$p['lat'].",".$p['lon'].",".$p['alt'].")";
-                $r = mysqli_query($con,$q); 
-                if (!$r)
-                {
-                    echo $dt->format('Y-m-d H:i:s') . " SQL Error: " . mysqli_error($con) . " Q: " . $q . "\n";
-                }
-                else
-                    echo $dt->format('Y-m-d H:i:s') . " Insert into database \n";
+                /*
+                    As we can get this data later than its occurence, and we only get a time and no date
+                    It is possibe, if we assume that its todays date, that it is in fact captured yeterday UTC.
+                    So if the timestanp is more than say 10 minutes ahead of now, we can assume it was the day before.
+                    The 10 minute window allows for clock sync issues.
+                */
+                $dtgps = new DateTime($dt->format('Y-m-d') . " " . $p['time']);
+                if ( ($dtgps->getTimestamp() - 600) > $dt->getTimestamp)
+                    $dtgps->setTimestamp($dtgps->getTimestamp() - 86400);
+                $strTime =  $dtgps->format('Y-m-d H:i:s');   
+                $DB->createTrack(1,$gld,$strTime,0,$p['lat'],$p['lon'],$p['alt'],'FlarmOGN');
             }
             
             //Now check GNZ for same
@@ -107,16 +107,7 @@ if (count($gliderlist) > 0)
                 $data = $gnzData['data'];
                 foreach ($data as $r)
                 {
-                    $q = "insert into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude) values (1,'".$gld."','".$r['thetime'] ."',0,".$r['lat'].",".$r['lng'].",".$r['alt'].")";
-                    $r = mysqli_query($con,$q); 
-                    if (!$r)
-                    {
-                        if (mysqli_errno($con) != 1062)
-                            echo $dt->format('Y-m-d H:i:s') . " SQL Error: " . mysqli_error($con) . " Q: " . $q . "\n";
-                    }
-                    else 
-                        echo "GNZ Entry inserted into database\n";
-                       
+                    $DB->createTrack(1,$gld,$r['thetime'],0,$r['lat'],$r['lon'],$r['alt'],'FlarmGNZ');                       
                 }
 
             }
@@ -128,6 +119,4 @@ if (count($gliderlist) > 0)
         }  
     }  
 }
-else
-    echo "Nobody Flying Today\n";
 ?>  

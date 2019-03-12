@@ -96,6 +96,18 @@ class GlidingDB extends SQLPlus
         return $r;
     }
     
+    public function allFlightsToday($org)
+    {
+        $dateTimeZone = new DateTimeZone($this->getOrgTimezone($org));
+        $dateTime = new DateTime("now", $dateTimeZone);
+        $dateStr = $dateTime->format('Ymd');
+        
+        $q = "SELECT * from flights where org = ".intval($org)." and localdate = '{$dateStr}'";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+    
     //*********************************************************************
     // Flight
     //*********************************************************************
@@ -160,11 +172,38 @@ class GlidingDB extends SQLPlus
     }
     
     //*********************************************************************
+    // Spots
+    //*********************************************************************
+    public function getSpot($id)
+    {
+        return $this->singlequery("SELECT * from spots where id = " . intval($id));
+    }
+    
+    public function getSpotByReg($org,$rego)
+    {
+        return $this->singlequery("SELECT * from spots where org = {$org} and rego_short = '{$rego}'");
+    }
+    
+    public function updateSpotLastReq($org,$rego)
+    {
+        $dt = new DateTime;
+        $strdt = $dt->format('Y-m-d H:i:s');
+        return $this->update("update spots set lastreq = '{$strdt}' where org = {$org} and rego_short = '{$rego}'");
+    }
+    
+    public function updateSpotLastListReq($org,$rego)
+    {
+        $dt = new DateTime;
+        $strdt = $dt->format('Y-m-d H:i:s');
+        return $this->update("update spots set lastlistreq = '{$strdt}' where org = {$org} and rego_short = '{$rego}'");
+    }
+    
+    //*********************************************************************
     // Tracks
     //*********************************************************************
-    public function createTrack($org,$rego,$gpstime,$gpstimemilli,$lat,$lon,$alt)
+    public function createTrack($org,$rego,$gpstime,$gpstimemilli,$lat,$lon,$alt,$src='')
     {
-        return $this->create("INSERT into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude) values (".$org.",'".$rego."','".$gpstime."',".intval($gpstimemilli).",".$lat.",".$lon.",".$alt.")");
+        return $this->create("INSERT into tracks (org,glider,point_time,point_time_milli,lattitude,longitude,altitude,tracks_source) values (".$org.",'".$rego."','".$gpstime."',".intval($gpstimemilli).",".$lat.",".$lon.",".$alt.",'{$src}')");
     }
     
     public function numTracksForFlight($start,$end,$aircraft)
