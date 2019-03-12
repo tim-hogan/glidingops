@@ -91,7 +91,7 @@ if (strlen($strxml) > 0)
  
  //Find organistaion for aircraft
  $org = 0;
- if ($aircraft = $DB->getAircraftByRegShort($tripid) )
+ if ($aircraft = $DB->getAircraftByRegShort($tripdesc) )
     $org = intval($aircraft['org']);
  
  /* Remove the need to validate user, causes more problems for end user getting data from their phone. */  
@@ -112,7 +112,7 @@ if (strlen($strxml) > 0)
     $alt=$point->getElementsByTagName('altitude')->item(0)->nodeValue;
     $acu=$point->getElementsByTagName('haccu')->item(0)->nodeValue;
    
-    if (! $DB->createTrack($org,$tripid,$dt->format('Y-m-d H:i:s'),$milli,$lat,$lon,$alt,'bTraced') )
+    if (! $DB->createTrack($org,$tripdesc,$dt->format('Y-m-d H:i:s'),$milli,$lat,$lon,$alt,'bTraced') )
     {
         $err=1;
         $messsage .= "SQL Error see error log";
