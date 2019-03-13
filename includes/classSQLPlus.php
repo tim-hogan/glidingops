@@ -16,7 +16,7 @@ class SQLPlus extends mysqli
                 else
                 {
                     error_log("Unable to connect to database " . $params['dbname']);
-                    die("SQL Connect error " . $this->connect_error . " [".$this->connect_errno."]");
+                    throw new Exception("SQL Connect error {$this->connect_error} [{$this->connect_errno}]");
                 }
             }
             else
@@ -25,6 +25,12 @@ class SQLPlus extends mysqli
             
     }
 
+    function __destruct()
+    {
+        echo "Clode DB";
+        $this->close();
+    }
+    
     protected function sqlError($q)
     {
         $this->_sqlerr = true;
