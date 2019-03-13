@@ -27,7 +27,6 @@ class SQLPlus extends mysqli
 
     function __destruct()
     {
-        echo "Clode DB";
         $this->close();
     }
     
