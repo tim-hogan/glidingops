@@ -194,7 +194,6 @@ function getFlightData($flightid)
         
         
         //Glider tracks
-        $DBArchive = new TracksDB($con_params['tracks']);
         $r = null;
         $data['track_count'] = 0;
         $numtracks = $DB->numTracksForFlight($st,$ed,$flight['glider']);
@@ -206,6 +205,7 @@ function getFlightData($flightid)
         }
         else
         {
+            $DBArchive = new TracksDB($con_params['tracks']);
             $r = $DBArchive->getTracksForFlight($st,$ed,$flight['glider']);
             if ($r->num_rows > 0)
             {
