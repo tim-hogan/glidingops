@@ -53,7 +53,6 @@ function GetLastSpot($key)
   curl_close($ch);
   return $result;
 }
-$dtNow = new DateTime('now');
 
 //Who is flying today
 $r = $DB->allFlightsToday($org);
