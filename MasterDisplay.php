@@ -120,8 +120,6 @@ function xmlReplyType(xml)
     var node;
     try {node=xml.getElementsByTagName("resp")[0].childNodes;}catch(err){node=null;}
     if (null != node) return "resp";
-    try {node=xml.getElementsByTagName("getspotdata")[0].childNodes;}catch(err){node=null;}
-    if (null != node) return "getspotdata";
   }
   return "";    	
 }
@@ -176,13 +174,6 @@ function GetUpd()
 {
  var v="todayxml.php?org=" + gOrg;
  console.log("Send Request for Todays");
- xmlhttp.open("GET", v, true);
- xmlhttp.send();
-}
-function GetSpotData(org)
-{
- var v="GetSpotData.php?org=" + org;
- console.log("Send Request for Spots");
  xmlhttp.open("GET", v, true);
  xmlhttp.send();
 }
@@ -283,7 +274,6 @@ function poll()
   }
   if ((pollcnt % 70) == 0)
   {
-     GetSpotData(gOrg);
      pollcnt = 0;
   }
 }
