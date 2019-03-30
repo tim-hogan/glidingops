@@ -1,0 +1,82 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'json'
+require 'yaml'
+require 'erb'
+
+currentDir = File.dirname(__FILE__)
+
+# checkout homestead revision corresponding to versions : * v7.20.0
+if Vagrant::Util::Platform.windows?
+    # need to test if 'vendor/laravel/homestead' exists
+    ENV['HOME']="#{ENV['HOMEDRIVE']}#{ENV['HOMEPATH']}"
+    system(
+<<-SCRIPT
+IF NOT EXIST "#{currentDir}\vendor\laravel\homestead" (git clone https://github.com/laravel/homestead.git vendor/laravel/homestead && git -C vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926)
+SCRIPT
+    )
+else
+    system(
+<<-SCRIPT
+if [ ! -d 'vendor/laravel/homestead' ]; then
+    git clone https://github.com/laravel/homestead.git vendor/laravel/homestead
+    git -C vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
+fi
+SCRIPT
+    )
+end
+
+VAGRANTFILE_API_VERSION ||= "2"
+confDir = $confDir ||= File.expand_path("vendor/laravel/homestead", currentDir)
+
+homesteadYamlPath = File.expand_path("Homestead.yaml", currentDir)
+homesteadJsonPath = File.expand_path("Homestead.json", currentDir)
+afterScriptPath = "after.sh"
+customizationScriptPath = "user-customizations.sh"
+aliasesPath = "aliases"
+
+php56InstallScript = <<-SCRIPT
+sudo apt-get update
+sudo apt-get -y \
+    -o Dpkg::Options::="--force-confdef" \
+    -o Dpkg::Options::="--force-confold" \
+    install php5.6 php5.6-dev php5.6-fpm php5.6-mcrypt php5.6-mbstring php5.6-curl php5.6-cli php5.6-mysql php5.6-gd php5.6-intl php5.6-xsl php5.6-zip
+SCRIPT
+
+require File.expand_path('dev/bootstrap.rb', currentDir)
+require File.expand_path(confDir + '/scripts/homestead.rb')
+
+Vagrant.require_version '>= 1.9.0'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    if File.exist? aliasesPath then
+        config.vm.provision "file", source: aliasesPath, destination: "/tmp/bash_aliases"
+        config.vm.provision "shell" do |s|
+            s.inline = "awk '{ sub(\"\r$\", \"\"); print }' /tmp/bash_aliases > /home/vagrant/.bash_aliases"
+        end
+        config.vm.provision "shell", inline: php56InstallScript
+    end
+
+    if File.exist? homesteadYamlPath then
+        settings = YAML::load(ERB.new(File.read(homesteadYamlPath)).result)
+    elsif File.exist? homesteadJsonPath then
+        settings = JSON.parse(File.read(homesteadJsonPath))
+    else
+        abort "Homestead settings file not found in " + currentDir
+    end
+
+    Homestead.configure(config, settings)
+
+    if File.exist? afterScriptPath then
+        config.vm.provision "shell", path: afterScriptPath, privileged: false, keep_color: true
+    end
+
+    if File.exist? customizationScriptPath then
+        config.vm.provision "shell", path: customizationScriptPath, privileged: false, keep_color: true
+    end
+
+    if defined? VagrantPlugins::HostsUpdater
+        config.hostsupdater.aliases = settings['sites'].map { |site| site['map'] }
+    end
+end
