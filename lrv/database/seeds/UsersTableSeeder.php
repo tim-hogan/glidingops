@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
         $user->org = 1;
         $user->expire = '2014-10-27 00:00:00';
         $user->securitylevel = 255;
-        $user->member = 1;
+        $user->member = null;
         $user->force_pw_reset = 0;
 
         $org->users()->save($user);

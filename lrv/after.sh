@@ -7,3 +7,8 @@
 # If you have user-specific configurations you would like
 # to apply, you may also create user-customizations.sh,
 # which will be run after this script.
+
+cd code/lrv
+composer install
+php artisan migrate
+php artisan db:seed
