@@ -4,6 +4,29 @@
 require 'json'
 require 'yaml'
 
+# checkout homestead revision corresponding to versions : * v7.20.0
+if Vagrant::Util::Platform.windows?
+    # need to test if 'vendor/laravel/homestead' exists
+    system(
+<<-SCRIPT
+@echo off
+IF NOT EXIST 'vendor/laravel/homestead' (
+    git clone https://github.com/laravel/homestead.git vendor/laravel/homestead
+    git --git-dir=vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
+)
+SCRIPT
+    )
+else
+    system(
+<<-SCRIPT
+if [ ! -d 'vendor/laravel/homestead' ]; then
+    git clone https://github.com/laravel/homestead.git vendor/laravel/homestead
+    git --git-dir=vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
+fi
+SCRIPT
+    )
+end
+
 VAGRANTFILE_API_VERSION ||= "2"
 confDir = $confDir ||= File.expand_path("vendor/laravel/homestead", File.dirname(__FILE__))
 
