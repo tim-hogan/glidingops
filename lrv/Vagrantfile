@@ -12,7 +12,7 @@ if Vagrant::Util::Platform.windows?
 @echo off
 IF NOT EXIST 'vendor/laravel/homestead' (
     git clone https://github.com/laravel/homestead.git vendor/laravel/homestead
-    git --git-dir=vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
+    git -C vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
 )
 SCRIPT
     )
@@ -21,7 +21,7 @@ else
 <<-SCRIPT
 if [ ! -d 'vendor/laravel/homestead' ]; then
     git clone https://github.com/laravel/homestead.git vendor/laravel/homestead
-    git --git-dir=vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
+    git -C vendor/laravel/homestead checkout cae38adcfdde1de1c4581e7a33872adaf9fbf926
 fi
 SCRIPT
     )
