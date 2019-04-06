@@ -62,7 +62,7 @@ First you'll have to checkout the project from github. It comes configured with 
 
 [Laravel Homestead](https://laravel.com/docs/5.8/homestead) uses [Vagrant](https://www.vagrantup.com/) to build and provision a virtual machine with all the packages necessary for running the project on your local machine (php5.6, mysql, apache etc.).
 
-Before you move on, you'll have to make sure you have [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed on your development machine. VirtualBox is our default choice for running the aformentioned virtual machine. If you do not fency VirtualBox, you can use any of the Vagrant's [supported providers](https://www.vagrantup.com/docs/providers/). Just edit `glidingops/lrv/Homestead.yaml` and specify your provider of choice.
+Before you move on, you'll have to make sure you have [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and Vagrant(https://www.vagrantup.com/) installed on your development machine. VirtualBox is our default choice for running the aformentioned virtual machine. If you do not fency VirtualBox, you can use any of the Vagrant's [supported providers](https://www.vagrantup.com/docs/providers/). Just edit `glidingops/lrv/Homestead.yaml` and specify your provider of choice.
 
 After you've checked out the project, change current folder to `lrv`. All commands for setting up the environment will be run from this folder.
 ```bash
