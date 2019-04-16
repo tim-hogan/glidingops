@@ -32,6 +32,10 @@ if(isset($_SESSION['security'])){
    top: 0;
 }
 
+.role-items li {
+   white-space: nowrap;
+}
+
 </style>
 <style>
 <?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
@@ -96,6 +100,9 @@ if (true){echo '<th ';if ($colsort == 2) echo "class='colsel'";echo " onclick=";
 if (true){echo '<th ';if ($colsort == 3) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=3'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "FIRSTNAME";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "SURNAME";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "DISPLAY NAME";echo "</th>";}
+?>
+   <th>ROLES</th>
+<?php
 if (true){echo '<th ';if ($colsort == 7) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=7'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "ADDRESS";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 8) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=8'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 9) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=9'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "";echo "</th>";}
@@ -121,7 +128,19 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT members.id,members.member_id,members.firstname,members.surname,members.displayname,members.date_of_birth,members.mem_addr1,members.mem_addr2,members.mem_addr3,members.mem_addr4,members.mem_city,members.mem_country,members.mem_postcode,members.emerg_addr1,members.emerg_addr2,members.emerg_addr3,members.emerg_addr4,members.emerg_city,members.emerg_country,members.emerg_postcode,members.gnz_number,members.qgp_number,b.class,c.status_name,members.phone_home,members.phone_mobile,members.phone_work,members.email,members.gone_solo,members.enable_text,members.enable_email,members.official_observer,members.first_aider FROM members LEFT JOIN membership_class b ON b.id = members.class LEFT JOIN membership_status c ON c.id = members.status";
+$sql= <<<SQL
+SELECT members.id,members.member_id,members.firstname,members.surname,members.displayname,members.date_of_birth,members.mem_addr1,members.mem_addr2,members.mem_addr3,members.mem_addr4,members.mem_city,members.mem_country,members.mem_postcode,members.emerg_addr1,members.emerg_addr2,members.emerg_addr3,members.emerg_addr4,members.emerg_city,members.emerg_country,members.emerg_postcode,members.gnz_number,members.qgp_number,b.class,c.status_name,members.phone_home,members.phone_mobile,members.phone_work,members.email,members.gone_solo,members.enable_text,members.enable_email,members.official_observer,members.first_aider,roles.role_names
+FROM members
+LEFT JOIN membership_class b ON b.id = members.class
+LEFT JOIN membership_status c ON c.id = members.status
+LEFT JOIN (
+   SELECT role_member.member_id AS member_id, GROUP_CONCAT(roles.name) AS role_names
+   FROM role_member
+   LEFT JOIN roles ON roles.id = role_member.role_id
+   GROUP BY role_member.member_id
+) roles ON roles.member_id = members.id
+SQL;
+
 if ($_SESSION['org'] > 0){$sql .= " WHERE members.org=".$_SESSION['org'];}
 switch ($selopt) {
 case 0:  $sql .= " and b.class <> 'Short Term' "; break;
@@ -202,6 +221,22 @@ if (true){echo "<td class='right'>";echo $row[1];echo "</td>";}
 if (true){echo "<td>";echo $row[2];echo "</td>";}
 if (true){echo "<td>";echo $row[3];echo "</td>";}
 if (true){echo "<td>";echo $row[4];echo "</td>";}
+?>
+   <td>
+      <ul class='role-items'>
+      <?php
+      if($row[33]) {
+         $roles = explode(",", $row[33]);
+         foreach ($roles as $role) {
+      ?>
+         <li><?=$role?></li>
+      <?php
+         };
+      };
+      ?>
+      </ul>
+   </td>
+<?php
 if (true){echo "<td>";echo $row[6];echo "</td>";}
 if (true){echo "<td>";echo $row[7];echo "</td>";}
 if (true){echo "<td>";echo $row[8];echo "</td>";}
