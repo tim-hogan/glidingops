@@ -103,13 +103,6 @@ if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";
 ?>
    <th>ROLES</th>
 <?php
-if (true){echo '<th ';if ($colsort == 7) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=7'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "ADDRESS";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 8) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=8'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 9) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=9'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 10) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=10'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 11) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=11'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CITY";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 12) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=12'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "COUNTRY";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 13) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=13'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "POSTCODE";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 23) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=23'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CLASS";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 24) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=24'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "STATUS";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 25) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=25'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "HOME PHONE1";echo "</th>";}
@@ -166,27 +159,6 @@ break;
  case 5:
    $sql .= "displayname";
    break;
- case 7:
-   $sql .= "mem_addr1";
-   break;
- case 8:
-   $sql .= "mem_addr2";
-   break;
- case 9:
-   $sql .= "mem_addr3";
-   break;
- case 10:
-   $sql .= "mem_addr4";
-   break;
- case 11:
-   $sql .= "mem_city";
-   break;
- case 12:
-   $sql .= "mem_country";
-   break;
- case 13:
-   $sql .= "mem_postcode";
-   break;
  case 23:
    $sql .= "b.class";
    break;
@@ -237,13 +209,6 @@ if (true){echo "<td>";echo $row[4];echo "</td>";}
       </ul>
    </td>
 <?php
-if (true){echo "<td>";echo $row[6];echo "</td>";}
-if (true){echo "<td>";echo $row[7];echo "</td>";}
-if (true){echo "<td>";echo $row[8];echo "</td>";}
-if (true){echo "<td>";echo $row[9];echo "</td>";}
-if (true){echo "<td>";echo $row[10];echo "</td>";}
-if (true){echo "<td>";echo $row[11];echo "</td>";}
-if (true){echo "<td>";echo $row[12];echo "</td>";}
 if (true){echo "<td>";echo $row[22];echo "</td>";}
 if (true){echo "<td>";echo $row[23];echo "</td>";}
 if (true){echo "<td>";echo $row[24];echo "</td>";}
