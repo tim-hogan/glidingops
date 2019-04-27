@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class MembershipStatus extends Model
 {
-  const STATUS_NAME_ACTIVE = 'Active';
+  const STATUS_NAME_ACTIVE   = 'Active';
+  const STATUS_NAME_PASSIVE  = 'Passive';
+  const STATUS_NAME_RESIGNED = 'Resigned';
+  const STATUS_NAME_DECEASED = 'Deceased';
 
   /**
    * The table associated with the model.

@@ -34,6 +34,11 @@ class Organisation extends Model
         return $this->hasMany('App\Models\User', 'org');
     }
 
+    public function membershipClasses()
+    {
+        return $this->hasMany('App\Models\MembershipClass', 'org');
+    }
+
     public function vectors()
     {
         return $this->hasMany(Vector::class);

@@ -15,6 +15,12 @@ if(isset($_SESSION['security'])){
 <meta name="viewport" content="initial-scale=1.0">
 <head>
 <title>Gliding-All Members</title>
+
+<!-- JS Libraries -->
+<?php
+include 'jsLibraies.php';
+?>
+
 <style>
 <?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?>
 .main-box {
@@ -36,16 +42,63 @@ if(isset($_SESSION['security'])){
    white-space: nowrap;
 }
 
+.filters {
+   display: flex;
+   flex-direction: row;
+}
+
+.filterSection {
+   display: flex;
+   flex-direction: column;
+   margin: 12px;
+}
+
+.filterSection.submit {
+   display: flex;
+   flex-direction: column-reverse;
+}
+
+.filterForm {
+   display: flex;
+}
+
 </style>
 <style>
 <?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
 <link rel="stylesheet" type="text/css" href="styletable1.css">
-<script>function goBack() {window.history.back()}</script>
-<script>function SelectionChange() {document.getElementById("selform").submit();}</script>
-<script><?php if(isset($_GET['sel'])) echo "var thissel=" . $_GET['sel'] .";"; else echo "thissel=0;";?>
-function optSel(s){var y=document.getElementById('selopt').childNodes;for(x=0;x<y.length;x++){if (y[x].value == s)y[x].selected=true;}}</script>
-</head>
-<body onload='optSel(thissel)' style="height: 100%" class="main-box">
+
+<script>
+function goBack() {window.history.back()}
+
+$(document).ready(function () {
+   $( "#roles-none" ).change(function() {
+      if(this.checked) {
+         $("#select-roles option:selected").removeAttr("selected");
+         $('#select-roles').prop('disabled', true)
+         $('#select-roles').selectpicker('refresh')
+      } else {
+         $('#select-roles').prop('disabled', false)
+         $('#select-roles').selectpicker('refresh')
+      }
+   })
+
+   $("#select-roles").change(function() {
+      $( "#roles-none" ).prop('checked', false);;
+   })
+
+   $("#reset-filter").click(function() {
+      // $("#filter-form").
+   })
+
+   $("[data-sort-id]").click(function(event) {
+      const sortId = $(event.target).data('sort-id')
+      $("#filter-form #col").val(sortId)
+      $("#filter").click()
+   })
+})
+</script>
+
+<body style="height: 100%" class="main-box">
 <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
 <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
 <?php
@@ -63,7 +116,6 @@ $pageid=12;
 $pkcol=4;
 $pagesortdata = $_SESSION['pagesortdata'];
 $colsort = $pagesortdata[$pageid];
-$selopt = 0;
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
  if(isset($_GET['col']))
@@ -75,44 +127,106 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
    $_SESSION['pagesortdata'] = $pagesortdata;
   }
  }
- if(isset($_GET['sel']))
- {
-   $selopt = $_GET['sel'];
- }
 }
+
+$organisation  = App\Models\Organisation::find($org);
+$allRoles      = App\Models\Role::all();
+$allClasses    = $organisation->membershipClasses();
+$allStatuses   = App\Models\MembershipStatus::all();
+
+// Seleced filters
+$filterRoles = isset($_GET['roles']) ? $_GET['roles'] : null;
+$filterRolesNone = isset($_GET['roles-none']) ? $_GET['roles-none'] : null;
+$filterClasses = isset($_GET['classes']) ? $_GET['classes'] : null;
+$filterStatuses = isset($_GET['statuses']) ? $_GET['statuses'] : null;
+
+if($filterRolesNone) {
+   $filterRoles = null;
+}
+
+if(! isset($_GET['filter'])) {
+   // default filters
+   $filterRoles = null;
+   $filterRolesNone = null;
+   $filterClasses = $organisation->membershipClasses()->where('class', '<>', App\Models\MembershipClass::CLASS_SHORT_TERM)->get()->map(function ($class) {
+      return $class->id;
+   })->all(); // all but short term
+   $filterStatuses = [App\Models\MembershipStatus::activeStatus()->id];
+}
+
 if ($colsort == 0)
  	$colsort = $pkcol;
 ?>
-<div id="sel">
-<form id = "selform" method="get" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-<select id='selopt' name="sel" onchange='SelectionChange()'>
-<option value = '0'>All Except Short Term</option>
-<option value = '1'>All</option>
-<select></form>
+<div class="filters">
+<form id="filter-form" method="get" action="<?=htmlspecialchars($_SERVER["PHP_SELF"])?>" class="filterForm">
+   <input type="hidden" name="col" id="col" value="<?=$colsort?>" />
+   <div class="filterSection">
+      <div>
+         <input type="checkbox" id='roles-none' name='roles-none' <?=($filterRolesNone) ? 'checked' : ''?>/>
+         <label for="roles-none">Members with no roles</label>
+      </div>
+      <select multiple name="roles[]" id="select-roles" class="selectpicker" <?=($filterRolesNone) ? 'disabled' : ''?>>
+         <?php
+         $allRoles->each(function($role) use ($filterRoles) {
+            $selected = ($filterRoles) ? in_array($role->id, $filterRoles) : false;
+         ?>
+         <option value="<?=$role->id?>" <?=($selected) ? 'selected' : ''?>><?=$role->name?></option>
+         <?php
+         });
+         ?>
+      </select>
+   </div>
+   <div class="filterSection">
+      <label for="selectClasses">Classes</label>
+      <select multiple name="classes[]" id="selectClasses" class="selectpicker">
+         <?php
+         $allClasses->each(function($class) use ($filterClasses) {
+            $selected = ($filterClasses) ? in_array($class->id, $filterClasses) : false;
+         ?>
+         <option value="<?=$class->id?>" <?=($selected) ? 'selected' : ''?>><?=$class->class?></option>
+         <?php
+         });
+         ?>
+      </select>
+   </div>
+   <div class="filterSection">
+      <label for="selectStatuses">Statuses</label>
+      <select multiple name="statuses[]" id="selectStatuses" class="selectpicker">
+         <?php
+         $allStatuses->each(function($status) use ($filterStatuses) {
+            $selected = ($filterStatuses) ? in_array($status->id, $filterStatuses) : false;
+         ?>
+         <option value="<?=$status->id?>" <?=($selected) ? 'selected' : ''?>><?=$status->status_name?></option>
+         <?php
+         });
+         ?>
+      </select>
+   </div>
+   <div class="filterSection submit">
+      <input type="submit" value="Apply Filter" name="filter" id='filter' class="btn btn-primary"/>
+   </div>
+</form>
 </div>
+
 <div id="div1" class='content'>
 <table class="sticky-header">
    <thead>
    <tr>
-<?php
-if (true){echo '<th ';if ($colsort == 1) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=1'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "ID";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 2) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=2'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "MEM NUM";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 3) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=3'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "FIRSTNAME";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "SURNAME";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "DISPLAY NAME";echo "</th>";}
-?>
-   <th>ROLES</th>
-<?php
-if (true){echo '<th ';if ($colsort == 23) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=23'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CLASS";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 24) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=24'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "STATUS";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 25) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=25'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "HOME PHONE1";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 26) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=26'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "MOBILE PHONE";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 28) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=28'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "EMAIL";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 30) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=30'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "TEXT";echo "</th>";}
-if (true){echo '<th ';if ($colsort == 31) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='members-list.php?col=31'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "EMIAL";echo "</th>";}
-?>
-</tr>
-</thead>
+      <th data-sort-id='1' <?=($colsort == 1) ? "class='colsel'" : ''?> style='cursor:pointer'>ID</th>
+      <th data-sort-id='2' <?=($colsort == 2) ? "class='colsel'" : ''?> style='cursor:pointer'>MEM NUM</th>
+      <th data-sort-id='3' <?=($colsort == 3) ? "class='colsel'" : ''?> style='cursor:pointer'>FIRSTNAME</th>
+      <th data-sort-id='4' <?=($colsort == 4) ? "class='colsel'" : ''?> style='cursor:pointer'>SURNAME</th>
+      <th data-sort-id='5' <?=($colsort == 5) ? "class='colsel'" : ''?> style='cursor:pointer'>DISPLAY NAME</th>
+      <th>ROLES</th>
+      <th data-sort-id='23' <?=($colsort == 23) ? "class='colsel'" : ''?> style='cursor:pointer'>CLASS</th>
+      <th data-sort-id='24' <?=($colsort == 24) ? "class='colsel'" : ''?> style='cursor:pointer'>STATUS</th>
+      <th data-sort-id='25' <?=($colsort == 25) ? "class='colsel'" : ''?> style='cursor:pointer'>HOME PHONE1</th>
+      <th data-sort-id='26' <?=($colsort == 26) ? "class='colsel'" : ''?> style='cursor:pointer'>MOBILE PHONE</th>
+      <th data-sort-id='28' <?=($colsort == 28) ? "class='colsel'" : ''?> style='cursor:pointer'>EMAIL</th>
+      <th data-sort-id='30' <?=($colsort == 30) ? "class='colsel'" : ''?> style='cursor:pointer'>TEXT</th>
+      <th data-sort-id='31' <?=($colsort == 31) ? "class='colsel'" : ''?> style='cursor:pointer'>EMIAL</th>
+   </tr>
+   </thead>
 <tbody>
 <?php
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
@@ -121,24 +235,42 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= <<<SQL
+
+$whereRoles = "";
+if($filterRoles) {
+   $sqlValues = join(',', $filterRoles);
+   $whereRoles .= " WHERE roles.id IN ({$sqlValues}) ";
+}
+$rolesSql=<<<SQL
+   SELECT role_member.member_id AS member_id, GROUP_CONCAT(roles.name) AS role_names
+   FROM role_member
+   JOIN roles ON roles.id = role_member.role_id
+   {$whereRoles}
+   GROUP BY role_member.member_id
+SQL;
+$rolesJoin = ($filterRoles) ? "JOIN ({$rolesSql})" : "LEFT JOIN ({$rolesSql})";
+
+$sql=<<<SQL
 SELECT members.id,members.member_id,members.firstname,members.surname,members.displayname,members.date_of_birth,members.mem_addr1,members.mem_addr2,members.mem_addr3,members.mem_addr4,members.mem_city,members.mem_country,members.mem_postcode,members.emerg_addr1,members.emerg_addr2,members.emerg_addr3,members.emerg_addr4,members.emerg_city,members.emerg_country,members.emerg_postcode,members.gnz_number,members.qgp_number,b.class,c.status_name,members.phone_home,members.phone_mobile,members.phone_work,members.email,members.gone_solo,members.enable_text,members.enable_email,members.official_observer,members.first_aider,roles.role_names
 FROM members
 LEFT JOIN membership_class b ON b.id = members.class
 LEFT JOIN membership_status c ON c.id = members.status
-LEFT JOIN (
-   SELECT role_member.member_id AS member_id, GROUP_CONCAT(roles.name) AS role_names
-   FROM role_member
-   LEFT JOIN roles ON roles.id = role_member.role_id
-   GROUP BY role_member.member_id
-) roles ON roles.member_id = members.id
+{$rolesJoin} roles ON roles.member_id = members.id
 SQL;
 
 if ($_SESSION['org'] > 0){$sql .= " WHERE members.org=".$_SESSION['org'];}
-switch ($selopt) {
-case 0:  $sql .= " and b.class <> 'Short Term' "; break;
-case 1:  break;
+if($filterClasses) {
+   $sqlValues = join(',', $filterClasses);
+   $sql .= " and b.id IN ({$sqlValues}) ";
 }
+if($filterRolesNone) {
+   $sql .= " AND roles.member_id IS NULL ";
+}
+if($filterStatuses) {
+   $sqlValues = join(',', $filterStatuses);
+   $sql .= " AND c.id IN ({$sqlValues}) ";
+}
+
 $sql.=" ORDER BY ";
 switch ($colsort) {
  case 0:
@@ -182,7 +314,7 @@ break;
    break;
 }
 $sql .= " ASC";
-$diagtext.= "SQL=".$sql;
+echo($diagtext);
 $r = mysqli_query($con,$sql);
 $rownum = 0;
 while ($row = mysqli_fetch_array($r) )
@@ -222,7 +354,8 @@ if (true){echo "<td class='right'>";echo $row[30];echo "</td>";}
 </tbody>
 </table>
 </div>
-<form id="form1" action='Member' method='GET'><input type='submit' value = 'Create New'>
+<form id="form1" action='Member' method='GET' style="margin-top: 12px">
+   <input type='submit' value = 'Create New' class="btn btn-primary">
 </form>
 <?php if($DEBUG>0) echo "<p>".$diagtext."</p>";?>
 </body>
