@@ -1,5 +1,6 @@
 <?php session_start(); ?>
 <?php
+include 'timehelpers.php';
 $org=0;
 if(isset($_SESSION['org'])) $org=$_SESSION['org'];
 if(isset($_SESSION['security'])){
@@ -492,6 +493,12 @@ $phone_mobile_f=htmlspecialchars($phone_mobile_f,ENT_QUOTES);
 $phone_work_f=htmlspecialchars($phone_work_f,ENT_QUOTES);
 $email_f=htmlspecialchars($email_f,ENT_QUOTES);
 }
+
+// =========== USER ROLES ===============
+$allRoles = App\Models\Role::all();
+if($recid != null) {
+  $userRoles = App\Models\Member::find($recid)->roles;
+}
 ?>
 <div id='divform'>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -843,6 +850,22 @@ echo "<td><input type='checkbox' name='first_aider_i[]' Value='1' ";if ($first_a
 echo $first_aider_err; echo "</td></tr>";
 }
 ?>
+<tr>
+  <td class='desc'>ROLES</td>
+  <td/>
+  <td>
+  <?php
+    $allRoles->each(function($role) use ($userRoles) {
+      $selected = ($userRoles) ? $userRoles->contains($role) : false;
+      $key = "role-{$role->id}";
+  ?>
+    <input type='checkbox' value="<?=$role->id?>" <?=($selected) ? 'checked' : ''?> name='roles[]' id='<?=$key?>'/>
+    <label for='<?=$key?>'><?=$role->name?></label>
+  <?php
+    });
+  ?>
+  </td>
+</tr>
 </table>
 <table>
 <tr><td><input type="submit" name = 'tran' value = '<?php echo $trantype; ?>'></td><td><?php if ($trantype == "Update") echo "<input type='submit' name = 'del' value = 'Delete'>";?></td><td></td><td></td></tr>
