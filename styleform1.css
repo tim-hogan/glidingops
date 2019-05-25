@@ -5,3 +5,7 @@ a:visited {text-decoration: none;}
 a:hover {text-decoration: none;}
 a:active {text-decoration: none;}
 
+.field-error-msg {
+  color: red;
+  padding-left: 10px;
+}

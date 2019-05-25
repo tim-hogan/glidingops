@@ -107,8 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
   $recid = $_GET['id'];
   if ($recid >= 0)
   {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+   $trantype="Update";
+   $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
+   $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
     $errtext= "Failed to connect to Database: " . mysqli_connect_error();
@@ -156,7 +157,12 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $bfr_expire_f = $row['bfr_expire'];
     $official_observer_f = $row['official_observer'];
     $first_aider_f = $row['first_aider'];
-    $trantype="Update";
+    $roleIds = [];
+    if($recid != null) {
+      $userRoles = App\Models\Member::find($recid)->roles;
+      $roleIds = $userRoles->map(function($role){ return $role->id; })->all();
+    }
+
     mysqli_close($con);
    }
   }
@@ -205,6 +211,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $official_observer_err = "";
  $first_aider_err = "";
  $localdate_lastemail_err = "";
+ $trantype=$_POST["tran"];
+ $roleIds = $_POST["roles"];
+ if(isset($_POST['updateid'])){
+  $recid = $_POST['updateid'];
+ }
  $member_id_f = InputChecker($_POST["member_id_i"]);
  if (!empty($member_id_f ) ) {if (!is_numeric($member_id_f ) ) {$member_id_err = "MEMBER NUM is not numeric";$error = 1;}}
  $firstname_f = InputChecker($_POST["firstname_i"]);
@@ -449,22 +460,34 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
       $Q.= ")";
     }}
     $sqltext = $Q;
+    if(isset($_POST["del"])) {
+      $member =  App\Models\Member::find($recid);
+      $member->roles()->sync([]);
+    }
     if(!mysqli_query($con,$Q) )
     {
        $errtext = "Database entry: " . mysqli_error($con) . "<br>" . $Q;
+    } else {
+      if($_POST["tran"] == "Create") {
+        $recid = $con->insert_id;
+      }
+
+      if(!isset($_POST["del"]) && isset($_POST["roles"])) {
+        // Update Roles collection from roles[] POST parameter
+        if (is_array($roleIds)) {
+          $member =  App\Models\Member::find($recid);
+          $member->roles()->sync($roleIds);
+        }
+      }
+
+      if(isset($_POST["del"])){
+        header("Location: AllMembers");
+      } else {
+        header("Location: Member?id={$recid}");
+      }
+      exit();
     }
     mysqli_close($con);
-  }
-
-  if($_POST["tran"] != "Delete" && isset($_POST["roles"])) {
-    // Update Roles collection from roles[] POST parameter
-    $roleIds = $_POST["roles"];
-    $lastId = ($_POST["tran"] == "Create") ? $con->insert_id : $_POST['updateid'];
-
-    if (is_array($roleIds)) {
-      $member =  App\Models\Member::find($lastId);
-      $member->roles()->sync($roleIds);
-    }
   }
  }
 $firstname_f=htmlspecialchars($firstname_f,ENT_QUOTES);
@@ -492,9 +515,7 @@ $email_f=htmlspecialchars($email_f,ENT_QUOTES);
 
 // =========== USER ROLES ===============
 $allRoles = App\Models\Role::all();
-if($recid != null) {
-  $userRoles = App\Models\Member::find($recid)->roles;
-}
+$userRoles = App\Models\Role::find($roleIds);
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -510,7 +531,7 @@ if($recid != null) {
 <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
 <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
 <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
-<script>function goBack() {window.history.back()}</script>
+<script>function goBack() {window.location = 'AllMembers'}</script>
 <div id='divform'>
 <form method="post" action="<?php echo htmlspecialchars('./Member');?>">
 <table>
@@ -536,8 +557,7 @@ echo $member_id_err; echo "</td></tr>";
 echo "<tr><td class='desc'>FIRSTNAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($firstname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='firstname_i' ";echo "size='30' ";echo "Value='";echo $firstname_f;echo "' ";echo "maxlength='40'";echo ">";echo "</td>";echo "<td>";
-echo $firstname_err; echo "</td></tr>";
+  if (strlen($firstname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='firstname_i' ";echo "size='30' ";echo "Value='";echo $firstname_f;echo "' ";echo "maxlength='40'";echo "><span class='field-error-msg'>{$firstname_err}</span>";echo "</td>";echo "<td>"; echo "</td></tr>";
 }
 ?>
 <?php if (true)
@@ -545,8 +565,7 @@ echo $firstname_err; echo "</td></tr>";
 echo "<tr><td class='desc'>SURNAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($surname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='surname_i' ";echo "size='30' ";echo "Value='";echo $surname_f;echo "' ";echo "maxlength='40'";echo ">";echo "</td>";echo "<td>";
-echo $surname_err; echo "</td></tr>";
+if (strlen($surname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='surname_i' ";echo "size='30' ";echo "Value='";echo $surname_f;echo "' ";echo "maxlength='40'";echo "><span class='field-error-msg'>{$surname_err}</span>";echo "</td>";echo "<td></td></tr>";
 }
 ?>
 <?php if (true)
@@ -554,8 +573,7 @@ echo $surname_err; echo "</td></tr>";
 echo "<tr><td class='desc'>DISPLAY NAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($displayname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='displayname_i' ";echo "size='40' ";echo "Value='";echo $displayname_f;echo "' ";echo "maxlength='80'";echo ">";echo "</td>";echo "<td>";
-echo $displayname_err; echo "</td></tr>";
+if (strlen($displayname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='displayname_i' ";echo "size='40' ";echo "Value='";echo $displayname_f;echo "' ";echo "maxlength='80'";echo "><span class='field-error-msg'>{$displayname_err}</span>";echo "</td>";echo "<td></td></tr>";
 }
 ?>
 <?php if (true)
@@ -879,7 +897,22 @@ echo $first_aider_err; echo "</td></tr>";
 </tr>
 </table>
 <table>
-<tr><td><input type="submit" name = 'tran' value = '<?php echo $trantype; ?>'></td><td><?php if ($trantype == "Update") echo "<input type='submit' name = 'del' value = 'Delete'>";?></td><td></td><td></td></tr>
+<tr>
+  <td>
+    <?php
+    if($recid > -1) {
+      $submitValue = 'Update';
+    } else {
+      $submitValue = 'Create';
+    }
+    ?>
+    <input type="submit" name = 'tran' value = '<?=$submitValue?>'>
+  </td>
+  <td>
+    <?php if ($recid > -1) echo "<input type='submit' name = 'del' value = 'Delete'>";?>
+  </td>
+  <td></td>
+  <td></td></tr>
 </table>
 <input type="hidden" name = 'updateid' value = '<?php echo $recid; ?>'>
 </form>
