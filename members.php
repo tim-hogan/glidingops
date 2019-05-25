@@ -9,23 +9,7 @@ if(isset($_SESSION['security'])){
  header('Location: Login.php');
  die("Please logon");
 }
-?>
-<!DOCTYPE HTML>
-<html>
-<meta name="viewport" content="width=device-width">
-<meta name="viewport" content="initial-scale=1.0">
-<head>
-<style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
-<style>
-<?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
-<link rel="stylesheet" type="text/css" href="styleform1.css">
-</head>
-<body>
-<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
-<?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
-<?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
-<script>function goBack() {window.history.back()}</script>
-<?php
+
 $DEBUG=0;
 $dateTimeZone = new DateTimeZone($_SESSION['timezone']);
 $dateTime = new DateTime('now', $dateTimeZone);
@@ -266,17 +250,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $phone_mobile_f = InputChecker($_POST["phone_mobile_i"]);
  $phone_work_f = InputChecker($_POST["phone_work_i"]);
  $email_f = InputChecker($_POST["email_i"]);
-if(in_array("1",$_POST['gone_solo_i']))
+if(is_array($_POST['gone_solo_i']) && in_array("1",$_POST['gone_solo_i']))
  $gone_solo_f = 1;
 else
  $gone_solo_f = 0;
  if (!empty($gone_solo_f ) ) {if (!is_numeric($gone_solo_f ) ) {$gone_solo_err = "SOLO is not numeric";$error = 1;}}
-if(in_array("1",$_POST['enable_text_i']))
+if(is_array($_POST['enable_text_i']) && in_array("1",$_POST['enable_text_i']))
  $enable_text_f = 1;
 else
  $enable_text_f = 0;
  if (!empty($enable_text_f ) ) {if (!is_numeric($enable_text_f ) ) {$enable_text_err = "ENABLE TEXTS is not numeric";$error = 1;}}
-if(in_array("1",$_POST['enable_email_i']))
+if(is_array($_POST['enable_email_i']) && in_array("1",$_POST['enable_email_i']))
  $enable_email_f = 1;
 else
  $enable_email_f = 0;
@@ -287,11 +271,11 @@ if ($_SESSION['security'] & 16) { $icr_expire_f = InputChecker($_POST["icr_expir
 }
 if ($_SESSION['security'] & 16) { $bfr_expire_f = InputChecker($_POST["bfr_expire_i"]);
 }
-if(in_array("1",$_POST['official_observer_i']))
+if(is_array($_POST['official_observer_i']) && in_array("1",$_POST['official_observer_i']))
  $official_observer_f = 1;
 else
  $official_observer_f = 0;
-if(in_array("1",$_POST['first_aider_i']))
+if(is_array($_POST['first_aider_i']) && in_array("1",$_POST['first_aider_i']))
  $first_aider_f = 1;
 else
  $first_aider_f = 0;
@@ -383,8 +367,9 @@ if ($_SESSION['security'] & 16) {      $Q .= ",bfr_expire=";
       $Q .= "'" . $official_observer_f . "'";
       $Q .= ",first_aider=";
       $Q .= "'" . $first_aider_f . "'";
-$Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
-$Q .= $_POST['updateid'];}
+      $Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
+$Q .= $_POST['updateid'];
+}
      else
      if ($_POST["tran"] == "Create"){
        $Q = "INSERT INTO members (";$Q .= "member_id";$Q .= ", org";$Q .= ", firstname";$Q .= ", surname";$Q .= ", displayname";$Q .= ", date_of_birth";$Q .= ", mem_addr1";$Q .= ", mem_addr2";$Q .= ", mem_addr3";$Q .= ", mem_addr4";$Q .= ", mem_city";$Q .= ", mem_country";$Q .= ", mem_postcode";$Q .= ", emerg_addr1";$Q .= ", emerg_addr2";$Q .= ", emerg_addr3";$Q .= ", emerg_addr4";$Q .= ", emerg_city";$Q .= ", emerg_country";$Q .= ", emerg_postcode";$Q .= ", gnz_number";$Q .= ", qgp_number";$Q .= ", class";$Q .= ", status";$Q .= ", phone_home";$Q .= ", phone_mobile";$Q .= ", phone_work";$Q .= ", email";$Q .= ", gone_solo";$Q .= ", enable_text";$Q .= ", enable_email";if ($_SESSION['security'] & 16) $Q .= ", medical_expire";if ($_SESSION['security'] & 16) $Q .= ", icr_expire";if ($_SESSION['security'] & 16) $Q .= ", bfr_expire";$Q .= ", official_observer";$Q .= ", first_aider";$Q .= " ) VALUES (";
@@ -470,6 +455,17 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
     }
     mysqli_close($con);
   }
+
+  if($_POST["tran"] != "Delete" && isset($_POST["roles"])) {
+    // Update Roles collection from roles[] POST parameter
+    $roleIds = $_POST["roles"];
+    $lastId = ($_POST["tran"] == "Create") ? $con->insert_id : $_POST['updateid'];
+
+    if (is_array($roleIds)) {
+      $member =  App\Models\Member::find($lastId);
+      $member->roles()->sync($roleIds);
+    }
+  }
  }
 $firstname_f=htmlspecialchars($firstname_f,ENT_QUOTES);
 $surname_f=htmlspecialchars($surname_f,ENT_QUOTES);
@@ -500,8 +496,23 @@ if($recid != null) {
   $userRoles = App\Models\Member::find($recid)->roles;
 }
 ?>
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="initial-scale=1.0">
+<head>
+<style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
+<style>
+<?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
+<link rel="stylesheet" type="text/css" href="styleform1.css">
+</head>
+<body>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
+<?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
+<?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
+<script>function goBack() {window.history.back()}</script>
 <div id='divform'>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+<form method="post" action="<?php echo htmlspecialchars('./Member');?>">
 <table>
 <?php if (true)
 {
