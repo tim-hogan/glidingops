@@ -147,16 +147,6 @@ if($filterRolesNone) {
    $filterRoles = null;
 }
 
-if(! isset($_GET['filter'])) {
-   // default filters
-   // $filterRoles = null;
-   // $filterRolesNone = null;
-   // $filterClasses = $organisation->membershipClasses()->where('class', '<>', App\Models\MembershipClass::CLASS_SHORT_TERM)->get()->map(function ($class) {
-   //    return $class->id;
-   // })->all(); // all but short term
-   // $filterStatuses = [App\Models\MembershipStatus::activeStatus()->id];
-}
-
 if ($colsort == 0)
  	$colsort = $pkcol;
 ?>
