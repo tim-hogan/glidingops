@@ -135,10 +135,13 @@ $allClasses    = $organisation->membershipClasses();
 $allStatuses   = App\Models\MembershipStatus::all();
 
 // Seleced filters
+$filterDisabled = isset($_GET['filter-disabled']) ? true : false;
 $filterRoles = isset($_GET['roles']) ? $_GET['roles'] : null;
 $filterRolesNone = isset($_GET['roles-none']) ? $_GET['roles-none'] : null;
-$filterClasses = isset($_GET['classes']) ? $_GET['classes'] : null;
-$filterStatuses = isset($_GET['statuses']) ? $_GET['statuses'] : null;
+$filterClasses = isset($_GET['classes']) ? $_GET['classes'] : $organisation->membershipClasses()->where('class', '<>', App\Models\MembershipClass::CLASS_SHORT_TERM)->get()->map(function ($class) {
+      return $class->id;
+   })->all(); // all but short term
+$filterStatuses = isset($_GET['statuses']) ? $_GET['statuses'] : [App\Models\MembershipStatus::activeStatus()->id];
 
 if($filterRolesNone) {
    $filterRoles = null;
@@ -146,12 +149,12 @@ if($filterRolesNone) {
 
 if(! isset($_GET['filter'])) {
    // default filters
-   $filterRoles = null;
-   $filterRolesNone = null;
-   $filterClasses = $organisation->membershipClasses()->where('class', '<>', App\Models\MembershipClass::CLASS_SHORT_TERM)->get()->map(function ($class) {
-      return $class->id;
-   })->all(); // all but short term
-   $filterStatuses = [App\Models\MembershipStatus::activeStatus()->id];
+   // $filterRoles = null;
+   // $filterRolesNone = null;
+   // $filterClasses = $organisation->membershipClasses()->where('class', '<>', App\Models\MembershipClass::CLASS_SHORT_TERM)->get()->map(function ($class) {
+   //    return $class->id;
+   // })->all(); // all but short term
+   // $filterStatuses = [App\Models\MembershipStatus::activeStatus()->id];
 }
 
 if ($colsort == 0)
@@ -205,6 +208,9 @@ if ($colsort == 0)
    <div class="filterSection submit">
       <input type="submit" value="Apply Filter" name="filter" id='filter' class="btn btn-primary"/>
    </div>
+   <div class="filterSection submit">
+      <input type="submit" value="Show All" name="filter-disabled" id='filter-disabled' class="btn btn-primary"/>
+   </div>
 </form>
 </div>
 
@@ -237,7 +243,7 @@ if (mysqli_connect_errno())
 }
 
 $whereRoles = "";
-if($filterRoles) {
+if(!$filterDisabled && $filterRoles) {
    $sqlValues = join(',', $filterRoles);
    $whereRoles .= " WHERE roles.id IN ({$sqlValues}) ";
 }
@@ -248,7 +254,7 @@ $rolesSql=<<<SQL
    {$whereRoles}
    GROUP BY role_member.member_id
 SQL;
-$rolesJoin = ($filterRoles) ? "JOIN ({$rolesSql})" : "LEFT JOIN ({$rolesSql})";
+$rolesJoin = (!$filterDisabled && $filterRoles) ? "JOIN ({$rolesSql})" : "LEFT JOIN ({$rolesSql})";
 
 $sql=<<<SQL
 SELECT members.id,members.member_id,members.firstname,members.surname,members.displayname,members.date_of_birth,members.mem_addr1,members.mem_addr2,members.mem_addr3,members.mem_addr4,members.mem_city,members.mem_country,members.mem_postcode,members.emerg_addr1,members.emerg_addr2,members.emerg_addr3,members.emerg_addr4,members.emerg_city,members.emerg_country,members.emerg_postcode,members.gnz_number,members.qgp_number,b.class,c.status_name,members.phone_home,members.phone_mobile,members.phone_work,members.email,members.gone_solo,members.enable_text,members.enable_email,members.official_observer,members.first_aider,roles.role_names
@@ -259,14 +265,14 @@ LEFT JOIN membership_status c ON c.id = members.status
 SQL;
 
 if ($_SESSION['org'] > 0){$sql .= " WHERE members.org=".$_SESSION['org'];}
-if($filterClasses) {
+if(!$filterDisabled && $filterClasses) {
    $sqlValues = join(',', $filterClasses);
    $sql .= " and b.id IN ({$sqlValues}) ";
 }
-if($filterRolesNone) {
+if(!$filterDisabled && $filterRolesNone) {
    $sql .= " AND roles.member_id IS NULL ";
 }
-if($filterStatuses) {
+if(!$filterDisabled && $filterStatuses) {
    $sqlValues = join(',', $filterStatuses);
    $sql .= " AND c.id IN ({$sqlValues}) ";
 }
