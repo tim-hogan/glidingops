@@ -34,7 +34,7 @@ include 'jsLibraies.php';
 }
 
 .sticky-header th {
-   position: sticky;
+   position: -webkit-sticky; position: sticky;
    top: 0;
 }
 
@@ -43,8 +43,8 @@ include 'jsLibraies.php';
 }
 
 .filters {
-   display: flex;
-   flex-direction: row;
+   /*display: flex;
+   flex-direction: row;*/
 }
 
 .filterSection {
@@ -60,6 +60,7 @@ include 'jsLibraies.php';
 
 .filterForm {
    display: flex;
+   flex-wrap: wrap;
 }
 
 </style>
