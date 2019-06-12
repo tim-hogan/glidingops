@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 include 'timehelpers.php';
 include 'helpers.php';
+include 'geohelpers.php';
 
 require './includes/classGlidingDB.php';
 require './includes/classTracksDB.php';
@@ -235,6 +236,101 @@ function getFlightData($flightid)
         returnError($req,1006,"No Flight");
 }
 
+function getCouldLandOut($orgval)
+{
+    global $DB;
+    global $req;
+    
+    $ret = array();
+    $data = array();
+    $flights_analyzed = array();
+    
+    
+    $home_coordiantes = ['GREYTOWN' => 
+                            ['lat' => -41.104186,
+                             'lon' => 175.500444,
+                             'alt' => 40.0],
+                         'MASTERTON' =>
+                            ['lat' => -40.974917,
+                             'lon' => 175.632745,
+                             'alt' => 113.0]
+                        ];   
+    
+    $org = intval($orgval);
+    if ($org <= 0)
+        returnError($req,1007,"Invalid organistaion");
+    if (!$DB->getOrganisation($org))
+        returnError($req,1008,"No organistaion for id {$org}");
+    
+    //All flights flying now for club
+    $current_flights = array();
+    $r = $DB->flyingNowByStart($org);
+    while ($flight = $r->fetch_array())
+    {
+        $f = array();
+        $f['glider'] = $flight['glider'];
+        $f['start']  = $flight['start'] / 1000;
+        $f['location'] = $flight['location'];
+        $f['land']  = 0;
+        
+        //Check that we do not have a glider that has landed but hasn't been landed by the ground control
+        foreach ($current_flights as $f2) 
+        {
+            if (strtoupper($f2['glider']) == strtoupper($flight['glider']))
+                $f2['land'] =  $f['start'];   
+        }
+        array_push($current_flights,$f);
+    }
+    
+    foreach ($current_flights as $f) 
+    {
+        if ($f['land'] == 0)
+        {
+            //Search for last two gps points for this flight
+            $start = new DateTime();
+            $start->setTimestamp($f['start']);
+            //Add a day to end
+            $end = new DateTime();
+            $end->setTimestamp($start->getTimestamp() + 86400);
+            $r = $DB->getLastTwoTracksForFlight($start,$end,$f['glider']);
+            if ($r->num_rows >= 2)
+            {
+                $track_last = $r->fetch_array();
+                $track_prev = $r->fetch_array();
+                //Check altitude is below 1500 feet
+                if ( (floatval($track_last['alt']) * 3.28084) < 1500.0)
+                {
+                    //Now check that last alt is less than pre alt (Descending)
+                    if (floatval($track_last['alt']) < floatval($track_prev['alt']) )
+                    {
+                        //Now distance from homebase
+                        if (array_key_exists(strtoupper($f['location']),$home_coordiantes) )
+                        {
+                            $cord = $home_coordiantes[ strtoupper($f['location']) ];
+                            $d = DistKM($cord['lat'],$cord['lon'],$f['lat'],$f['lon']) * 1000.0;
+                            $glide_ratio = $d / ($f['alt'] - $cord['alt']);
+                            $flight_result = array();
+                            $flight_result['glider'] = $f['glider'];
+                            $flight_result['ratio'] = $glide_ratio;
+                            $flight_result['distance'] = $d;
+                            $flight_result['outland_risk'] = false;
+                            if ($glide_ratio > 50.0)
+                                $flight_result['outland_risk'] = true;
+                            array_push($flights_analyzed,$flight_result);
+                        }
+                    }
+                }
+            }
+        }
+    }
+        
+    $ret['meta'] = newOKMetaHdr($req);
+    $data['flights'] = $flights_analyzed;
+    $ret['data'] = $data;    
+    echo json_encode($ret);
+   
+}
+
 /*
 ***********************************************************************
 PUT AND POST FUNCTIONS
@@ -378,23 +474,43 @@ function parseLoc($params)
 function createTrack($params) 
 {
     global $DB;
+    global $req;
+    
+    $ret = array();
     $org = 1;
     $glider = '';
     $gpstime = '1970-01-01 00:00:01';
     $lat = 0.0;
     $lon = 0.0;
     $alt = 0.0;
+    $timeunix = 0;
     
     if (isset($params['org'])) $glider = $params['org'];
     if (isset($params['glider'])) $glider = $params['glider'];
-    if (isset($params['gpstime'])) $gpstime = $params['gpstime'];
+    
+    //We can get time as two options , either a string or a milli second timestamp.
+    if (isset($params['gpstime'])) 
+        $gpstime = $params['gpstime'];
+    else
+    if (isset($params['timeunix'])) 
+        $timeunix = intval($params['timeunix']);
+    
     if (isset($params['lat'])) $lat = floatval($params['lat']);
     if (isset($params['lon'])) $lon = floatval($params['lon']);
     if (isset($params['alt'])) $alt = floatval($params['alt']);
     
+    if ($timeunix > 0)
+    {
+        $d = new DateTime();
+        $d->setTimestamp(intval($timeunix));
+        $gpstime = $d->format('Y-m-d H:i:s');
+    }
+    
     $DB->createTrack($org,$glider,$gpstime,0.0,$lat,$lon,$alt,'Particle');  
     
-    echo "0";
+    $ret['meta'] = newOKMetaHdr($req);
+    $ret['data'] = array();    
+    echo json_encode($ret);
     exit();
 }
 
@@ -425,7 +541,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     case 'flightdata':
         getFlightData($reqValue1);
         break;
-
+    case 'couldlandout':
+        getCouldLandOut($reqValue1);
+        break;
     default:
         returnError($req,1002,"Invalid parameter");
         break;

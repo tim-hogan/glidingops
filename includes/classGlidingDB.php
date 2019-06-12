@@ -82,6 +82,20 @@ class GlidingDB extends SQLPlus
         return $r;
     }
     
+    public function flyingNowByStart($org)
+    {
+        $dateTimeZone = new DateTimeZone($this->getOrgTimezone($org));
+        $dateTime = new DateTime("now", $dateTimeZone);
+        $dateStr = $dateTime->format('Ymd');
+        $dateTimeNow = new DateTime("now");
+        $flightTypeGlider = $this->getGlidingFlightType();
+        
+        $q = "SELECT flights.seq,flights.glider, b.displayname,c.displayname, (flights.start/1000) from flights LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 where flights.org = ".intval($org)." and flights.localdate=" . $dateStr . " and flights.type = ".$flightTypeGlider." and flights.deleted <> 1 and flights.start > 0 and flights.land=0 order by flights.start ASC";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+    
     public function completedToday($org)
     {
         $dateTimeZone = new DateTimeZone($this->getOrgTimezone($org));
@@ -217,6 +231,14 @@ class GlidingDB extends SQLPlus
     public function getTracksForFlight($start,$end,$aircraft)
     {
         $q = "SELECT * from tracks where glider = '".$aircraft."' and point_time >= '".$start->format('Y-m-d H:i:s')."' and point_time <= '".$end->format('Y-m-d H:i:s')."' order by point_time";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+    
+    public function getLastTwoTracksForFlight($start,$end,$aircraft)
+    {
+        $q = "SELECT * from tracks where glider = '".$aircraft."' and point_time >= '".$start->format('Y-m-d H:i:s')."' and point_time <= '".$end->format('Y-m-d H:i:s')."' order by point_time DESC Limit 2";
         $r = $this->query($q);
         if (!$r) {$this->sqlError($q); return null;}
         return $r;

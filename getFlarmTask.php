@@ -94,7 +94,7 @@ if (count($gliderlist) > 0)
                     The 10 minute window allows for clock sync issues.
                 */
                 $dtgps = new DateTime($dt->format('Y-m-d') . " " . $p['time']);
-                if ( ($dtgps->getTimestamp() - 600) > $dt->getTimestamp)
+                if ($dtgps->getTimestamp() > ($dt->getTimestamp() + 3600*12)) 
                     $dtgps->setTimestamp($dtgps->getTimestamp() - 86400);
                 $strTime =  $dtgps->format('Y-m-d H:i:s');   
                 $DB->createTrack(1,$gld,$strTime,0,$p['lat'],$p['lon'],$p['alt'],'FlarmOGN');

@@ -74,6 +74,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   }
   else
     $q2 = "SELECT tracks.point_time,lattitude,longitude,altitude from tracks where tracks.org = ".$org." and tracks.glider = '".$row[1]."' and tracks.point_time >= '" .$strStart. "' ORDER by tracks.point_time";  
+  
   $r2 = mysqli_query($con,$q2); 
   while ($row2 = mysqli_fetch_array($r2) )
   {
