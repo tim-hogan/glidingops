@@ -262,7 +262,7 @@ class GlidingDB extends SQLPlus
     
     public function allTracksForPeriod($start,$end)
     {
-        $q = "SELECT * from tracks where point_time > '{$strstart}' and point_time < '{$strend}' order by glider, point_time";
+        $q = "SELECT * from tracks where point_time > '{$start}' and point_time < '{$end}' order by glider, point_time";
         $r = $this->query($q);
         if (!$r) {$this->sqlError($q); return null;}
         return $r;
