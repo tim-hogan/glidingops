@@ -260,6 +260,14 @@ class GlidingDB extends SQLPlus
         return $r;
     }
     
+    public function allTracksForPeriod($start,$end)
+    {
+        $q = "SELECT * from tracks where point_time > '{$strstart}' and point_time < '{$strend}' order by glider, point_time";
+        $r = $this->query($q);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+    
     public function deleteTrack($id)
     {
         return $this->delete("DELETE from tracks where id = " . intval($id));
