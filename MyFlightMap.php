@@ -1,3 +1,7 @@
+<?php
+$global_settings = require('./config/site.php'); 
+$global_settings = $global_params['globalSettings']; 	
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +20,7 @@ h1 {font-size:20px;}
 #textarea td {font-size: 14px;}
 </style>
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBACKvSv3Dkose3DNn9rmvfCdJnEUwcGaE">
+      src="https://maps.googleapis.com/maps/api/js?key=<?php echo $global_settings['mapKey'];?>">
 </script>
 <script type="text/javascript">
 <?php
