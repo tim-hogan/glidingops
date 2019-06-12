@@ -7,6 +7,8 @@ if (isset($_GET['org']))
  $org=$_GET['org'];
 else
  die("Organisation number not set");
+$global_settings = require('./config/site.php'); 
+$global_settings = $global_params['globalSettings']; 	
 ?>
 <style><?php $inc = "./orgs/" . $org . "/heading1.css"; include $inc; ?></style>
 <style>
@@ -58,7 +60,7 @@ table.Flying2 {border-collapse: collapse;margin: 5px;}
 .showtxt {color: white;}
 </style>
 <script type="text/javascript"
- src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBACKvSv3Dkose3DNn9rmvfCdJnEUwcGaE">
+ src="https://maps.googleapis.com/maps/api/js?key=<?php echo $global_settings['mapKey'];?>">
 </script>
 <script type="text/javascript"
  src="/mapiconmaker.js">
