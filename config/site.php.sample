@@ -1,0 +1,10 @@
+/*----------------------------------------------------
+  Site settings file for global site settings
+*/----------------------------------------------------
+<?php
+  return [
+    'globalSettings' => [
+        'mapKey' => 'enter_map_key_here'
+    ]
+  ];
+?>
