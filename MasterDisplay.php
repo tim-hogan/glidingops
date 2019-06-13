@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<head>
-<meta http-equiv="refresh" content="3600">
 <?php
 $org=0;
 if (isset($_GET['org']))
@@ -10,6 +7,9 @@ else
 $global_settings = require('./config/site.php'); 
 $global_settings = $global_params['globalSettings']; 	
 ?>
+<!DOCTYPE html>
+<head>
+<meta http-equiv="refresh" content="3600">
 <style><?php $inc = "./orgs/" . $org . "/heading1.css"; include $inc; ?></style>
 <style>
 body {margin:0; font-family: Arial, Helvetica, sans-serif; background: black;}
