@@ -4,8 +4,8 @@ if (isset($_GET['org']))
  $org=$_GET['org'];
 else
  die("Organisation number not set");
-$global_settings = require('./config/site.php'); 
-$global_settings = $global_params['globalSettings']; 	
+$global_settings = require( dirname(__FILE__) . '/config/site.php'); 
+$global_settings = $global_settings['globalSettings']; 	
 ?>
 <!DOCTYPE html>
 <head>

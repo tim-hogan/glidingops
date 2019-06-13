@@ -1,6 +1,16 @@
 <?php
-$global_settings = require('./config/site.php'); 
-$global_settings = $global_params['globalSettings']; 	
+include 'timehelpers.php';
+include 'geohelpers.php';
+include 'helpers.php';
+
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+require dirname(__FILE__) . '/includes/classTracksDB.php';
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$DB = new GlidingDB($con_params['gliding']);
+$DBArchive = new TracksDB($con_params['tracks']);
+
+$global_settings = require(dirname(__FILE__) . '/config/site.php'); 
+$global_settings = $global_settings['globalSettings']; 	
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,15 +34,6 @@ h1 {font-size:20px;}
 </script>
 <script type="text/javascript">
 <?php
-include 'timehelpers.php';
-include 'geohelpers.php';
-include 'helpers.php';
-
-require dirname(__FILE__) . '/includes/classGlidingDB.php';
-require dirname(__FILE__) . '/includes/classTracksDB.php';
-$con_params = require( dirname(__FILE__) .'/config/database.php'); 
-$DB = new GlidingDB($con_params['gliding']);
-$DBArchive = new TracksDB($con_params['tracks']);
 
 $flightid=0;
 $diag="";
