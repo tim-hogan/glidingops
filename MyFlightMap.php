@@ -1,3 +1,17 @@
+<?php
+include 'timehelpers.php';
+include 'geohelpers.php';
+include 'helpers.php';
+
+require dirname(__FILE__) . '/includes/classGlidingDB.php';
+require dirname(__FILE__) . '/includes/classTracksDB.php';
+$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$DB = new GlidingDB($con_params['gliding']);
+$DBArchive = new TracksDB($con_params['tracks']);
+
+$global_settings = require(dirname(__FILE__) . '/config/site.php'); 
+$global_settings = $global_settings['globalSettings']; 	
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,19 +30,10 @@ h1 {font-size:20px;}
 #textarea td {font-size: 14px;}
 </style>
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBACKvSv3Dkose3DNn9rmvfCdJnEUwcGaE">
+      src="https://maps.googleapis.com/maps/api/js?key=<?php echo $global_settings['mapKey'];?>">
 </script>
 <script type="text/javascript">
 <?php
-include 'timehelpers.php';
-include 'geohelpers.php';
-include 'helpers.php';
-
-require dirname(__FILE__) . '/includes/classGlidingDB.php';
-require dirname(__FILE__) . '/includes/classTracksDB.php';
-$con_params = require( dirname(__FILE__) .'/config/database.php'); 
-$DB = new GlidingDB($con_params['gliding']);
-$DBArchive = new TracksDB($con_params['tracks']);
 
 $flightid=0;
 $diag="";

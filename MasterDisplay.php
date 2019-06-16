@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<head>
-<meta http-equiv="refresh" content="3600">
 <?php
 $org=0;
 if (isset($_GET['org']))
  $org=$_GET['org'];
 else
  die("Organisation number not set");
+$global_settings = require( dirname(__FILE__) . '/config/site.php'); 
+$global_settings = $global_settings['globalSettings']; 	
 ?>
+<!DOCTYPE html>
+<head>
+<meta http-equiv="refresh" content="3600">
 <style><?php $inc = "./orgs/" . $org . "/heading1.css"; include $inc; ?></style>
 <style>
 body {margin:0; font-family: Arial, Helvetica, sans-serif; background: black;}
@@ -58,7 +60,7 @@ table.Flying2 {border-collapse: collapse;margin: 5px;}
 .showtxt {color: white;}
 </style>
 <script type="text/javascript"
- src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBACKvSv3Dkose3DNn9rmvfCdJnEUwcGaE">
+ src="https://maps.googleapis.com/maps/api/js?key=<?php echo $global_settings['mapKey'];?>">
 </script>
 <script type="text/javascript"
  src="/mapiconmaker.js">
