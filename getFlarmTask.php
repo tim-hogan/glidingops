@@ -9,7 +9,7 @@ require 'ognClass.php';
 require 'GlidingGNZClass.php';
 require dirname(__FILE__) . '/includes/classGlidingDB.php';
 
-$con_params = require( dirname(__FILE__) .'/config/database.php'); 
+$con_params = require( dirname(__FILE__) .'/config/database.php');
 $con_params = $con_params['gliding'];
 $DB = new GlidingDB($con_params);
 
@@ -66,16 +66,16 @@ if (count($gliderlist) > 0)
             }
         }
     }
-    
+
     //Now source data for OGN
     $myOGN = new ogn();
     $rogn =  json_decode($myOGN->getCurrentFlarms(),true);
     $myGNZ = new GNZ('www.gliding.net.nz');
-    
+
     $dtNZ = new DateTime();
-    $dtNZ->setTimezone(new DateTimeZone('Pacific/Auckland')); 
+    $dtNZ->setTimezone(new DateTimeZone('Pacific/Auckland'));
     $dayStr = $dtNZ->format('Y-m-d');
-    
+
     foreach ($gliderlist as $gld)
     {
         $ICAO = '';
@@ -94,20 +94,20 @@ if (count($gliderlist) > 0)
                     The 10 minute window allows for clock sync issues.
                 */
                 $dtgps = new DateTime($dt->format('Y-m-d') . " " . $p['time']);
-                if ( ($dtgps->getTimestamp() - 600) > $dt->getTimestamp)
+                if ($dtgps->getTimestamp() > ($dt->getTimestamp() + 3600*12))
                     $dtgps->setTimestamp($dtgps->getTimestamp() - 86400);
-                $strTime =  $dtgps->format('Y-m-d H:i:s');   
+                $strTime =  $dtgps->format('Y-m-d H:i:s');
                 $DB->createTrack(1,$gld,$strTime,0,$p['lat'],$p['lon'],$p['alt'],'FlarmOGN');
             }
-            
+
             //Now check GNZ for same
-            try 
+            try
             {
                 $gnzData = $myGNZ->getFlarmData($dayStr,$ICAO);
                 $data = $gnzData['data'];
                 foreach ($data as $r)
                 {
-                    $DB->createTrack(1,$gld,$r['thetime'],0,$r['lat'],$r['lon'],$r['alt'],'FlarmGNZ');                       
+                    $DB->createTrack(1,$gld,$r['thetime'],0,$r['lat'],$r['lon'],$r['alt'],'FlarmGNZ');
                 }
 
             }
@@ -115,8 +115,8 @@ if (count($gliderlist) > 0)
             {
                 echo "Exception getting GNZ Data\n";
             }
-            
-        }  
-    }  
+
+        }
+    }
 }
-?>  
+?>

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MembershipClass extends Model
 {
+  const CLASS_SHORT_TERM = 'Short Term';
+
   /**
    * The table associated with the model.
    *

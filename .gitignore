@@ -6,3 +6,4 @@ lrv/storage
 maintenance.trigger
 lrv/.vagrant
 vagrant.log
+lrv/vagrant.log

@@ -1,5 +1,6 @@
 <?php session_start(); ?>
 <?php
+include 'timehelpers.php';
 $org=0;
 if(isset($_SESSION['org'])) $org=$_SESSION['org'];
 if(isset($_SESSION['security'])){
@@ -8,23 +9,7 @@ if(isset($_SESSION['security'])){
  header('Location: Login.php');
  die("Please logon");
 }
-?>
-<!DOCTYPE HTML>
-<html>
-<meta name="viewport" content="width=device-width">
-<meta name="viewport" content="initial-scale=1.0">
-<head>
-<style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
-<style>
-<?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
-<link rel="stylesheet" type="text/css" href="styleform1.css">
-</head>
-<body>
-<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
-<?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
-<?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
-<script>function goBack() {window.history.back()}</script>
-<?php
+
 $DEBUG=0;
 $dateTimeZone = new DateTimeZone($_SESSION['timezone']);
 $dateTime = new DateTime('now', $dateTimeZone);
@@ -122,8 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
   $recid = $_GET['id'];
   if ($recid >= 0)
   {
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+   $trantype="Update";
+   $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
+   $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
    if (mysqli_connect_errno())
    {
     $errtext= "Failed to connect to Database: " . mysqli_connect_error();
@@ -171,7 +157,12 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $bfr_expire_f = $row['bfr_expire'];
     $official_observer_f = $row['official_observer'];
     $first_aider_f = $row['first_aider'];
-    $trantype="Update";
+    $roleIds = [];
+    if($recid != null) {
+      $userRoles = App\Models\Member::find($recid)->roles;
+      $roleIds = $userRoles->map(function($role){ return $role->id; })->all();
+    }
+
     mysqli_close($con);
    }
   }
@@ -220,6 +211,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $official_observer_err = "";
  $first_aider_err = "";
  $localdate_lastemail_err = "";
+ $trantype=$_POST["tran"];
+ $roleIds = $_POST["roles"];
+ if(isset($_POST['updateid'])){
+  $recid = $_POST['updateid'];
+ }
  $member_id_f = InputChecker($_POST["member_id_i"]);
  if (!empty($member_id_f ) ) {if (!is_numeric($member_id_f ) ) {$member_id_err = "MEMBER NUM is not numeric";$error = 1;}}
  $firstname_f = InputChecker($_POST["firstname_i"]);
@@ -265,17 +261,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $phone_mobile_f = InputChecker($_POST["phone_mobile_i"]);
  $phone_work_f = InputChecker($_POST["phone_work_i"]);
  $email_f = InputChecker($_POST["email_i"]);
-if(in_array("1",$_POST['gone_solo_i']))
+if(is_array($_POST['gone_solo_i']) && in_array("1",$_POST['gone_solo_i']))
  $gone_solo_f = 1;
 else
  $gone_solo_f = 0;
  if (!empty($gone_solo_f ) ) {if (!is_numeric($gone_solo_f ) ) {$gone_solo_err = "SOLO is not numeric";$error = 1;}}
-if(in_array("1",$_POST['enable_text_i']))
+if(is_array($_POST['enable_text_i']) && in_array("1",$_POST['enable_text_i']))
  $enable_text_f = 1;
 else
  $enable_text_f = 0;
  if (!empty($enable_text_f ) ) {if (!is_numeric($enable_text_f ) ) {$enable_text_err = "ENABLE TEXTS is not numeric";$error = 1;}}
-if(in_array("1",$_POST['enable_email_i']))
+if(is_array($_POST['enable_email_i']) && in_array("1",$_POST['enable_email_i']))
  $enable_email_f = 1;
 else
  $enable_email_f = 0;
@@ -286,11 +282,11 @@ if ($_SESSION['security'] & 16) { $icr_expire_f = InputChecker($_POST["icr_expir
 }
 if ($_SESSION['security'] & 16) { $bfr_expire_f = InputChecker($_POST["bfr_expire_i"]);
 }
-if(in_array("1",$_POST['official_observer_i']))
+if(is_array($_POST['official_observer_i']) && in_array("1",$_POST['official_observer_i']))
  $official_observer_f = 1;
 else
  $official_observer_f = 0;
-if(in_array("1",$_POST['first_aider_i']))
+if(is_array($_POST['first_aider_i']) && in_array("1",$_POST['first_aider_i']))
  $first_aider_f = 1;
 else
  $first_aider_f = 0;
@@ -382,8 +378,9 @@ if ($_SESSION['security'] & 16) {      $Q .= ",bfr_expire=";
       $Q .= "'" . $official_observer_f . "'";
       $Q .= ",first_aider=";
       $Q .= "'" . $first_aider_f . "'";
-$Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
-$Q .= $_POST['updateid'];}
+      $Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
+$Q .= $_POST['updateid'];
+}
      else
      if ($_POST["tran"] == "Create"){
        $Q = "INSERT INTO members (";$Q .= "member_id";$Q .= ", org";$Q .= ", firstname";$Q .= ", surname";$Q .= ", displayname";$Q .= ", date_of_birth";$Q .= ", mem_addr1";$Q .= ", mem_addr2";$Q .= ", mem_addr3";$Q .= ", mem_addr4";$Q .= ", mem_city";$Q .= ", mem_country";$Q .= ", mem_postcode";$Q .= ", emerg_addr1";$Q .= ", emerg_addr2";$Q .= ", emerg_addr3";$Q .= ", emerg_addr4";$Q .= ", emerg_city";$Q .= ", emerg_country";$Q .= ", emerg_postcode";$Q .= ", gnz_number";$Q .= ", qgp_number";$Q .= ", class";$Q .= ", status";$Q .= ", phone_home";$Q .= ", phone_mobile";$Q .= ", phone_work";$Q .= ", email";$Q .= ", gone_solo";$Q .= ", enable_text";$Q .= ", enable_email";if ($_SESSION['security'] & 16) $Q .= ", medical_expire";if ($_SESSION['security'] & 16) $Q .= ", icr_expire";if ($_SESSION['security'] & 16) $Q .= ", bfr_expire";$Q .= ", official_observer";$Q .= ", first_aider";$Q .= " ) VALUES (";
@@ -463,9 +460,32 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
       $Q.= ")";
     }}
     $sqltext = $Q;
+    if(isset($_POST["del"])) {
+      $member =  App\Models\Member::find($recid);
+      $member->roles()->sync([]);
+    }
     if(!mysqli_query($con,$Q) )
     {
        $errtext = "Database entry: " . mysqli_error($con) . "<br>" . $Q;
+    } else {
+      if($_POST["tran"] == "Create") {
+        $recid = $con->insert_id;
+      }
+
+      if(!isset($_POST["del"]) && isset($_POST["roles"])) {
+        // Update Roles collection from roles[] POST parameter
+        if (is_array($roleIds)) {
+          $member =  App\Models\Member::find($recid);
+          $member->roles()->sync($roleIds);
+        }
+      }
+
+      if(isset($_POST["del"])){
+        header("Location: AllMembers");
+      } else {
+        header("Location: Member?id={$recid}");
+      }
+      exit();
     }
     mysqli_close($con);
   }
@@ -492,9 +512,28 @@ $phone_mobile_f=htmlspecialchars($phone_mobile_f,ENT_QUOTES);
 $phone_work_f=htmlspecialchars($phone_work_f,ENT_QUOTES);
 $email_f=htmlspecialchars($email_f,ENT_QUOTES);
 }
+
+// =========== USER ROLES ===============
+$allRoles = App\Models\Role::all();
+$userRoles = App\Models\Role::find($roleIds);
 ?>
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="initial-scale=1.0">
+<head>
+<style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
+<style>
+<?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
+<link rel="stylesheet" type="text/css" href="styleform1.css">
+</head>
+<body>
+<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
+<?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
+<?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
+<script>function goBack() {window.location = 'AllMembers'}</script>
 <div id='divform'>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+<form method="post" action="<?php echo htmlspecialchars('./Member');?>">
 <table>
 <?php if (true)
 {
@@ -518,8 +557,7 @@ echo $member_id_err; echo "</td></tr>";
 echo "<tr><td class='desc'>FIRSTNAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($firstname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='firstname_i' ";echo "size='30' ";echo "Value='";echo $firstname_f;echo "' ";echo "maxlength='40'";echo ">";echo "</td>";echo "<td>";
-echo $firstname_err; echo "</td></tr>";
+  if (strlen($firstname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='firstname_i' ";echo "size='30' ";echo "Value='";echo $firstname_f;echo "' ";echo "maxlength='40'";echo "><span class='field-error-msg'>{$firstname_err}</span>";echo "</td>";echo "<td>"; echo "</td></tr>";
 }
 ?>
 <?php if (true)
@@ -527,8 +565,7 @@ echo $firstname_err; echo "</td></tr>";
 echo "<tr><td class='desc'>SURNAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($surname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='surname_i' ";echo "size='30' ";echo "Value='";echo $surname_f;echo "' ";echo "maxlength='40'";echo ">";echo "</td>";echo "<td>";
-echo $surname_err; echo "</td></tr>";
+if (strlen($surname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='surname_i' ";echo "size='30' ";echo "Value='";echo $surname_f;echo "' ";echo "maxlength='40'";echo "><span class='field-error-msg'>{$surname_err}</span>";echo "</td>";echo "<td></td></tr>";
 }
 ?>
 <?php if (true)
@@ -536,8 +573,7 @@ echo $surname_err; echo "</td></tr>";
 echo "<tr><td class='desc'>DISPLAY NAME</td><td>*</td>";
 echo "<td>";
 echo "<input ";
-if (strlen($displayname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='displayname_i' ";echo "size='40' ";echo "Value='";echo $displayname_f;echo "' ";echo "maxlength='80'";echo ">";echo "</td>";echo "<td>";
-echo $displayname_err; echo "</td></tr>";
+if (strlen($displayname_err) > 0) echo "class='err' ";echo "type='text' ";echo "name='displayname_i' ";echo "size='40' ";echo "Value='";echo $displayname_f;echo "' ";echo "maxlength='80'";echo "><span class='field-error-msg'>{$displayname_err}</span>";echo "</td>";echo "<td></td></tr>";
 }
 ?>
 <?php if (true)
@@ -843,9 +879,40 @@ echo "<td><input type='checkbox' name='first_aider_i[]' Value='1' ";if ($first_a
 echo $first_aider_err; echo "</td></tr>";
 }
 ?>
+<tr>
+  <td class='desc'>ROLES</td>
+  <td/>
+  <td>
+  <?php
+    $allRoles->each(function($role) use ($userRoles) {
+      $selected = ($userRoles) ? $userRoles->contains($role) : false;
+      $key = "role-{$role->id}";
+  ?>
+    <input type='checkbox' value="<?=$role->id?>" <?=($selected) ? 'checked' : ''?> name='roles[]' id='<?=$key?>'/>
+    <label for='<?=$key?>'><?=$role->name?></label>
+  <?php
+    });
+  ?>
+  </td>
+</tr>
 </table>
 <table>
-<tr><td><input type="submit" name = 'tran' value = '<?php echo $trantype; ?>'></td><td><?php if ($trantype == "Update") echo "<input type='submit' name = 'del' value = 'Delete'>";?></td><td></td><td></td></tr>
+<tr>
+  <td>
+    <?php
+    if($recid > -1) {
+      $submitValue = 'Update';
+    } else {
+      $submitValue = 'Create';
+    }
+    ?>
+    <input type="submit" name = 'tran' value = '<?=$submitValue?>'>
+  </td>
+  <td>
+    <?php if ($recid > -1) echo "<input type='submit' name = 'del' value = 'Delete'>";?>
+  </td>
+  <td></td>
+  <td></td></tr>
 </table>
 <input type="hidden" name = 'updateid' value = '<?php echo $recid; ?>'>
 </form>
