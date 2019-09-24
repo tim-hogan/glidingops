@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
    echo "<diag>Short Term Class = " . $shorttermclass . "</diag>";
 
    //First get the roster for the date
-   $q = "SELECT flights.seq,flights.towplane, flights.glider, flights.towpilot, flights.pic, flights.p2, flights.height,(flights.start/1000),(flights.land/1000), (flights.land-flights.start), a.bill_pic , a.bill_p2 , a.bill_other, flights.billing_member1,flights.billing_member2, b.class , c.class, flights.launchtype, flights.id, flights.comments, a.name, flights.type , flights.towland from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 where flights.org = ".$org." and flights.deleted != 1 and flights.localdate=" . $datestr;
+   $q = "SELECT flights.seq,flights.towplane, flights.glider, flights.towpilot, flights.pic, flights.p2, flights.height,(flights.start/1000),(flights.land/1000), (flights.land-flights.start), a.bill_pic , a.bill_p2 , a.bill_other, flights.billing_member1,flights.billing_member2, b.class , c.class, flights.launchtype, flights.id, flights.comments, a.name, flights.type , flights.towland, a.no_comment from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 where flights.org = ".$org." and flights.deleted != 1 and flights.localdate=" . $datestr;
    // 0 flights.seq
    // 1 flights.towplane
    // 2 flights.glider
@@ -62,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
    //20 a.name
    //21 type
    //22 flights.towland
+   //23 a.no_comment
    
    $r = mysqli_query($con,$q);
    while ($row = mysqli_fetch_array($r) )
@@ -225,8 +226,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
                 echo "<err>Flight Seq: " .$thisseq. " Landing time must be after takeoff time</err>";
             }
        }
-       //We must have a comment if billscheme charges are all zero
-       if ($row[10] == 0 && $row[11] == 0 && $row[12] ==0 && $row[21] == $flightTypeGlider)
+       //We must have a comment if billscheme charges are all zero, unless the no_comment field is one
+       if ($row[10] == 0 && $row[11] == 0 && $row[12] == 0 && $row[21] == $flightTypeGlider && $row[23] != 1)
        {
            //We need a comment in the comment field.
            if (strlen($row[19]) == 0)
