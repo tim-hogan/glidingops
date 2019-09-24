@@ -57,6 +57,7 @@ if (true){echo '<th ';if ($colsort == 2) echo "class='colsel'";echo " onclick=";
 if (true){echo '<th ';if ($colsort == 3) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='billingoptions-list.php?col=3'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CHARGE PIC";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 4) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='billingoptions-list.php?col=4'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CHARGE P2";echo "</th>";}
 if (true){echo '<th ';if ($colsort == 5) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='billingoptions-list.php?col=5'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "CHARGE OTHER";echo "</th>";}
+if (true){echo '<th ';if ($colsort == 6) echo "class='colsel'";echo " onclick=";echo "\"";echo "location.href='billingoptions-list.php?col=6'";echo "\"";echo " style='cursor:pointer;'";echo ">";echo "NO COMMENT";echo "</th>";}
 ?>
 </tr>
 <?php
@@ -66,7 +67,7 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT billingoptions.id,billingoptions.name,billingoptions.bill_pic,billingoptions.bill_p2,billingoptions.bill_other FROM billingoptions"; 
+$sql= "SELECT billingoptions.id,billingoptions.name,billingoptions.bill_pic,billingoptions.bill_p2,billingoptions.bill_other,billingoptions.no_comment FROM billingoptions"; 
 $sql.=" ORDER BY ";
 switch ($colsort) {
  case 0:
@@ -86,6 +87,8 @@ break;
    break;
  case 5:
    $sql .= "bill_other";
+ case 6:
+   $sql .= "no_comment";   
    break;
 }
 $sql .= " ASC";
@@ -100,6 +103,7 @@ if (true){echo "<td>";echo $row[1];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[2];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[3];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[4];echo "</td>";}
+if (true){echo "<td class='right'>";echo $row[5];echo "</td>";}
   echo "</tr>";
 }
 ?>

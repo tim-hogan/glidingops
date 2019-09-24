@@ -36,6 +36,8 @@ $bill_p2_f="";
 $bill_p2_err="";
 $bill_other_f="";
 $bill_other_err="";
+$no_comment_f="";
+$no_comment_err="";
 function InputChecker($data)
 {
  $data = trim($data);
@@ -66,6 +68,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $bill_pic_f = $row['bill_pic'];
     $bill_p2_f = $row['bill_p2'];
     $bill_other_f = $row['bill_other'];
+	$no_comment_f = $row['no_comment'];
     $trantype="Update";
     mysqli_close($con);
    }
@@ -80,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $bill_pic_err = "";
  $bill_p2_err = "";
  $bill_other_err = "";
+ $no_comment_err="";
  $name_f = InputChecker($_POST["name_i"]);
 if(in_array("1",$_POST['bill_pic_i']))
  $bill_pic_f = 1;
@@ -96,6 +100,11 @@ if(in_array("1",$_POST['bill_other_i']))
 else
  $bill_other_f = 0;
  if (!empty($bill_other_f ) ) {if (!is_numeric($bill_other_f ) ) {$bill_other_err = "Charge Other is not numeric";$error = 1;}}
+if(in_array("1",$_POST['no_comment_i']))
+ $no_comment_f = 1;
+else
+ $no_comment_f = 0;
+ if (!empty($no_comment_f ) ) {if (!is_numeric($no_comment_f ) ) {$no_comment_err = "No Comment is not numeric";$error = 1;}} 
  if ($error != 1)
  {
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
@@ -119,11 +128,13 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
       $Q .= "'" . $bill_p2_f . "'";
       $Q .= ",bill_other=";
       $Q .= "'" . $bill_other_f . "'";
+      $Q .= ",no_comment=";
+      $Q .= "'" . $no_comment_f . "'";	  
 $Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
 $Q .= $_POST['updateid'];}
      else
      if ($_POST["tran"] == "Create"){
-       $Q = "INSERT INTO billingoptions (";$Q .= "name";$Q .= ", bill_pic";$Q .= ", bill_p2";$Q .= ", bill_other";$Q .= " ) VALUES (";
+       $Q = "INSERT INTO billingoptions (";$Q .= "name";$Q .= ", bill_pic";$Q .= ", bill_p2";$Q .= ", bill_other";$Q .= ", no_comment";$Q .= " ) VALUES (";
        $Q .= "'" . mysqli_real_escape_string($con, $name_f) . "'";
        $Q.= ",";
        $Q .= "'" . $bill_pic_f . "'";
@@ -131,6 +142,8 @@ $Q .= $_POST['updateid'];}
        $Q .= "'" . $bill_p2_f . "'";
        $Q.= ",";
        $Q .= "'" . $bill_other_f . "'";
+       $Q.= ",";
+       $Q .= "'" . $no_comment_f . "'";	   
       $Q.= ")";
     }}
     $sqltext = $Q;
@@ -183,6 +196,13 @@ echo $bill_p2_err; echo "</td></tr>";
 echo "<tr><td class='desc'>Charge Other</td><td></td>";
 echo "<td><input type='checkbox' name='bill_other_i[]' Value='1' ";if ($bill_other_f ==1) echo "checked";echo "></td>";echo "<td>";
 echo $bill_other_err; echo "</td></tr>";
+}
+?>
+<?php if (true)
+{
+echo "<tr><td class='desc'>No Comment</td><td></td>";
+echo "<td><input type='checkbox' name='no_comment_i[]' Value='1' ";if ($no_comment_f ==1) echo "checked";echo "></td>";echo "<td>";
+echo $no_comment_err; echo "</td></tr>";
 }
 ?>
 </table>

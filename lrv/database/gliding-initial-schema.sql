@@ -185,6 +185,7 @@ CREATE TABLE `billingoptions` (
   `bill_pic` int(11) DEFAULT NULL,
   `bill_p2` int(11) DEFAULT NULL,
   `bill_other` int(11) DEFAULT NULL,
+  `no_comment` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
