@@ -1,0 +1,22 @@
+ip: 192.168.10.10
+memory: 2048
+cpus: 1
+provider: virtualbox
+authorize: <%=ENV['HOME']%>/.ssh/id_rsa.pub
+keys:
+    - <%=ENV['HOME']%>/.ssh/id_rsa
+folders:
+    -
+        map: ../
+        to: /home/vagrant/code
+sites:
+    -
+        map: glidingops.test
+        to: /home/vagrant/code
+        php: "5.6"
+        type: apache
+databases:
+    - gliding
+    - tracks
+name: glidingops-dev-vm
+hostname: glidingops-dev

@@ -5,4 +5,5 @@ lrv/storage
 .env.testing
 maintenance.trigger
 lrv/.vagrant
+vagrant.log
 lrv/vagrant.log
