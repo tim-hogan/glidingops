@@ -60,7 +60,9 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
    }
    else
    {
-    $q = "SELECT * FROM billingoptions WHERE id = " . $recid ;
+	$q = <<<SQL
+		SELECT * FROM billingoptions WHERE id = {$recid}
+SQL;
     $r = mysqli_query($con,$q);
     $row = mysqli_fetch_array($r);
     $id_f = $row['id'];
@@ -115,37 +117,28 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
    }
    else
    {
+	 $escaped_name = mysqli_real_escape_string($con, $name_f);
      $Q = "";
+	 
      if (isset($_POST["del"]) ) {if ($_POST["del"] == "Delete"){
-       $Q="DELETE FROM billingoptions WHERE id = " . $_POST['updateid'] ;}}
+       $Q =<<<SQL
+		DELETE FROM billingoptions WHERE id = {$_POST['updateid']}
+SQL;
+	   }}
      if (isset($_POST["tran"]) ) {if ($_POST["tran"] == "Update"){
-      $Q = "UPDATE billingoptions SET ";
-      $Q .= "name=";
-      $Q .= "'" . mysqli_real_escape_string($con, $name_f)  . "'";
-      $Q .= ",bill_pic=";
-      $Q .= "'" . $bill_pic_f . "'";
-      $Q .= ",bill_p2=";
-      $Q .= "'" . $bill_p2_f . "'";
-      $Q .= ",bill_other=";
-      $Q .= "'" . $bill_other_f . "'";
-      $Q .= ",no_comment=";
-      $Q .= "'" . $no_comment_f . "'";	  
-$Q .= " WHERE ";$Q .= "id ";$Q .= "= ";
-$Q .= $_POST['updateid'];}
+      $Q =<<<SQL
+		UPDATE billingoptions 
+		SET name = '{$escaped_name}', bill_pic = '{$bill_pic_f}', bill_p2 = '{$bill_p2_f}', bill_other= '{$bill_other_f}', no_comment = '{$no_comment_f}'
+		WHERE id = {$_POST['updateid']}
+SQL;
+	 }
      else
      if ($_POST["tran"] == "Create"){
-       $Q = "INSERT INTO billingoptions (";$Q .= "name";$Q .= ", bill_pic";$Q .= ", bill_p2";$Q .= ", bill_other";$Q .= ", no_comment";$Q .= " ) VALUES (";
-       $Q .= "'" . mysqli_real_escape_string($con, $name_f) . "'";
-       $Q.= ",";
-       $Q .= "'" . $bill_pic_f . "'";
-       $Q.= ",";
-       $Q .= "'" . $bill_p2_f . "'";
-       $Q.= ",";
-       $Q .= "'" . $bill_other_f . "'";
-       $Q.= ",";
-       $Q .= "'" . $no_comment_f . "'";	   
-      $Q.= ")";
-    }}
+      $Q =<<<SQL
+		INSERT INTO billingoptions (name, bill_pic, bill_p2, bill_other, no_comment)
+		VALUES ('{$escaped_name}', '{$bill_pic_f}', '{$bill_p2_f}', '{$bill_other_f}', '{$no_comment_f}')
+SQL;
+	 }}
     $sqltext = $Q;
     if(!mysqli_query($con,$Q) )
     {
