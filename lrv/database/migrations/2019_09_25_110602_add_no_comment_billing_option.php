@@ -13,8 +13,9 @@ class AddNoCommentBillingOption extends Migration
      */
     public function up()
     {
-        Schema::table('tracks', function($table) {
-            DB::statement('ALTER TABLE `billingoptions` ADD `no_comment` int(11) DEFAULT 0;');
+        Schema::table('billingoptions', function($table) {
+			$table->integer('requires_comment')->nullable(true)->default(0);
+			$table->integer('is_external_club')->nullable(true)->default(0);
         });
     }
 
@@ -25,9 +26,9 @@ class AddNoCommentBillingOption extends Migration
      */
     public function down()
     {
-        Schema::table('tracks', function($table) {
-            $table->dropColumn('tracks_source');
-            DB::statement('ALTER TABLE billingoptions DROP COLUMN `no_comment`');
+        Schema::table('billingoptions', function($table) {
+            $table->dropColumn('requires_comment');
+			$table->dropColumn('is_external_club');
         });
     }
 }
