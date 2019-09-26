@@ -184,6 +184,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     //find the No Charge id
 	$NoChargeId = getNoChargeOpt($con);
+	
+	//find the Trial Flight ID's
+	$trialFlightIds = getTrialFlightOpts($con);
 
     $clubgliders = array();
 
@@ -336,7 +339,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     echo "<h2>TRIAL FLIGHTS</h2>";
     $havetrial = 0;
 
-    $q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and flights.billing_option <> ".$NoChargeId." and a.bill_pic = 0 and a.bill_p2 = 0 and a.bill_other = 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+    $q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and flights.billing_option IN ('" . implode("','",$trialFlightIds) . "') and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
     //0 localdate
     //1 glider
     //2 land - start

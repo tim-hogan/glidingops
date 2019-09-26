@@ -41,11 +41,14 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $flightTypeCheck = getCheckFlightType($con); 
     $flightTypeRetrieve = getRetrieveFlightType($con); 
         
-        //find the juinor class id
+    //find the juinor class id
 	$juniorclass = getJuniorClass($con,$org);
 
 	//find the No Charge id
 	$NoChargeId = getNoChargeOpt($con);
+	
+	//find the Trial Flight ID's
+	$trialFlightIds = getTrialFlightOpts($con);
 	
     $towChargeType = getTowChargeType($con,$org);
 
@@ -147,7 +150,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         echo "Height";
     echo ",Type,Tow,Glider,Airways,Total,Notes\r\n";
 	
-	$q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$org." and flights.finalised > 0 and flights.billing_option <> ".$NoChargeId." and a.bill_pic = 0 and a.bill_p2 = 0 and a.bill_other = 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+	$q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$org." and flights.finalised > 0 and flights.billing_option <> ".$NoChargeId." and flights.billing_option IN ('" . implode("','",$trialFlightIds) . "') and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
     $r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {
