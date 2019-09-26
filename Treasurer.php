@@ -419,6 +419,126 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 		echo "</table>";
 	else
 	   echo "<p class='indent1'>There were no trial flights for this month</p>";
+   
+    /*  ---------------
+    Other Clubs
+     */
+	 
+	echo "<h2>OTHER CLUBS</h2>";
+	echo "<table>";
+	
+	//Main Loop for other clubs
+    $q="SELECT id, name FROM billingoptions WHERE is_external_club = 1 order by name ASC";
+	
+	$r = mysqli_query($con,$q);
+	while ($row = mysqli_fetch_array($r) )
+    {		
+		echo "<tr><th class='thname' colspan=13>" . $row[1] . "<th></tr>";
+		
+		$q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.type = ".$flightTypeGlider." and flights.finalised > 0 and flights.billing_option = ".$row[0]." and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+		//0 localdate
+		//1 glider
+		//2 land-start
+		//3 height
+		//4 display name 1
+		//5 display name 2
+		//6 comments
+		//7 billing option
+		//8 launch type
+		//9 two plane
+		//10 location
+		//11 tow land - start
+		//12 seq		
+		
+		$totalExternalClub = 0;
+		$r = mysqli_query($con,$q);
+		while ($row2 = mysqli_fetch_array($r) )
+		{
+			$totMins = floor($row2[2] / 60000);
+			$totalExternalClub += 1;
+			if ($totalExternalClub == 1)
+			{
+				echo "<table>";
+				echo "<tr><th>DATE</th><th>LOCATION</th><th>GLIDER</th>";
+				if ($towChargeType==2)
+					echo "<th>TOW TIME</th>";
+				echo "<th>DURATION</th><th>";
+				if ($towChargeType==2)
+					echo "TYPE";
+				else
+					echo "HEIGHT";
+				echo "</th><th>PIC</th><th>P2</th><th>TYPE</th><th>TOW</th><th>GLIDER</th><th>".strtoupper($strNameOtherCharges)."</th><th>TOTAL</th><th>NOTES</th></tr>";
+			}
+			$datestrflight=$row2[0];
+			$flightDate = new DateTime();
+			$flightDate->setDate(substr($datestrflight,0,4),substr($datestrflight,4,2),substr($datestrflight,6,2));
+
+			echo "<tr>";
+			$strdate=$row2[0];
+			echo "<td>";echo substr($datestrflight,6,2) . "/" . substr($datestrflight,4,2) . "/" . substr($datestrflight,0,4);echo "</td>";
+			echo "<td>";echo $row2[10];echo "</td>";
+			echo "<td class='right'>";echo $row2[1];echo "</td>";
+			echo "<td class='right'>" . strDuration($row2[2]). "</td>";
+			echo "<td class='right'>";
+		    if ($row2[8] == $towlaunch)
+            {
+                if ($towChargeType==2)
+		    	    echo "AEROTOW";
+		 	    else
+				    echo $row2[3];
+		    }
+
+		    if ($row2[8] == $selflaunch)
+			    echo "SELF";
+            if ($row2[8] == $winchlaunch)
+			    echo "WINCH";			
+			echo "</td>";
+			echo "<td class='right'>";echo $row2[5];echo "</td>";
+			echo "<td class='right'>";echo $row2[4];echo "</td>";
+			echo "<td>";echo $row2[7];echo "</td>";
+            //Calculate tow charges
+            $towcost=0.0;
+			if ($row2[8] == $towlaunch)
+				$towcost = CalcTowCharge2($_SESSION['org'],$row2[8],$row2[9],$row2[11],$row2[3],$row[3],$clubGlid,$is5050);
+			else
+			if ($row2[8] == $winchlaunch)
+				  $towcost = CalcWinchCharge($con,$_SESSION['org'],$row2[19],$flightDate);
+			if ($SchemeCharge > 0 && $iChargeTow == 0)
+				 $towcost=0.0;
+            if ($towcost < 0.00)
+            {
+			    echo "<td class='right'>ERROR</td>";
+            }
+		    else
+		    {
+                  echo "<td class='right'>$";
+                  echo sprintf("%01.2f",$towcost);
+                  echo "</td>";
+		    }
+
+			$glidcost =0.0;
+			$glidcost = CalcGliderCharge($_SESSION['org'],1,$row2[1],0,0.00,0,$totMins,"");
+			echo "<td class='right'>$";
+			echo sprintf("%01.2f",$glidcost);
+			echo "</td>";
+			$airwaycost=0.0;
+			$airwaycost=CalcOtherCharges($_SESSION['org'],$row2[10],1,0,$juniorclass,$flightDate,0,$row2[12]);
+			echo "<td class='right'>$";
+			echo sprintf("%01.2f",$airwaycost);
+			echo "</td>";
+			echo "<td class='right'>$";
+			echo sprintf("%01.2f",($towcost+$glidcost+$airwaycost));
+			echo "</td>";
+			echo "<td>";echo $row2[6];echo "</td>";
+			
+			if ($totalExternalClub == 0)
+				echo "<p class='indent1'>No flights this month</p>";
+			else
+				echo "</table>";			
+		}		
+	}
+	
+	echo "</table>";
 
     /*  ---------------
     Members Flights
