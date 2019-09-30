@@ -507,8 +507,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 			else
 			if ($row2[8] == $winchlaunch)
 				  $towcost = CalcWinchCharge($con,$_SESSION['org'],$row2[19],$flightDate);
-			if ($SchemeCharge > 0 && $iChargeTow == 0)
-				 $towcost=0.0;
             if ($towcost < 0.00)
             {
 			    echo "<td class='right'>ERROR</td>";
