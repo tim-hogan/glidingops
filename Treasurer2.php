@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $dateEnd2 = $dateEnd->format('Ymd');
 	
     $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+	$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 	if (mysqli_connect_errno())
 	{
  		echo "<p>Unable to connect to database</p>";
@@ -201,6 +201,102 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
         echo "\r\n";
 
 	}
+	
+	echo ",,,,,,,,,\r\n";
+    echo "OTHER CLUBS,,,,,,,,,\r\n";
+    echo "Bill To,Date,Location,Glider,PIC,P2,";
+    if ($towChargeType==2)
+        echo "Tow Time,";
+	echo "Duration,";
+    if ($towChargeType==2)
+	    echo "Launch Type";
+    else
+        echo "Height";
+    echo ",Type,Tow,Glider,Airways,Total,Notes\r\n";
+	
+	//Main Loop for other clubs
+    $q="SELECT id, name FROM billingoptions WHERE is_external_club = 1 order by name ASC";
+	$r = mysqli_query($con,$q);
+	while ($row = mysqli_fetch_array($r) )
+    {	
+		$q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$org." and flights.type = ".$flightTypeGlider." and flights.finalised > 0 and flights.billing_option = ".$row[0]." and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+		//0 localdate
+		//1 glider
+		//2 land-start
+		//3 height
+		//4 display name 1
+		//5 display name 2
+		//6 comments
+		//7 billing option
+		//8 launch type
+		//9 two plane
+		//10 location
+		//11 tow land - start
+		//12 seq	
+		
+		$r = mysqli_query($con,$q);
+		while ($row2 = mysqli_fetch_array($r) )
+		{				
+			echo removecomma($row[1]). ",";
+			echo removecomma($row2[0]). ",";
+			echo removecomma($row2[10]). ",";
+			echo removecomma($row2[1]). ",";
+			echo removecomma($row2[4]). ",";
+			echo removecomma($row2[5]). ",";
+            if ($towChargeType==2)
+                echo strDuration($row2[11]) . ",";
+			echo strDuration($row2[2]) . ",";			
+            if ($row2[8] == $towlaunch)
+            {
+                if ($towChargeType==2)
+                    echo "AEROTOW";
+	            else
+	                echo removecomma($row2[3]);
+            }			
+			echo",";
+		    if ($row2[8] == $selflaunch)
+			    echo "SELF";
+            if ($row2[8] == $winchlaunch)
+			    echo "WINCH";			
+			if ($row2[8] == $towlaunch)
+				echo "AEROTOW";
+			echo",";
+			
+	        $datestrflight=$row[0];
+			$flightDate = new DateTime();
+			$flightDate->setDate(substr($datestrflight,0,4),substr($datestrflight,4,2),substr($datestrflight,6,2));			
+			
+            //Calculate tow charges
+            $towcost=0.0;
+			if ($row2[8] == $towlaunch){
+				$clubGlid=0;
+				if (in_array($row2[1],$clubgliders))
+					$clubGlid=1;				
+				$towcost = CalcTowCharge2($org,$row2[8],$row2[9],$row2[11],$row2[3],"",$clubGlid,0);
+			}
+			else
+			if ($row2[8] == $winchlaunch)
+				  $towcost = CalcWinchCharge($con,$org,$row2[19],$flightDate);
+            if ($towcost < 0.00)
+			    echo "ERROR";
+		    else
+				echo sprintf("%01.2f",$towcost);
+			echo ",";
+			
+			$totMins = floor($row2[2] / 60000);
+			$glidcost = CalcGliderCharge($org,1,$row2[1],0,0.00,0,$totMins,"");
+			echo $glidcost.",";
+
+			$airwaycost=CalcOtherCharges($org,$row2[10],1,0,$juniorclass,$flightDate,0,$row2[12]);
+			echo $airwaycost.",";
+;
+			echo ($towcost+$glidcost+$airwaycost);	
+			
+			echo "\r\n";
+		}			
+		
+	}
+	
 
 	echo ",,,,,,,,,\r\n";
 	echo "MEMBERS,,,,,,,,,,,,,,\r\n";
@@ -221,11 +317,10 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 	$r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {
-
         $totamount=0.0;
         $newmember = 1;
         $tablestart = 0;
-        //Now do we have any flights to be billed to thsi member
+        //Now do we have any flights to be billed to this member
         $q2 = "SELECT flights.localdate, flights.glider, (flights.land-flights.start),flights.height, flights.pic, flights.p2, a.name, a.bill_pic , a.bill_p2, a.bill_other, flights.comments, flights.billing_member1, flights.billing_member2 ,b.displayname , c.displayname ,d.displayname, e.displayname, flights.launchtype, flights.towplane, flights.location, flights.type , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 LEFT JOIN members d ON d.id = flights.pic LEFT JOIN members e ON e.id = flights.p2 where flights.org = ".$org." and flights.finalised > 0 and localdate >= '" . $dateStart2 . "' and localdate < '" . $dateEnd2 . "' and (billing_member1 = " . $row[0] . " or billing_member2 = " . $row[0] . ") order by localdate,seq ASC"; 
 	//0 locadate
         //1 glider
@@ -406,6 +501,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
             echo "\r\n";
         }
 	}
+	
     mysqli_close($con);
 }
 if ($DEBUG>0) echo $diagtext;
