@@ -498,8 +498,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 			echo "<td>";echo $row2[7];echo "</td>";
             //Calculate tow charges
             $towcost=0.0;
-			if ($row2[8] == $towlaunch)
-				$towcost = CalcTowCharge2($_SESSION['org'],$row2[8],$row2[9],$row2[11],$row2[3],$row[3],$clubGlid,$is5050);
+			if ($row2[8] == $towlaunch){
+				$clubGlid=0;
+				if (in_array($row2[1],$clubgliders))
+					$clubGlid=1;				
+				$towcost = CalcTowCharge2($_SESSION['org'],$row2[8],$row2[9],$row2[11],$row2[3],"",$clubGlid,0);
+			}
 			else
 			if ($row2[8] == $winchlaunch)
 				  $towcost = CalcWinchCharge($con,$_SESSION['org'],$row2[19],$flightDate);
