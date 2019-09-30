@@ -529,16 +529,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 			echo "<td class='right'>$";
 			echo sprintf("%01.2f",($towcost+$glidcost+$airwaycost));
 			echo "</td>";
-			echo "<td>";echo $row2[6];echo "</td>";
-			
-			if ($totalExternalClub == 0)
-				echo "<p class='indent1'>No flights this month</p>";
-			else
-				echo "</table>";			
+			echo "<td>";echo $row2[6];echo "</td>";			
 		}		
 	}
 	
-	echo "</table>";
+	if ($totalExternalClub == 0)
+		echo "<p class='indent1'>No flights this month</p>";
+	else
+		echo "</table>";	
 
     /*  ---------------
     Members Flights
