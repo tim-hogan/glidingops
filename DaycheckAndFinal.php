@@ -38,7 +38,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
    echo "<diag>Short Term Class = " . $shorttermclass . "</diag>";
 
    //First get the roster for the date
-   $q = "SELECT flights.seq,flights.towplane, flights.glider, flights.towpilot, flights.pic, flights.p2, flights.height,(flights.start/1000),(flights.land/1000), (flights.land-flights.start), a.bill_pic , a.bill_p2 , a.bill_other, flights.billing_member1,flights.billing_member2, b.class , c.class, flights.launchtype, flights.id, flights.comments, a.name, flights.type , flights.towland, a.requires_comment, a.name from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 where flights.org = ".$org." and flights.deleted != 1 and flights.localdate=" . $datestr;
+   $q = <<<SQL
+		SELECT 	flights.seq,flights.towplane, flights.glider, flights.towpilot, flights.pic, flights.p2, flights.height,(flights.start/1000),(flights.land/1000), (flights.land-flights.start),
+				a.bill_pic , a.bill_p2 , a.bill_other, flights.billing_member1,flights.billing_member2, b.class , c.class, flights.launchtype, flights.id, flights.comments, a.name, flights.type,
+				flights.towland, a.requires_comment, a.name 
+		FROM flights LEFT JOIN billingoptions a ON a.id = flights.billing_option 
+					 LEFT JOIN members b ON b.id = flights.billing_member1 
+					 LEFT JOIN members c ON c.id = flights.billing_member2 
+		WHERE flights.org = {$org} and flights.deleted != 1 and flights.localdate={$datestr};
+SQL;
    // 0 flights.seq
    // 1 flights.towplane
    // 2 flights.glider

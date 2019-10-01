@@ -222,7 +222,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     echo "<h2>TUG ONLY CHECK FLIGHTS</h2>";
 
-    $q="SELECT flights.localdate,flights.location,b.rego_short, a.displayname, (flights.land-flights.start),flights.comments from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN aircraft b ON b.id = flights.towplane where flights.org = ".$_SESSION['org']." and flights.type = ".$flightTypeCheck." and flights.finalised > 0 and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+    $q=<<<SQL
+		SELECT flights.localdate, flights.location, b.rego_short, a.displayname, (flights.land-flights.start), flights.comments 
+		FROM flights 
+		LEFT JOIN members a ON a.id = flights.towpilot 
+		LEFT JOIN aircraft b ON b.id = flights.towplane 
+		WHERE flights.org = {$_SESSION['org']} AND flights.type = {$flightTypeCheck} AND flights.finalised > 0 AND localdate >= {$dateStart2} and localdate < {$dateEnd2} 
+		ORDER BY localdate, seq ASC;
+SQL;
     $r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {
@@ -252,7 +259,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     */
     echo "<h2>NO CHARGE FLIGHTS</h2>";
     $totalfree = 0;
-    $q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.type = ".$flightTypeGlider." and flights.finalised > 0 and flights.billing_option = ".$NoChargeId." and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+    $q=<<<SQL
+		SELECT 	flights.localdate, flights.glider, (flights.land-flights.start), flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane,
+				flights.location, (flights.towland-flights.start), seq 
+		FROM flights 
+		LEFT JOIN billingoptions a ON a.id = flights.billing_option 
+		LEFT JOIN members b ON b.id = flights.p2 
+		LEFT JOIN members c ON c.id = flights.pic 
+		WHERE flights.org = {$_SESSION['org']} AND flights.type = {$flightTypeGlider} AND flights.finalised > 0 AND flights.billing_option = {$NoChargeId} 
+			  AND localdate >= {$dateStart2} AND localdate < {$dateEnd2} 
+		ORDER BY localdate,seq ASC;
+SQL;
     //0 localadate
     //1 glider
     //2 land-start
@@ -338,8 +355,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     echo "<h2>TRIAL FLIGHTS</h2>";
     $havetrial = 0;
-
-    $q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and flights.billing_option IN ('" . implode("','",$trialFlightIds) . "') and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+	$trialFlightsListString = implode("','",$trialFlightIds);
+    $q=<<<SQL
+		SELECT 	flights.localdate, flights.glider, (flights.land-flights.start), flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane,
+				flights.location, (flights.towland-flights.start), seq 
+		FROM flights 
+		LEFT JOIN billingoptions a ON a.id = flights.billing_option 
+		LEFT JOIN members b on b.id = flights.p2 
+		LEFT JOIN members c on c.id = flights.pic 
+		WHERE flights.org = {$_SESSION['org']} AND flights.finalised > 0 AND flights.billing_option IN ('{$trialFlightsListString}') AND localdate >= {$dateStart2} AND localdate < {$dateEnd2} 
+		ORDER BY localdate,seq ASC;
+SQL;
     //0 localdate
     //1 glider
     //2 land - start
@@ -435,7 +461,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {		
 		echo "<tr><th class='thname' colspan=13>" . $row[1] . "<th></tr>";
 		
-		$q="SELECT flights.localdate,flights.glider, (flights.land-flights.start),flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane, flights.location , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b on b.id = flights.p2 LEFT JOIN members c on c.id = flights.pic where flights.org = ".$_SESSION['org']." and flights.type = ".$flightTypeGlider." and flights.finalised > 0 and flights.billing_option = ".$row[0]." and localdate >= " . $dateStart2 . " and localdate < " . $dateEnd2 . " order by localdate,seq ASC";
+		$q=<<<SQL
+		SELECT 	flights.localdate, flights.glider, (flights.land-flights.start), flights.height, b.displayname, c.displayname,flights.comments, a.name, flights.launchtype, flights.towplane,
+				flights.location, (flights.towland-flights.start), seq 
+		FROM flights 
+		LEFT JOIN billingoptions a ON a.id = flights.billing_option 
+		LEFT JOIN members b on b.id = flights.p2 
+		LEFT JOIN members c on c.id = flights.pic 
+		WHERE flights.org = {$_SESSION['org']} AND flights.type = {$flightTypeGlider} AND flights.finalised > 0 AND flights.billing_option = {$row[0]} 
+			AND localdate >= {$dateStart2} AND localdate < {$dateEnd2} 
+		ORDER BY localdate,seq ASC;
+SQL;
 		//0 localdate
 		//1 glider
 		//2 land-start
@@ -559,7 +595,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $newmember = 1;
         $tablestart = 0;
         //Now do we have any flights to be billed to thsi member
-        $q2 = "SELECT flights.localdate, flights.glider, (flights.land-flights.start),flights.height, flights.pic, flights.p2, a.name, a.bill_pic , a.bill_p2, a.bill_other, flights.comments, flights.billing_member1, flights.billing_member2 ,b.displayname , c.displayname, d.displayname, e.displayname, flights.launchtype, flights.towplane, flights.location , flights.type , (flights.towland-flights.start) , seq from flights LEFT JOIN billingoptions a ON a.id = flights.billing_option LEFT JOIN members b ON b.id = flights.billing_member1 LEFT JOIN members c ON c.id = flights.billing_member2 LEFT JOIN members d ON d.id = flights.pic LEFT JOIN members e ON e.id = flights.p2 where flights.org = ".$_SESSION['org']." and flights.finalised > 0 and localdate >= '" . $dateStart2 . "' and localdate < '" . $dateEnd2 . "' and (billing_member1 = " . $row[0] . " or billing_member2 = " . $row[0] . ") order by localdate,seq ASC";
+        $q2 = <<<SQL
+			SELECT 	flights.localdate, flights.glider, (flights.land-flights.start), flights.height, flights.pic, flights.p2, a.name, a.bill_pic , a.bill_p2, a.bill_other, flights.comments,
+					flights.billing_member1, flights.billing_member2, b.displayname, c.displayname, d.displayname, e.displayname, flights.launchtype, flights.towplane, flights.location,
+					flights.type, (flights.towland-flights.start), seq
+			FROM flights 
+			LEFT JOIN billingoptions a ON a.id = flights.billing_option 
+			LEFT JOIN members b ON b.id = flights.billing_member1 
+			LEFT JOIN members c ON c.id = flights.billing_member2 
+			LEFT JOIN members d ON d.id = flights.pic 
+			LEFT JOIN members e ON e.id = flights.p2 
+			WHERE flights.org = {$_SESSION['org']} AND flights.finalised > 0 AND localdate >= '{$dateStart2}' AND localdate < '{$dateEnd2}' 
+				AND (billing_member1 = {$row[0]} or billing_member2 = {$row[0]}) 
+			ORDER BY localdate,seq ASC;
+SQL;
 	//0 locadate
         //1 glider
         //2 land - start
