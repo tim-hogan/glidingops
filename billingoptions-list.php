@@ -68,7 +68,7 @@ if (mysqli_connect_errno())
 {
  echo "<p>Unable to connect to database</p>";
 }
-$sql= "SELECT id, name, bill_pic, bill_p2, bill_other, requires_comment, is_external_club FROM billingoptions"; 
+$sql= "SELECT id, name, bill_pic, bill_p2, bill_other, requires_comment, other_club FROM billingoptions"; 
 $sql.=" ORDER BY ";
 switch ($colsort) {
  case 0:
@@ -92,7 +92,7 @@ break;
    $sql .= "requires_comment";   
    break;
  case 7:
-   $sql .= "is_external_club";   
+   $sql .= "other_club";   
    break;   
 }
 $sql .= " ASC";

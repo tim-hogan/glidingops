@@ -215,7 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     echo ",Type,Tow,Glider,Airways,Total,Notes\r\n";
 	
 	//Main Loop for other clubs
-    $q="SELECT id, name FROM billingoptions WHERE is_external_club = 1 order by name ASC";
+    $q="SELECT id, name FROM billingoptions WHERE other_club = 1 order by name ASC";
 	$r = mysqli_query($con,$q);
 	while ($row = mysqli_fetch_array($r) )
     {	

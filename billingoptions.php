@@ -38,8 +38,8 @@ $bill_other_f="";
 $bill_other_err="";
 $requires_comment_f="";
 $requires_comment_err="";
-$is_external_club_f="";
-$is_external_club_err="";
+$other_club_f="";
+$other_club_err="";
 function InputChecker($data)
 {
  $data = trim($data);
@@ -73,7 +73,7 @@ SQL;
     $bill_p2_f = $row['bill_p2'];
     $bill_other_f = $row['bill_other'];
 	$requires_comment_f = $row['requires_comment'];
-	$is_external_club_f = $row['is_external_club'];	
+	$other_club_f = $row['other_club'];	
     $trantype="Update";
     mysqli_close($con);
    }
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  $bill_p2_err = "";
  $bill_other_err = "";
  $requires_comment_err="";
- $is_external_club_err=""; 
+ $other_club_err=""; 
  $name_f = InputChecker($_POST["name_i"]);
 if(in_array("1",$_POST['bill_pic_i']))
  $bill_pic_f = 1;
@@ -111,11 +111,11 @@ if(in_array("1",$_POST['requires_comment_i']))
 else
  $requires_comment_f = 0;
  if (!empty($requires_comment_f ) ) {if (!is_numeric($requires_comment_f ) ) {$requires_comment_err = "Requires Comment is not numeric";$error = 1;}}
-if(in_array("1",$_POST['is_external_club_i']))
- $is_external_club_f = 1;
+if(in_array("1",$_POST['other_club_i']))
+ $other_club_f = 1;
 else
- $is_external_club_f = 0;
- if (!empty($is_external_club_f ) ) {if (!is_numeric($is_external_club_f ) ) {$is_external_club_err = "Is External Club is not numeric";$error = 1;}}
+ $other_club_f = 0;
+ if (!empty($other_club_f ) ) {if (!is_numeric($other_club_f ) ) {$other_club_err = "Is External Club is not numeric";$error = 1;}}
  if ($error != 1)
  {
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
@@ -137,15 +137,15 @@ SQL;
      if (isset($_POST["tran"]) ) {if ($_POST["tran"] == "Update"){
       $Q =<<<SQL
 		UPDATE billingoptions 
-		SET name = '{$escaped_name}', bill_pic = '{$bill_pic_f}', bill_p2 = '{$bill_p2_f}', bill_other= '{$bill_other_f}', requires_comment = '{$requires_comment_f}', is_external_club = '{$is_external_club_f}'
+		SET name = '{$escaped_name}', bill_pic = '{$bill_pic_f}', bill_p2 = '{$bill_p2_f}', bill_other= '{$bill_other_f}', requires_comment = '{$requires_comment_f}', other_club = '{$other_club_f}'
 		WHERE id = {$_POST['updateid']}
 SQL;
 	 }
      else
      if ($_POST["tran"] == "Create"){
       $Q =<<<SQL
-		INSERT INTO billingoptions (name, bill_pic, bill_p2, bill_other, requires_comment, is_external_club)
-		VALUES ('{$escaped_name}', '{$bill_pic_f}', '{$bill_p2_f}', '{$bill_other_f}', '{$requires_comment_f}', {$is_external_club_f})
+		INSERT INTO billingoptions (name, bill_pic, bill_p2, bill_other, requires_comment, other_club)
+		VALUES ('{$escaped_name}', '{$bill_pic_f}', '{$bill_p2_f}', '{$bill_other_f}', '{$requires_comment_f}', {$other_club_f})
 SQL;
 	 }}
     $sqltext = $Q;
@@ -210,8 +210,8 @@ echo $requires_comment_err; echo "</td></tr>";
 <?php if (true)
 {
 echo "<tr><td class='desc'>Is External Club</td><td></td>";
-echo "<td><input type='checkbox' name='is_external_club_i[]' Value='1' ";if ($is_external_club_f ==1) echo "checked";echo "></td>";echo "<td>";
-echo $is_external_club_err; echo "</td></tr>";
+echo "<td><input type='checkbox' name='other_club_i[]' Value='1' ";if ($other_club_f ==1) echo "checked";echo "></td>";echo "<td>";
+echo $other_club_err; echo "</td></tr>";
 }
 ?>
 </table>
