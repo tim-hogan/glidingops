@@ -956,6 +956,18 @@ function fieldchange(what, row = null) {
 
   var charges = document.getElementById("k" + iRow).value;
   var comments = document.getElementById("l" + iRow).value;
+  
+  //HACK:GWR - BEGIN
+  if (comments.toUpperCase().includes("GWR")){
+      var ch = document.getElementById("k" + iRow).childNodes;
+      for (mm = 0; mm < ch.length; mm++) {
+        ch[mm].selected = false;
+        if (ch[mm].value == "c13")
+          ch[mm].selected = true;
+      }	
+  }
+  //HACK:GWR - END
+  
   comments = comments.replace(/&/g, "&amp;");
   comments = escape(comments);
   var del = document.getElementById("m" + iRow).value;

@@ -84,6 +84,21 @@ function getNoChargeOpt($db)
    return $ret;
 }
 
+function getTrialFlightOpts($con)
+{
+	$ret=array();
+	$q="SELECT id from billingoptions where name LIKE '%Trial%'";	
+	$r1 = mysqli_query($con,$q);
+	$cnt = 0;	
+	while ($row = mysqli_fetch_array($r1) )
+	{
+  		$ret[$cnt]=$row[0];
+  		$cnt++;
+	}
+	mysqli_free_result($r1);
+	return $ret;	
+}
+
 function getRoleId($db,$strRole)
 {
    $ret=-1.0;
