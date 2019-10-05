@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as BaseUser;
 
-class User extends Authenticatable
+class User extends BaseUser
 {	
     /**
      * The table associated with the model.
