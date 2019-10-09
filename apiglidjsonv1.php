@@ -398,6 +398,46 @@ function createTrack($params)
     exit();
 }
 
+function trackme($params)
+{
+    global $DB;
+    
+    error_log("Api from trackme follows");
+    var_error_log($params);
+    $org = 1;
+    
+    //Error checks
+    if ($params && isset($params['deviceId']))
+    {
+        if ($aircraft = $DB->getAircraftBySpotId($params['deviceId']) )
+        {
+            if (isset($params['deviceSendDateTime']))
+                $t = DateTime::createFromFormat(DateTime::ISO8601,$params['deviceSendDateTime']);
+            else
+                $t = new DateTime();   //Use now
+            $alt = 0.0;
+            if (isset($params['altitude']) && $params['altitude'])
+                $alt = $params['altitude'];
+            //Finaly check that we have a lat and lon;
+            if (isset($params['latitude']) && isset($params['longitude']))
+                $DB->createTrack($org,$aircraft['rego_short'],$t->format('Y-m-d H:i:s'),0.0,$params['latitude'],$params['longitude'],$alt,'NZSPOT'); 
+            else
+                error_log("trackme: No lat or lon supplied");
+        }
+        else
+            error_log("trackme: Aircraft not found");
+    }
+    else
+        error_log("trackme: invalid parameters");
+        
+    //Return all ok even if we did not use the data.    
+    $ret = array();
+    $ret['messageId'] = $params['gatewayMessageId'];
+    $ret['response'] = "OK";
+    $ret['error'] = null;
+    echo json_encode($ret);
+    exit();
+}
 
 //Start
 if (!isset($_GET['r'])) 
@@ -405,8 +445,13 @@ if (!isset($_GET['r']))
 
 $r = $_GET['r'];
 $tok = strtok($r,"/");
-if (strlen($tok) == 16) $key = $tok;
-$req = strtok("/");
+if (strlen($tok) == 16) 
+{
+    $key = $tok;
+    $req = strtok("/");
+}
+else
+    $req = $tok;
 $reqValue1 =strtok("/"); 
 $reqValue2 =strtok("/"); 
 $reqValue3 =strtok("/"); 
@@ -449,6 +494,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT'  || $_SERVER['REQUEST_METHOD'] == 'POST'
         break;
     case 'createtrack':
         createTrack($params);
+        break;
+    case 'trackme':
+        trackme($params);
         break;
     default:
         returnError($req,1000,"Invalid parameter");

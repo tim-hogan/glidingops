@@ -148,6 +148,11 @@ class GlidingDB extends SQLPlus
         return $this->singlequery("SELECT * from aircraft where aircraft_particle_id = '" . $pid . "'");    
     }
     
+    public function getAircraftBySpotId($sid)
+    {
+        return $this->singlequery("SELECT * from aircraft where spot_id = '{$sid}'");    
+    }
+    
     public function updateAircraftTrackStatus($aid,$status)
     {
         $d = new DateTime('now');
