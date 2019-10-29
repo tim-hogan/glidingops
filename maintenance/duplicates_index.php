@@ -75,7 +75,7 @@
         <td><?php echo $row['org_name'] ?></td>
 <?php
       $firstname=urlencode($row['firstname']);
-      $surname=urldecode($row['surname']);
+      $surname=urlencode($row['surname']);
       $query = "firstname={$firstname}&surname={$surname}&org={$row['org']}"
 ?>
         <td>
