@@ -44,8 +44,8 @@
   $con_params = require('../config/database.php'); $con_params = $con_params['gliding']; 
   $con=mysqli_connect($con_params['hostname'],$con_params['username'],
                       $con_params['password'],$con_params['dbname']);
-  $firstname = $_GET['firstname'];
-  $surname = $_GET['surname'];
+  $firstname = urldecode($_GET['firstname']);
+  $surname = urldecode($_GET['surname']);
   $org = $_GET['org'];
 
   if($org != $current_org) {
@@ -59,15 +59,16 @@
                     "phone_work",
                     "email", "class", "status", "gnz_number");
   
-  $q = "
+  $q =<<<SQL
     SELECT members.*, organisations.name AS org_name
     FROM
         members
         JOIN organisations 
         ON members.org = organisations.id
-        WHERE members.firstname = '{$firstname}'
-        AND   members.surname   = '{$surname}'
-        AND   members.org       = {$org}";
+        WHERE members.firstname = "{$firstname}"
+        AND   members.surname   = "{$surname}"
+        AND   members.org       = {$org};
+SQL;
 ?>
 
   <body>
