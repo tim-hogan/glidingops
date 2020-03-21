@@ -98,3 +98,35 @@ If your browser complains that it can not find https://glidingops.test then chec
 ```bash
 mysqldump -u YourUser -p YourDatabaseName > wantedsqlfile.sql
 ```
+
+## GraphQL
+Point your browser to https://glidingops.test/app/graphql-playground
+
+GraphQL example query:
+```
+{
+  users(page: 0) {
+    paginatorInfo {
+      total
+    }
+    data {
+      id
+      name
+      organisation {
+        id
+        name
+      }
+    }
+  }
+  
+  organisations(page: 0) {
+    paginatorInfo {
+      total
+    }
+    data {
+      id
+      name
+    }
+  }
+}
+```
