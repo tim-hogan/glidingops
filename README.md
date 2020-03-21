@@ -93,3 +93,8 @@ If your browser complains that it can not find https://glidingops.test then chec
 ```bash
 192.168.10.10   glidingops.test
 ```
+
+## Database import/export from mysql
+```bash
+mysqldump -u YourUser -p YourDatabaseName > wantedsqlfile.sql
+```
