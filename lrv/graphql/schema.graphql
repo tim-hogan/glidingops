@@ -25,3 +25,17 @@ type Organisation {
   name: String!
   users: [User!]!
 }
+
+type Flight {
+  id: ID!
+  organisation: Organisation
+  date: DateTime!
+  localdate: Int
+  updseq: Int
+  location: String
+  seq: Int
+  glider: String
+  start: Int
+  land: Int
+  comments: String
+}
