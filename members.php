@@ -899,6 +899,9 @@ echo $first_aider_err; echo "</td></tr>";
 <table>
 <tr>
   <td>
+    <?php if ($recid > -1) echo "<input type='submit' formmethod='get' formaction='/app/members/${id_f}/edit' name = 'edit_member' value = 'Edit documents'>";?>
+  </td>
+  <td>
     <?php
     if($recid > -1) {
       $submitValue = 'Update';
@@ -911,7 +914,6 @@ echo $first_aider_err; echo "</td></tr>";
   <td>
     <?php if ($recid > -1) echo "<input type='submit' name = 'del' value = 'Delete'>";?>
   </td>
-  <td></td>
   <td></td></tr>
 </table>
 <input type="hidden" name = 'updateid' value = '<?php echo $recid; ?>'>

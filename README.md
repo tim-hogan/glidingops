@@ -96,7 +96,10 @@ If your browser complains that it can not find https://glidingops.test then chec
 
 ## Database import/export from mysql
 ```bash
-mysqldump -u YourUser -p YourDatabaseName > wantedsqlfile.sql
+vagrant upload [filename].sql
+vagrant ssh
+mysqldump -u [username] -p [databaseName] > [filename].sql
+mysql -u [username] -p [databaseName] < [filename].sql
 ```
 
 ## GraphQL

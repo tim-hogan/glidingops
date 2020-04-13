@@ -8,6 +8,8 @@
 # to apply, you may also create user-customizations.sh,
 # which will be run after this script.
 
+sudo update-alternatives --set php /usr/bin/php7.4
+sudo apt-get -y install php7.4-fpm php7.4-mysql php7.4-mbstring php7.4-xml php7.4-gd php7.4-curl
 cd code/lrv
 composer install
 php artisan migrate

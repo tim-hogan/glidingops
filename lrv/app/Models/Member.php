@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
-class Member extends Model
+class Member extends Model implements HasMedia
 {
+    use HasMediaTrait;
+
     /**
      * The table associated with the model.
      *
