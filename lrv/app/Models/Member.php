@@ -58,4 +58,16 @@ class Member extends Model implements HasMedia
     {
         return $this->belongsTo('App\Models\MembershipStatus', 'status');
     }
+
+    public function latestDocuments()
+    {
+      $latestDocuments = $this->media()
+        ->groupBy('collection_name')
+        ->select(\DB::raw("collection_name, max(order_column) AS order_column"));
+      return Document::joinSub($latestDocuments->getQuery(), 'latest_documents', function($join){
+          $join->on('documents.collection_name', '=', 'latest_documents.collection_name');
+          $join->on('documents.order_column', '=', 'latest_documents.order_column');
+        })
+        ->orderBy('documents.collection_name', 'asc');
+    }
 }

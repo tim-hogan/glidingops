@@ -1,8 +1,17 @@
 <?php
 
 namespace App\Models;
-use Spatie\MediaLibrary\Models\Media as BaseMedia;
+use Spatie\MediaLibrary\Media as BaseMedia;
+use Carbon\Carbon;
 
 class Document extends BaseMedia 
 {
+  // TODO: find a way to make expires_at autocast to/from Carbon date
+  // protected $fillable = ['expires_at'];
+  // protected $casts = ['expires_at' => 'date'];
+
+  public function isExpired(): bool
+  {
+      return $this->expires_at->isPast();
+  }
 }

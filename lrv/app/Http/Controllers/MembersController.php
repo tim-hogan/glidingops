@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\Document;
 use Illuminate\Http\Request;
 
 class MembersController extends Controller
@@ -24,9 +25,9 @@ class MembersController extends Controller
      */
     public function create()
     {
-      $model = new Member();
+      $newMember = new Member();
       $route = ['members.store'];
-      return view('members.edit')->with(['model' => $model, 'route' => $route, 'method' => 'post']);
+      return view('members.edit')->with(['model' => $newMember, 'route' => $route, 'method' => 'post']);
     }
 
     /**
@@ -60,7 +61,8 @@ class MembersController extends Controller
     public function edit(Member $member)
     {
       $route = ['members.update', $member->id];
-      return view('members.edit')->with(['model' => $member, 'route' => $route, 'method' => 'put']);
+      $newDocument = new Document();
+      return view('members.edit')->with(['model' => $member, 'newDocument' => $newDocument, 'route' => $route, 'method' => 'put']);
     }
 
     /**

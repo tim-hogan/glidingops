@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMediaTable extends Migration
+class CreateDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,6 +23,7 @@ class CreateMediaTable extends Migration
             $table->json('manipulations');
             $table->json('custom_properties');
             $table->unsignedInteger('order_column')->nullable();
+            $table->date('expires_at')->nullable();
             $table->nullableTimestamps();
         });
     }
@@ -33,4 +34,5 @@ class CreateMediaTable extends Migration
     {
         Schema::dropIfExists('documents');
     }
+
 }
