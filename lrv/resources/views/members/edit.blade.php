@@ -4,6 +4,18 @@
 @endpush
 
 @push('scripts')
+<!-- reference Moment.js library -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
+<script>
+$('.custom-file-input').on('change',function(){
+  var fileName = $(this)[0].files[0].name
+  $(this).next('.custom-file-label').html(fileName)
+})
+$(function () {
+    // guess user timezone 
+    $('#tz').val(moment().format('Z'))
+})
+</script>
 @endpush
 
 @section('content')
@@ -22,31 +34,56 @@
         <h2>{{ ($method === 'put') ? "{$model->displayname}" : 'Create Member' }}</h2>
       </div>
     </div>
-    {{ Form::model($model, ['route' => $route, 'method' => $method])  }}
-      @if ($method === 'put')
-      <div class="row">
-        <div class="form-group">
-          <div class="col-sm-2">{{ Form::label('id', 'Id') }}</div>
-          <div class="col-sm-2">{{ $model->id }}</div>
-          <div class="col-sm-10"></div>
+    <!-- Documents form -->
+    {{ Form::model($newDocument, ['route' => ['members.documents.store', $model->id], 'method' => 'post', 'files' => true]) }}
+      <input type="hidden" name="tz" id="tz">
+      <div class="form-row">
+        <div class="form-group col-md-5">
+          <label for="documentFile">File</label>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="documentFile" name="documentFile" required>
+            <label class="custom-file-label" for="documentFile" aria-describedby="documentFileHelp">Choose a file ...</label>
+          </div>
+          <small id="documentFileHelp" class="form-text text-muted">Select a document to be uploaded.</small>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="documentType">Document type</label>
+          <select class="form-control" id="documentType" name="documentType">
+            <option>BFR</option>
+            <option>Medical Certificate</option>
+            <option>A Certificate</option>
+            <option>B Certificate</option>
+            <option>QGP</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="documentExpiresAt">Expiry date</label>
+          <input type="date" class="form-control" id="documentExpiresAt" name="documentExpiresAt">
         </div>
       </div>
-      @endif
-      <div class="row">
-        <!-- <div class="form-group">
-          <div class="col-sm-3">{{ Form::label('member_id', 'Member Num') }}</div>
-          <div class="col-sm-9">{{ Form::text('member_id', Input::old('member_id'), array('class' => 'form-control')) }}</div>
-        </div> -->
-      </div>
-      <div class="row">
-        <div class="col-sm-2">{{ Form::submit('Save!', array('class' => 'btn btn-primary')) }}</div>
-        <div class="col-sm-2"><a class="btn btn-small btn-warning" href="{{ URL::to('AllMembers') }}">Cancel</a></div>
-        <div class="col-sm-10"></div>
-      </div>
+      <button type="submit" class="btn btn-primary">Add</button>
     {{ Form::close() }}
-    <!-- Documents form -->
     <div class="row">
       <div class="col-sm-12"><h3>Documents</h3></div>
     </div>
-  </div>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Expiry date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($model->latestDocuments()->get() as $document)
+          <tr class='{{ $document->isExpired() ? "bg-danger" : "" }}'>
+            <td>{{ $document->file_name }}</td>
+            <td>{{ $document->collection_name }}</td>
+            <td>{{ $document->expires_at }}</td>
+            <td></td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>  
 @endsection

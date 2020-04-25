@@ -12,6 +12,7 @@ class Document extends BaseMedia
 
   public function isExpired(): bool
   {
-      return $this->expires_at->isPast();
+    return false;
+    // return $this->expires_at->isPast();
   }
 }

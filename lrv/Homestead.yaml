@@ -9,6 +9,8 @@ folders:
     -
         map: ../
         to: /home/vagrant/code
+        options:
+            mount_options: ['dmode=777','fmode=777']
 sites:
     -
         map: glidingops.test
