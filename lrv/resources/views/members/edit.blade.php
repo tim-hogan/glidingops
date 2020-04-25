@@ -81,7 +81,9 @@ $(function () {
             <td>{{ $document->file_name }}</td>
             <td>{{ $document->collection_name }}</td>
             <td>{{ $document->expires_at }}</td>
-            <td></td>
+            <td>
+              {{ link_to_route('members.documents.show', $title = 'Download', $parameters = [$model->id, $document->id], $attributes = ['target' => '_blank']) }}
+            </td>
           </tr>
         @endforeach
       </tbody>

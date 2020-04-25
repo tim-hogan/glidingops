@@ -20,4 +20,4 @@ Route::match(['get'], '/reports/membersRolesStatsReport', ['uses' => 'ReportsCon
 
 Route::resource('vectors', 'VectorsController');
 Route::resource('members', 'MembersController')->only(['create', 'edit', 'store', 'update']);
-Route::resource('members.documents', 'DocumentsController')->only(['store', 'update']);
+Route::resource('members.documents', 'DocumentsController')->only(['show', 'store', 'update']);

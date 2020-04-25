@@ -23,6 +23,16 @@ class DocumentsController extends Controller
   // }
 
   /**
+   * Download a document.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Member $member, Document $document)
+  {
+    return $document;
+  }
+
+  /**
    * Show the form for creating a new resource.
    *
    * @return \Illuminate\Http\Response
