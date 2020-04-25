@@ -6,13 +6,17 @@ use Carbon\Carbon;
 
 class Document extends BaseMedia 
 {
-  // TODO: find a way to make expires_at autocast to/from Carbon date
-  // protected $fillable = ['expires_at'];
-  // protected $casts = ['expires_at' => 'date'];
+  public function getDates()
+  {
+    return ['created_at', 'upated_at', 'expires_at'];
+  }
 
   public function isExpired(): bool
   {
-    return false;
-    // return $this->expires_at->isPast();
+    if(!is_null($this->expires_at)) {
+      return $this->expires_at->isPast();
+    } else {
+      return false;
+    }
   }
 }
