@@ -82,7 +82,9 @@ $(function () {
             <td>{{ $document->collection_name }}</td>
             <td>{{ $document->expires_at }}</td>
             <td>
-              {{ link_to_route('members.documents.show', $title = 'Download', $parameters = [$model->id, $document->id], $attributes = ['target' => '_blank']) }}
+              <a href="{{ route('members.documents.show', $parameters = [$model->id, $document->id]) }}" target="_blank">
+                <span class="fas fa-download" data-toggle="tooltip" title="Download document"/>
+              </a>              
             </td>
           </tr>
         @endforeach
