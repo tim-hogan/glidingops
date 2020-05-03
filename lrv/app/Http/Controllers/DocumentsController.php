@@ -53,13 +53,17 @@ class DocumentsController extends Controller
    */
   public function store(Request $request, Member $member)
   {
+    $validatedData = $request->validate([
+      'documentType' => ['required']
+    ]);
+
     $documentType = $request->input('documentType');
     $timezone = $request->input('tz', '+12:00');
     $documentExpiresAtInput = $request->input('documentExpiresAt', '');
     
-    if(!empty($documentExpiresAtInput)) {      
-      $documentExpiresAt = Carbon::createFromFormat('Y-m-d', $documentExpiresAtInput, $timezone)->tz('UTC')->toDateString();      
-    }
+    $documentExpiresAt = (!empty($documentExpiresAtInput)) ? 
+      Carbon::createFromFormat('Y-m-d', $documentExpiresAtInput, $timezone)->tz('UTC')->toDateString() :
+      null;
     
     DB::transaction(function() use ($member, $documentExpiresAt, $documentType) {    
       $newDocument = $member->addMediaFromRequest('documentFile')->toMediaCollection($documentType);

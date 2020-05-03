@@ -4,6 +4,15 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
+import $ from 'jquery';
+window.$ = window.jQuery = $;
+
+import * as select2 from "select2";
+import 'select2/dist/css/select2.css';
+import 'select2-bootstrap-theme/dist/select2-bootstrap.css';
+
+$.fn.select2.defaults.set( "theme", "bootstrap" );
+
 require('./bootstrap');
 
 window.Vue = require('vue');

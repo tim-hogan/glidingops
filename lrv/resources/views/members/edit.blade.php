@@ -15,18 +15,26 @@ $(function () {
     // guess user timezone 
     $('#tz').val(moment().format('Z'))
 })
+
+$(document).ready(function() {
+  $(".select2").select2({
+    tags: true
+  })
+})
 </script>
 @endpush
 
 @section('content')
   <div class='container'>
     <!-- Errors -->
-    <div class="row">
+    @if ($errors->any())
+    <div class="row alert alert-danger">
       <div class="col-sm-12">
         <!-- if there are creation/update errors, they will show here -->
         {{ Html::ul($errors->all()) }}
       </div>
     </div>
+    @endif
 
     <!-- Main form -->
     <div class="row">
@@ -48,7 +56,8 @@ $(function () {
         </div>
         <div class="form-group col-md-3">
           <label for="documentType">Document type</label>
-          <select class="form-control" id="documentType" name="documentType">
+          <select class="select2 form-control" id="documentType" name="documentType" required>
+            <option value=''>Please choose ...</option>
             <option>BFR</option>
             <option>Medical Certificate</option>
             <option>A Certificate</option>
