@@ -81,6 +81,7 @@ $(document).ready(function() {
           <th>Name</th>
           <th>Type</th>
           <th>Expiry date</th>
+          <th>Version count</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -90,6 +91,7 @@ $(document).ready(function() {
             <td>{{ $document->file_name }}</td>
             <td>{{ $document->collection_name }}</td>
             <td>{{ $document->expires_at }}</td>
+            <td>{{ $document->version_count }}</td>
             <td>
               <a href="{{ route('members.documents.show', $parameters = [$model->id, $document->id]) }}" target="_blank">
                 <span class="fas fa-download" data-toggle="tooltip" title="Download document"/>
