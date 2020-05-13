@@ -20,6 +20,14 @@ $(document).ready(function() {
   $(".select2").select2({
     tags: true
   })
+  $("#documentType").change(function(event) {
+    const needExpDate = [
+      'BFR',
+      'Medical Certificate'
+    ]
+    const newValue = event.target.value
+    $('#documentExpiresAt').prop('required', needExpDate.includes(newValue))
+  })
 })
 </script>
 @endpush
