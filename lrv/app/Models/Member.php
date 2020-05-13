@@ -5,10 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
+use App\Models\Document;
 
 class Member extends Model implements HasMedia
 {
     use HasMediaTrait;
+
+    protected $fillable = [
+      'medical_expire',
+      'icr_expire',
+      'bfr_expire'
+    ];
 
     /**
      * The table associated with the model.
@@ -69,5 +76,26 @@ class Member extends Model implements HasMedia
           $join->on('documents.order_column', '=', 'latest_documents.order_column');
         })
         ->orderBy('documents.collection_name', 'asc');
+    }
+
+    public function documentCollections()
+    {
+        return $this->media()->select('collection_name')->distinct()->get()
+                      ->map(function($d) { return $d->collection_name; } );
+    }
+
+    public function getLatestInCollection($collection_name) {
+      return $this->media()->where('collection_name', $collection_name)->orderBy('order_column', 'desc')->first();
+    }
+
+    public function updateExpiryFieldsFromDocuments() {
+      $latest_medical = $this->getLatestInCollection(Document::COLLECTION_MEDICAL);
+      $latest_bfr = $this->getLatestInCollection(Document::COLLECTION_BFR);
+
+      $this->update([
+        'medical_expire' => ($latest_medical === null) ? null : $latest_medical->expires_at,
+        'icr_expire' => null,
+        'bfr_expire' => ($latest_bfr === null) ? null : $latest_bfr->expires_at,
+      ]);
     }
 }

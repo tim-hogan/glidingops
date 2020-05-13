@@ -16948,3 +16948,11 @@ readers do not read off random characters that represent icons */
   font-weight: 400;
 }
 
+.app-actions {
+  display: inline-flex;
+}
+
+.app-actions .app-form-action {
+  display: inline-flex;
+}
+

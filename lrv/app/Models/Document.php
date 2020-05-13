@@ -6,6 +6,9 @@ use Carbon\Carbon;
 
 class Document extends BaseMedia 
 {
+  const COLLECTION_BFR     = 'BFR';
+  const COLLECTION_MEDICAL = 'Medical Certificate';
+
   public function getDates()
   {
     return ['created_at', 'upated_at', 'expires_at'];

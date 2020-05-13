@@ -20,4 +20,5 @@ Route::match(['get'], '/reports/membersRolesStatsReport', ['uses' => 'ReportsCon
 
 Route::resource('vectors', 'VectorsController');
 Route::resource('members', 'MembersController')->only(['create', 'edit', 'store', 'update']);
+Route::delete('members/{member}/documents/{collection}/latest', 'DocumentsController@destroyLastVersion')->name('members.documents.collections.latest');
 Route::resource('members.documents', 'DocumentsController')->only(['show', 'store', 'update']);

@@ -842,29 +842,38 @@ echo $enable_email_err; echo "</td></tr>";
 }
 ?>
 <?php if ($_SESSION['security'] & 16)
-{
-echo "<tr><td class='desc'>MEDICAL EXPIRES</td><td></td>";
-echo "<td><input type='date' name='medical_expire_i' Value='" . substr($medical_expire_f,0,10) . "'></td>";
-echo "<td>";
-echo $medical_expire_err; echo "</td></tr>";
+{?>
+  <tr>
+    <td colspan="4">Please edit these fields via the <b>Edit Documents</b> page:</td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr/></td>
+  </tr>
+  <tr>
+    <td class='desc'>MEDICAL EXPIRES</td>
+    <td></td>
+    <td><input disabled="true" type='date' name='medical_expire_i' Value='<?=substr($medical_expire_f,0,10)?>'></td>
+    <td><?=$medical_expire_err?></td>
+  </tr>
+  <tr>
+    <td class='desc'>ICR EXPIRES</td>
+    <td></td>
+    <td><input disabled="true" type='date' name='icr_expire_i' Value='<?=substr($icr_expire_f,0,10)?>'></td>
+    <td><?=$icr_expire_err?></td>
+  </tr>
+  <tr>
+    <td class='desc'>BFR EXPIRES</td>
+    <td></td>
+    <td><input disabled="true" type='date' name='bfr_expire_i' Value='<?=substr($bfr_expire_f,0,10)?>'></td>
+    <td><?=$bfr_expire_err?></td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr/></td>
+  </tr>
+<?php
 }
 ?>
-<?php if ($_SESSION['security'] & 16)
-{
-echo "<tr><td class='desc'>ICR EXPIRES</td><td></td>";
-echo "<td><input type='date' name='icr_expire_i' Value='" . substr($icr_expire_f,0,10) . "'></td>";
-echo "<td>";
-echo $icr_expire_err; echo "</td></tr>";
-}
-?>
-<?php if ($_SESSION['security'] & 16)
-{
-echo "<tr><td class='desc'>BFR EXPIRES</td><td></td>";
-echo "<td><input type='date' name='bfr_expire_i' Value='" . substr($bfr_expire_f,0,10) . "'></td>";
-echo "<td>";
-echo $bfr_expire_err; echo "</td></tr>";
-}
-?>
+
 <?php if (true)
 {
 echo "<tr><td class='desc'>OFFICIAL OBSERVER</td><td></td>";

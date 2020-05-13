@@ -19,3 +19,12 @@
 @import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@fortawesome/fontawesome-free/scss/brands';
+
+// Application wide CSS rules
+.app-actions {
+  display: inline-flex;
+}
+
+.app-actions .app-form-action {
+  display: inline-flex;
+}

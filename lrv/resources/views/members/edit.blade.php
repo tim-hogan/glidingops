@@ -90,12 +90,17 @@ $(document).ready(function() {
           <tr class='{{ $document->isExpired() ? "bg-danger" : "" }}'>
             <td>{{ $document->file_name }}</td>
             <td>{{ $document->collection_name }}</td>
-            <td>{{ $document->expires_at }}</td>
+            <td>{{ ($document->expires_at === null) ? '' : $document->expires_at->format('d/m/Y') }}</td>
             <td>{{ $document->version_count }}</td>
-            <td>
-              <a href="{{ route('members.documents.show', $parameters = [$model->id, $document->id]) }}" target="_blank">
-                <span class="fas fa-download" data-toggle="tooltip" title="Download document"/>
-              </a>              
+            <td class="app-actions">
+              <a class="btn" href="{{ route('members.documents.show', $parameters = [$model->id, $document->id]) }}" target="_blank">
+                <span class="fas fa-download" data-toggle="tooltip" title="Download the latest version of the document"/>
+              </a>
+              {{ Form::model($model, ['route' => ['members.documents.collections.latest', $model->id, $document->collection_name], 
+                                      'method' => 'delete',
+                                      'class' => 'app-form-action']) }}
+              <button type="submit" class="btn fas fa-trash-alt" data-toggle="tooltip" title="Remove the latest version of the document"/>
+              {{ Form::close() }}
             </td>
           </tr>
         @endforeach
