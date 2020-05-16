@@ -29,7 +29,12 @@ $(document).ready(function() {
     const newValue = event.target.value
     $('#documentExpiresAt').prop('required', needExpDate.includes(newValue))
   })
+
+  $("form.app-remove-document").submit(function(e){
+    return confirm('Do you really want to delete this version of the document?')
+  });
 })
+
 </script>
 @endpush
 
@@ -105,7 +110,7 @@ $(document).ready(function() {
               </a>
               {{ Form::model($model, ['route' => ['members.documents.collections.latest', $model->id, $document->collection_name], 
                                       'method' => 'delete',
-                                      'class' => 'app-form-action']) }}
+                                      'class' => 'app-form-action, app-remove-document']) }}
               <button type="submit" class="btn fas fa-trash-alt" data-toggle="tooltip" title="Remove the latest version of the document"/>
               {{ Form::close() }}
             </td>
