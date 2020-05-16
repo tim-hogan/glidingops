@@ -7,7 +7,18 @@ use Carbon\Carbon;
 class Document extends BaseMedia 
 {
   const COLLECTION_BFR     = 'BFR';
+  const COLLECTION_ICR     = 'ICR';
   const COLLECTION_MEDICAL = 'Medical Certificate';
+
+  const PREDEFINED_COLLECTIONS = [
+    Document::COLLECTION_BFR,
+    Document::COLLECTION_ICR,
+    Document::COLLECTION_BFR,
+    'A Certificate',
+    'B Certificate',
+    'QGP'
+  ];
+
 
   public function getDates()
   {
@@ -21,5 +32,13 @@ class Document extends BaseMedia
     } else {
       return false;
     }
+  }
+
+  public static function documentCollections()
+  {
+    $customCollections = Document::select('collection_name')->whereNotIn('collection_name', Document::PREDEFINED_COLLECTIONS)
+                            ->distinct()->get()
+                            ->map(function($d) { return $d->collection_name; } );
+    return collect(Document::PREDEFINED_COLLECTIONS)->merge($customCollections);
   }
 }

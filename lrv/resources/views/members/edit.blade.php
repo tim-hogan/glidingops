@@ -23,6 +23,7 @@ $(document).ready(function() {
   $("#documentType").change(function(event) {
     const needExpDate = [
       'BFR',
+      'ICR',
       'Medical Certificate'
     ]
     const newValue = event.target.value
@@ -66,11 +67,9 @@ $(document).ready(function() {
           <label for="documentType">Document type</label>
           <select class="select2 form-control" id="documentType" name="documentType" required>
             <option value=''>Please choose ...</option>
-            <option>BFR</option>
-            <option>Medical Certificate</option>
-            <option>A Certificate</option>
-            <option>B Certificate</option>
-            <option>QGP</option>
+            @foreach (App\Models\Document::documentCollections() as $collectionName)
+            <option>{{ $collectionName }}</option>
+            @endforeach
           </select>
         </div>
         <div class="form-group col-md-4">

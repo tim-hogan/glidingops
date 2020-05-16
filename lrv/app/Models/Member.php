@@ -78,12 +78,6 @@ class Member extends Model implements HasMedia
         ->orderBy('documents.collection_name', 'asc');
     }
 
-    public function documentCollections()
-    {
-        return $this->media()->select('collection_name')->distinct()->get()
-                      ->map(function($d) { return $d->collection_name; } );
-    }
-
     public function getLatestInCollection($collection_name) {
       return $this->media()->where('collection_name', $collection_name)->orderBy('order_column', 'desc')->first();
     }
