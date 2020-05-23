@@ -23,7 +23,7 @@ class CreateDocumentsTable extends Migration
             $table->json('manipulations');
             $table->json('custom_properties');
             $table->unsignedInteger('order_column')->nullable();
-            $table->date('issued_at')->nullable();
+            $table->date('expires_at')->nullable();
             $table->nullableTimestamps();
         });
     }

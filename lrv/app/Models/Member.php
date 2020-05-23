@@ -87,9 +87,9 @@ class Member extends Model implements HasMedia
       $latest_bfr = $this->getLatestInCollection(Document::COLLECTION_BFR);
 
       $this->update([
-        'medical_expire' => ($latest_medical === null) ? null : $latest_medical->issued_at,
+        'medical_expire' => ($latest_medical === null) ? null : $latest_medical->expires_at,
         'icr_expire' => null,
-        'bfr_expire' => ($latest_bfr === null) ? null : $latest_bfr->issued_at,
+        'bfr_expire' => ($latest_bfr === null) ? null : $latest_bfr->expires_at,
       ]);
     }
 }

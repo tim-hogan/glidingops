@@ -13,7 +13,7 @@ class Document extends BaseMedia
   const PREDEFINED_COLLECTIONS = [
     Document::COLLECTION_BFR,
     Document::COLLECTION_ICR,
-    Document::COLLECTION_MEDICAL,
+    Document::COLLECTION_BFR,
     'A Certificate',
     'B Certificate',
     'QGP'
@@ -22,16 +22,15 @@ class Document extends BaseMedia
 
   public function getDates()
   {
-    return ['created_at', 'upated_at', 'issued_at'];
+    return ['created_at', 'upated_at', 'expires_at'];
   }
 
   public function isExpired(): bool
   {
-    switch ($this->collection_name) {
-      case Document::COLLECTION_BFR:
-        return $this->issued_at->startOfDay()->isBefore(Carbon::now()->subYears(2)->startOfDay());
-      default:
-        return false;
+    if(!is_null($this->expires_at)) {
+      return $this->expires_at->isPast();
+    } else {
+      return false;
     }
   }
 

@@ -27,7 +27,7 @@ $(document).ready(function() {
       'Medical Certificate'
     ]
     const newValue = event.target.value
-    $('#documentIssuedAt').prop('required', needExpDate.includes(newValue))
+    $('#documentExpiresAt').prop('required', needExpDate.includes(newValue))
   })
 
   $("form.app-remove-document").submit(function(e){
@@ -78,8 +78,8 @@ $(document).ready(function() {
           </select>
         </div>
         <div class="form-group col-md-4">
-          <label for="documentIssuedAt">Issued at date</label>
-          <input type="date" class="form-control" id="documentIssuedAt" name="documentIssuedAt">
+          <label for="documentExpiresAt">Expiry date</label>
+          <input type="date" class="form-control" id="documentExpiresAt" name="documentExpiresAt">
         </div>
       </div>
       <button type="submit" class="btn btn-primary">Add</button>
@@ -92,7 +92,7 @@ $(document).ready(function() {
         <tr>
           <th>Name</th>
           <th>Type</th>
-          <th>Issued at date</th>
+          <th>Expiry date</th>
           <th>Version count</th>
           <th>Actions</th>
         </tr>
@@ -102,7 +102,7 @@ $(document).ready(function() {
           <tr class='{{ $document->isExpired() ? "bg-danger" : "" }}'>
             <td>{{ $document->file_name }}</td>
             <td>{{ $document->collection_name }}</td>
-            <td>{{ ($document->issued_at === null) ? '' : $document->issued_at->format('d/m/Y') }}</td>
+            <td>{{ ($document->expires_at === null) ? '' : $document->expires_at->format('d/m/Y') }}</td>
             <td>{{ $document->version_count }}</td>
             <td class="app-actions">
               <a class="btn" href="{{ route('members.documents.show', $parameters = [$model->id, $document->id]) }}" target="_blank">
