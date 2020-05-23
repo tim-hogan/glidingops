@@ -57,22 +57,22 @@ class DocumentsController extends Controller
       'documentType' => ['required']
     ];
     if(($request->input('documentType') == 'BFR') || ($request->input('documentType') == 'Medical Certificate')) {
-      $rules['documentExpiresAt'] = ['required'];
+      $rules['documentIssuedAt'] = ['required'];
     }    
     $validatedData = $request->validate($rules, $this->messages());
 
     $documentType = $request->input('documentType');
     $timezone = $request->input('tz', '+12:00');
-    $documentExpiresAtInput = $request->input('documentExpiresAt', '');
+    $documentIssuedAtInput = $request->input('documentIssuedAt', '');
     
-    $documentExpiresAt = (!empty($documentExpiresAtInput)) ? 
-      Carbon::createFromFormat('Y-m-d', $documentExpiresAtInput, $timezone)->tz('UTC')->toDateString() :
+    $documentIssuedAt = (!empty($documentIssuedAtInput)) ? 
+      Carbon::createFromFormat('Y-m-d', $documentIssuedAtInput, $timezone)->tz('UTC')->toDateString() :
       null;
     
-    DB::transaction(function() use ($member, $documentExpiresAt, $documentType) {    
+    DB::transaction(function() use ($member, $documentIssuedAt, $documentType) {    
       $newDocument = $member->addMediaFromRequest('documentFile')->toMediaCollection($documentType);
-      if(isset($documentExpiresAt)) {
-        $newDocument->expires_at = $documentExpiresAt;
+      if(isset($documentIssuedAt)) {
+        $newDocument->issued_at = $documentIssuedAt;
         $newDocument->save();
       }
       $member->updateExpiryFieldsFromDocuments();
@@ -99,7 +99,7 @@ class DocumentsController extends Controller
   {
       return [
           'documentType.required' => 'A document type is required.',
-          'documentExpiresAt.required'  => 'An expiry date is required.',
+          'documentIssuedAt.required'  => 'An issued at date is required.',
       ];
   }
 }
