@@ -13,7 +13,7 @@ class Document extends BaseMedia
   const PREDEFINED_COLLECTIONS = [
     Document::COLLECTION_BFR,
     Document::COLLECTION_ICR,
-    Document::COLLECTION_BFR,
+    Document::COLLECTION_MEDICAL,
     'A Certificate',
     'B Certificate',
     'QGP'
