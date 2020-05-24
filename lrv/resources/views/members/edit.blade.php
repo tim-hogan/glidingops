@@ -23,8 +23,7 @@ $(document).ready(function() {
   $("#documentType").change(function(event) {
     const needExpDate = [
       'BFR',
-      'ICR',
-      'Medical Certificate'
+      'ICR'
     ]
     const newValue = event.target.value
     $('#documentExpiresAt').prop('required', needExpDate.includes(newValue))

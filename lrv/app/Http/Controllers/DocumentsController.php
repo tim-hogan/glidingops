@@ -56,7 +56,7 @@ class DocumentsController extends Controller
     $rules = [
       'documentType' => ['required']
     ];
-    if(($request->input('documentType') == 'BFR') || ($request->input('documentType') == 'Medical Certificate')) {
+    if(($request->input('documentType') == Document::COLLECTION_BFR) || ($request->input('documentType') == Document::COLLECTION_ICR)) {
       $rules['documentExpiresAt'] = ['required'];
     }    
     $validatedData = $request->validate($rules, $this->messages());
