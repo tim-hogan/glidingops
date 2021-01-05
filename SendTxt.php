@@ -1,120 +1,124 @@
-<?php session_start(); ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-</head>
-<body>
 <?php
-$con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
+session_start();
+function var_error_log( $object=null,$text='')
+{
+    ob_start();
+    var_dump( $object );
+    $contents = ob_get_contents();
+    ob_end_clean();
+    error_log( "{$text} {$contents}" );
+}
+
+//Start
+//Gte t=environemnt variables
+$smskey = getenv("SMS_KEY");
+$gateway_host = getenv("SMS_HOST");
+if (!$smskey || strlen($smskey) == 0)
+{
+    error_log("Send text cannot get SMS key from environemnt varaibales");
+	echo "<p>Unable to get SMS key from environemnt variables</p>";
+	exit();
+}
+
+if (!$gateway_host || strlen($gateway_host) == 0)
+{
+    error_log("Send text cannot get SMS gateway host from environemnt varaibales");
+	echo "<p>Unable to get SMS gateway host  from environemnt variables</p>";
+	exit();
+}
+
+$con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
- echo "<p>Unable to connect to database</p>";
+	error_log("SendTxt ERROR: Unable to cpnnect to database");
+	echo "<p>Unable to connect to database</p>";
+	exit();
 }
 else
 {
+
 	$sql="SELECT texts.txt_id,texts.txt_to, messages.msg FROM texts INNER JOIN messages ON messages.id = texts.txt_msg_id WHERE txt_status = 0";
 	$r = mysqli_query($con,$sql);
 	while ($row = mysqli_fetch_array($r) )
 	{
-		//Create a socket to the text engin
-	
-		error_reporting(E_ALL);
+
+		//Parse the DB parameters
+        if ($row['txt_to'] && $row[2] && strlen($row[2]) > 0)
+        {
+            $strTo = trim($row['txt_to']);
+            $strTo = trim($strTo,"+");
+            $strTo = str_replace(" ","",$strTo);
+
+            if (strlen($strTo) > 0)
+            {
+
+                $strTo = urlencode($strTo);
 
 
-		/* Get the port for the WWW service. */
-		$service_port = getservbyname('www', 'tcp');
+                $postparam = array();
+                $postparam['smskey'] = getenv("SMS_KEY");
+                $postparam['phone'] = $strTo;
+                $postparam['msg'] = $row[2];
+                $postparam['county_code'] ="64";
+                $callback = '';
+                if (empty($_SERVER['HTTPS']))
+                    $callback = "http://";
+                else
+                    $callback = "https://";
 
-		/* Get the IP address for the target host. */
-		$address = gethostbyname('gateway.sonicmobile.com');
+                $callback .= $_SERVER['HTTP_HOST'];
+                $callback .= "/TextStatus.php";
+                $postparam['callback_url'] = $callback;
 
-		/* Create a TCP/IP socket. */
-		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		if ($socket === false) 
-		{
-    			echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "<br>";
-		} 
-		
-		
-		$result = socket_connect($socket, $address, $service_port);
-		if ($result === false) 
-		{
-    			echo "socket_connect() failed.\nReason: ($result) " . socket_strerror(socket_last_error($socket)) . "<br>";
-		} 
-		
-                echo "socket_connect()<br>";
-                
-		$in = "GET /message?application=gw_hogan_consultancy_lt&password=etj1mh5q2&customer=hogan_consultancy_lt&class=mt_message";
-		$in .= "&content=";	
-		$in .= urlencode($row[2]);
-		$in .= "&destination=%2b";
-		$strTo = trim($row['txt_to']);
-		$strTo = trim($strTo,"+");
-		$in .= urlencode($strTo);
+                $str = json_encode($postparam);
+                $url = $gateway_host;
 
-		
-		$in .= " HTTP/1.1\r\n";
-		$in .= "Host: gateway.sonicmobile.com\r\n";
-		$in .= "Connection: Close\r\n";
-		$in .= "Cache-Control: max-age=0\r\n";
-		$in .= "Accept: text/*\r\n";
-		$in .= "User-Agent: Remote-Locator-1.1\r\n";
-		$in .= "Accept-Encoding: *\r\n";
-		$in .= "Accept-Language: *\r\n";
-		$in .=  "\r\n";
-		
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS,$str);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                $result = curl_exec($ch);
 
-		$out = '';
-		$resp = '';
-		
-		socket_write($socket, $in, strlen($in));
-		
-		
-		while ($out = socket_read($socket, 2048)) 
-		{
-			$resp .= $out;
-		}
 
-		
-		
-                $bFound = false;
-		if (substr($resp,0,15) == "HTTP/1.1 200 OK")
-		{
-			
-			$Q = "UPDATE texts SET txt_status=1, txt_timestamp_sent = now() WHERE txt_id = " . $row['txt_id'] ;
-			$r2 = mysqli_query($con,$Q);
-			
-			$token = strtok($resp,"\n");		
-			while ($token != false)
-			{
-				
-				if ($bFound)
-				{
-					if (strlen($token) > 0)
-					{
-						
-						$val = (int) $token;
-						$bFound = false;
-						$Q = "UPDATE texts SET txt_unique=" . $val . " WHERE txt_id = " . $row['txt_id'] ;
-						
-						$r2 = mysqli_query($con,$Q);
-					}
-				}
-				if (substr($token,0,1) == "9")
-				   $bFound = true;
-				$token = strtok("\n");
-			}		
+                $result = json_decode($result,true);
 
-		}		
-		
-		socket_close($socket);
-		
 
+                $smsid = 0;
+                $status = "ERROR";
+                if (isset($result['meta']))
+                {
+                    if ($result['meta'] ['status'] = "OK")
+                    {
+                        $Q = "UPDATE texts SET txt_status=1, txt_timestamp_sent = now() WHERE txt_id = " . $row['txt_id'];
+                        $r2 = mysqli_query($con,$Q);
+
+                        $data = $result['data'];
+                        $smsid = intval($data['textid']);
+                        //if (isset($data['status']) && $data['status'])
+                        //    $status = "SENT";
+                        $Q = "UPDATE texts SET txt_unique=" . $smsid . " WHERE txt_id = " . $row['txt_id'] ;
+                        $r2 = mysqli_query($con,$Q);
+                    }
+                }
+            }
+            else
+            {
+                //Mark as error
+                $Q = "UPDATE texts SET txt_status=2, WHERE txt_id = " . $row['txt_id'];
+                $r2 = mysqli_query($con,$Q);
+            }
+        }
+        else
+        {
+            //Mark as error
+            $Q = "UPDATE texts SET txt_status=2, WHERE txt_id = " . $row['txt_id'];
+            $r2 = mysqli_query($con,$Q);
+        }
 	}
 
 	mysqli_close($con);
 }
 header('Location: MessagingPage');
 ?>
-</body>
-</html>
