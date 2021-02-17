@@ -10,7 +10,7 @@ if (! Secure::isSignedIn())
     exit();
 }
 
-$user = $DB->getUser($_SESSION['iduser']);
+$user = $DB->getUser($_SESSION['userid']);
 $org = $DB->getOrganisation($user['org']);
 ?>
 <!DOCTYPE HTML>

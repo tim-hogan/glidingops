@@ -62,7 +62,7 @@ class GlidingDB extends SQLPlus
     public function getLastOrgMessage($org)
     {
         $o = intval($org);
-        return $this->singlequery("select * from messages where org = {$o} and order by create_time desc limit 1");
+        return $this->singlequery("select * from messages where org = {$o} order by create_time desc limit 1");
     }
 
 
