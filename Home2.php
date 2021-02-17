@@ -1,6 +1,7 @@
 <?php
 session_start();
 require "./includes/classSecure.php";
+require "./includes/classTime.php";
 require "./includes/classGlidingDB.php";
 $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
