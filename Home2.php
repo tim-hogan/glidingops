@@ -11,8 +11,16 @@ if (! Secure::isSignedIn())
     exit();
 }
 
+$org = 0;
 $user = $DB->getUserWithMember($_SESSION['userid']);
-$org = $DB->getOrganisation($user['org']);
+if ($user && isset($user['org']))
+    $org = $DB->getOrganisation($user['org']);
+if ($org == 0)
+{
+    header("Location: Login.php");
+    exit();
+}
+
 ?>
 <!DOCTYPE HTML>
 <html>
