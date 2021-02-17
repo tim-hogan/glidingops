@@ -12,9 +12,14 @@ if (! Secure::isSignedIn())
 }
 
 $org = 0;
+$organistaion=null;
 $user = $DB->getUserWithMember($_SESSION['userid']);
 if ($user && isset($user['org']))
-    $org = $DB->getOrganisation($user['org']);
+{
+    if ($organistaion = $DB->getOrganisation($user['org']) )
+        $org = $user['org'];
+}
+
 if ($org == 0)
 {
     header("Location: Login.php");
