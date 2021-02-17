@@ -4,7 +4,7 @@ require "./includes/classSecure.php";
 require "./includes/classGlidingDB.php";
 $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
-if (! Secure::isSignedIn)
+if (! Secure::isSignedIn())
 {
     header("Location: Login.php");
     exit();
