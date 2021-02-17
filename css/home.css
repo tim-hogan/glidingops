@@ -1,0 +1,5 @@
+﻿#tiles {display: flex;}
+div.tile {margin: 5px; padding: 5px;width: 400px; height: 400px; background-color: #808080; color: #555; border: solid 1px #444;}
+div.tile:hover {margin: 0px; padding: 5px;width: 400px; height: 400px; background-color: #808080;border: solid 1px #444; box-shadow: 10px 10px 5px grey;}
+@media only screen and (min-width: 800px) {
+}

@@ -1,7 +1,7 @@
 ﻿#heading {padding: 5px;font-family: Calibri, Arial, Helvetica, sans-serif;background-color: #000040;}
 #headcontainer{display:flex;color: white;}
 #headcontainer div.left {}
-#headcontainer div.right {align-self: flex-end; margin-left:auto;}
+#headcontainer div.right {margin-left:auto;}
 #headcontainer p.phd1 {font-size: 14pt;margin: 0;}
 #headcontainer p.phd2 {font-size: 12pt;margin: 0;}
 #headcontainer p.phd3 {font-size: 10pt;margin: 0;}

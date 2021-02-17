@@ -316,6 +316,16 @@ class classTimeHelpers
         return classTimeHelpers::timeFormat($time,"jS M Y",$strTimeZone);
     }
 
+    public static function timeFormatnthDateTime1($time,$strTimeZone=null)
+    {
+        return classTimeHelpers::timeFormat($time,"jS M Y h:ia",$strTimeZone);
+    }
+
+    public static function timeFormatnthDateTime2($time,$strTimeZone=null)
+    {
+        return classTimeHelpers::timeFormat($time,"jS M Y H:i:s",$strTimeZone);
+    }
+
     public static function smartTime($strTime,$strTimeZone=null)
     {
        if ($strTimeZone==null || strlen($strTimeZone)==0)
