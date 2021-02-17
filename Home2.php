@@ -11,7 +11,7 @@ if (! Secure::isSignedIn())
     exit();
 }
 
-$user = $DB->getUser($_SESSION['userid']);
+$user = $DB->getUserWithMember($_SESSION['userid']);
 $org = $DB->getOrganisation($user['org']);
 ?>
 <!DOCTYPE HTML>
@@ -29,7 +29,7 @@ $org = $DB->getOrganisation($user['org']);
 <body>
     <div id="container">
         <div id="heading">
-
+            <?php include "./orgs/{$org}/heading.php" ?>
         </div>
         <div id="messages">
             <h1>LAST CLUB MESSAGE</h1>

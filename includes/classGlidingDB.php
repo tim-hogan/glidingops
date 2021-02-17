@@ -56,6 +56,11 @@ class GlidingDB extends SQLPlus
         return $this->p_singlequery("select * from users where id = ?","i",$id);
     }
 
+    public function getUserWithMember($id)
+    {
+        return $this->p_singlequery("select * from users left join members a on a.id = member where id = ?","i",$id);
+    }
+
     //*********************************************************************
     // Messages
     //*********************************************************************
