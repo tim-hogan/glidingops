@@ -1,5 +1,5 @@
 <?php
-
+require "./includes/classEnvironment.php";
 return [
 
     /*
@@ -48,11 +48,11 @@ return [
 
         'gliding' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST'),
+            'host' => $devt_environment->getkey('DATABASE_HOST'),
             'port' => env('DB_PORT'),
-            'database' => env('DB_DATABASE'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
+            'database' => $devt_environment->getkey('DATABASE_NAME'),
+            'username' => $devt_environment->getkey('DATABASE_USER'),
+            'password' => $devt_environment->getkey('DATABASE_PW'),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
