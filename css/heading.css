@@ -1,7 +1,13 @@
 ﻿#heading {padding: 5px;font-family: Calibri, Arial, Helvetica, sans-serif;background-color: #000040;}
-#headcontainer{display:flex;}
+#headcontainer{display:flex;color: white;}
 #headcontainer div.left {}
 #headcontainer div.right {align-self: flex-end;}
+#headingcontainer p.phd1 {font-size: 14pt;margin: 0;}
+#headingcontainer p.phd2 {font-size: 12pt;margin: 0;}
+#headingcontainer p.phd3 {font-size: 10pt;margin: 0;}
 @media only screen and (min-width: 800px) {
     #heading {padding: 20px;font-family: Calibri, Arial, Helvetica, sans-serif;background-color: #000040;}
+    #headingcontainer p.phd1 {font-size: 30pt;margin: 0;}
+    #headingcontainer p.phd2 {font-size: 24pt;margin: 0;}
+    #headingcontainer p.phd3 {font-size: 12pt;margin: 0;}
 }

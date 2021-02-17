@@ -1,7 +1,7 @@
 <div id="headcontainer">
     <div class="left">
-        <p>Wellington Wairarapa Gliding Club</p>
-        <p>operations</p>
+        <p class="phd1">Wellington Wairarapa Gliding Club</p>
+        <p class="phd2">operations</p>
     </div>
     <div class="right">
         <?php 
@@ -11,7 +11,7 @@
         if (isset($user['surname']) )
             $name .= $user['surname'];
         $name = htmlspecialchars(trim($name));
-        echo "<p>{$name} Signed in as {$user['usercode']}</p>";
+        echo "<p class='phd3'>{$name} Signed in as {$user['usercode']}</p>";
         ?>
     </div>
 </div>
