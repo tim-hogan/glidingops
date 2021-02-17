@@ -38,7 +38,7 @@ $org = $DB->getOrganisation($user['org']);
             if ($msg)
             {
                 $strMsgTime = classTimeHelpers::timeFormat12Hr($msg['create_time'],$org['timezone']);
-                echo "<p>{$strMsgTime} " . htmlspecialchars($msg) . "</p>";
+                echo "<p>{$strMsgTime} " . htmlspecialchars($msg['msg']) . "</p>";
             }
             ?>
         </div>
