@@ -14,6 +14,7 @@ RewriteRule   ^app/(.*)    /lrv/public/app/$1  [L]
 # RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
 
 RewriteRule newhome Home2.php [L]
+RewriteRule home.css home.css [L]
 RewriteRule home home.php [L]
 RewriteRule AssignRoles role_member-list.php [L]
 RewriteRule AssignRole role_member.php [L]
