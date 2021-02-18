@@ -1,5 +1,5 @@
 <?php
-require "./includes/classEnvironment.php";
+require_once "./includes/classEnvironment.php";
 return [
 
     /*

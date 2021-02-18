@@ -58,14 +58,14 @@ if ($org == 0)
         </div>
         <div id="main">
             <div id="tiles">
-                <div class="tile">
+                <div class="tile" onclick="window.location='MyFlights'">
                     <h1>My Flights</h1>
-                    <p>List all your flights</p>
+                    <p>Lists details of your flights.</p>
                 </div>
                 <div class="tile">
                     <h1>Flying Now</h1>
-                    <p>List</p>
-                    <p>Realtime map</p>
+                    <p>Choose between text based list of who is flying today or choose a map view to see tracked flights.</p>
+                    <p></p>
                 </div>
             </div>
         </div>

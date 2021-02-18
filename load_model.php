@@ -1,5 +1,5 @@
 <?php
-
+require_once "./includes/classEnvironment.php";
 require 'lrv/vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -10,9 +10,9 @@ $capsule = new Capsule;
 $capsule->addConnection([
   'driver'   => 'mysql',
   'host'     => getenv('DB_HOST'),
-  'database' => getenv('DB_DATABASE'),
-  'username' => getenv('DB_USERNAME'),
-  'password' => getenv('DB_PASSWORD'),
+  'database' => $devt_environment->getkey('DATABASE_NAME'),
+  'username' => $devt_environment->getkey('DATABASE_USER'),
+  'password' => $devt_environment->getkey('DATABASE_PW'),
   'charset'  => 'utf8',
   'collation' => 'utf8_unicode_ci',
   'prefix'   => '',
