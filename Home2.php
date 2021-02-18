@@ -59,6 +59,12 @@ if ($org == 0)
             <div id="tiles">
                 <div class="tile">
                     <h1>My Flights</h1>
+                    <p>List all your flights</p>
+                </div>
+                <div class="tile">
+                    <h1>Flying Now</h1>
+                    <p>List</p>
+                    <p>Realtime map</p>
                 </div>
             </div>
         </div>
