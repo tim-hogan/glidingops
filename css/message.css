@@ -1,4 +1,8 @@
 ﻿#messages {margin: 10px;padding: 10px;border: solid 1px #888;}
 #messages h1 {font-size: 16pt; color: #000080;margin: 0;}
+#messages p.msgtime {font-size: 12pt; color: #444;}
+#messages p.msg {font-size: 12pt; font-weight: bold; color: #558;}
 @media only screen and (min-width: 800px) {
+#messages p.msgtime {font-size: 14pt; color: #444;}
+#messages p.msg {font-size: 14pt; font-weight: bold; color: #558;}
 }

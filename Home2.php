@@ -51,7 +51,8 @@ if ($org == 0)
             if ($msg)
             {
                 $strMsgTime = classTimeHelpers::timeFormatnthDateTime1($msg['create_time'],$organistaion['timezone']);
-                echo "<p>{$strMsgTime} " . htmlspecialchars($msg['msg']) . "</p>";
+                echo "<p class='msgtime'>{$strMsgTime}</p>";
+                echo "<p class='msg'>" . htmlspecialchars($msg['msg']) . "</p>";
             }
             ?>
         </div>
