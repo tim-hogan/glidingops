@@ -13,6 +13,7 @@ RewriteRule   ^app/(.*)    /lrv/public/app/$1  [L]
 # TODO find another way to map laravel /api as gops has already implemented /api/v1/json/
 # RewriteRule   ^api/(.*)    /lrv/public/api/$1  [L]
 
+RewriteRule newhome Home2.php [L]
 RewriteRule home home.php [L]
 RewriteRule AssignRoles role_member-list.php [L]
 RewriteRule AssignRole role_member.php [L]
