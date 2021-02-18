@@ -50,7 +50,7 @@ if ($org == 0)
             $msg = $DB->getLastOrgMessage($org);
             if ($msg)
             {
-                $strMsgTime = classTimeHelpers::timeFormatnthDateTime1($msg['create_time'],$org['timezone']);
+                $strMsgTime = classTimeHelpers::timeFormatnthDateTime1($msg['create_time'],$organistaion['timezone']);
                 echo "<p>{$strMsgTime} " . htmlspecialchars($msg['msg']) . "</p>";
             }
             ?>
@@ -58,7 +58,7 @@ if ($org == 0)
         <div id="main">
             <div id="tiles">
                 <div class="tile">
-                    <p>My Flights</p>
+                    <h1>My Flights</h1>
                 </div>
             </div>
         </div>

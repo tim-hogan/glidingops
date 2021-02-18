@@ -318,12 +318,12 @@ class classTimeHelpers
 
     public static function timeFormatnthDateTime1($time,$strTimeZone=null)
     {
-        return classTimeHelpers::timeFormat($time,"jS M Y h:ia",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"D jS M Y h:ia",$strTimeZone);
     }
 
     public static function timeFormatnthDateTime2($time,$strTimeZone=null)
     {
-        return classTimeHelpers::timeFormat($time,"jS M Y H:i:s",$strTimeZone);
+        return classTimeHelpers::timeFormat($time,"D jS M Y H:i:s",$strTimeZone);
     }
 
     public static function smartTime($strTime,$strTimeZone=null)
