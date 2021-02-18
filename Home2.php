@@ -65,7 +65,8 @@ if ($org == 0)
                 <div class="tile">
                     <h1>Flying Now</h1>
                     <p>Choose between text based list of who is flying today or choose a map view to see tracked flights.</p>
-                    <p></p>
+                    <button>LIST</button>
+                    <button>MAP</button>
                 </div>
             </div>
         </div>
