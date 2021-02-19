@@ -192,7 +192,7 @@ $memberInstructor = false;
 $memberInstructor = $DB->IsMemberInstructor($user['member']);
 
 $rownum = 0;
-$r = $DB->allGliderFlightsForMember($memid);
+$r = $DB->allGliderFlightsForMember($user['member']);
 while ($flight = $r->fetch_array(MYSQLI_ASSOC))
 
 /*
