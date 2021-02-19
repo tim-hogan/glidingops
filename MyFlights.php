@@ -350,7 +350,7 @@ function printit(){window.print();}
             {
                 echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<tr><th colspan='2'>DATE</th><th>GLIDER</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+                echo "<tr><th colspan='2'>DATE</th><th>GLIDER</th><th>DURATION</th><th>LAUNCH</th><th>TYPE</th><th>TRACK</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -447,10 +447,6 @@ function printit(){window.print();}
                 if ($othermember = $DB->getMember($otherperson) )
                     $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
             }
-            $comment .= htmlspecialchars($flight['comments']);
-            echo "<td class='cmnt'>";
-            echo $comment;
-            echo "</td>";
 
             //Do we have any tracking data
             $trDateStart = new DateTime();
@@ -470,6 +466,13 @@ function printit(){window.print();}
             echo "<td></td><td>";
             echo htmlspecialchars($flight['location']);
             echo "</td>";
+
+            $comment .= htmlspecialchars($flight['comments']);
+            echo "<td colspan="5" class='cmnt'>";
+            echo $comment;
+            echo "</td>";
+
+
             echo "</tr>";
 
         }
