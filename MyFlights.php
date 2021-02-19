@@ -3,6 +3,8 @@ session_start();
 require "./includes/classSecure.php";
 require "./includes/classTime.php";
 require "./includes/classGlidingDB.php";
+require "./includes/classTracksDB.php";
+
 $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 $tracks_params = ["dbname" => $devt_environment->getkey('TRACKS_DATABASE_NAME'),
                   "username" => $devt_environment->getkey('TRACKS_DATABASE_USER'),
@@ -109,12 +111,6 @@ if (mysqli_connect_errno())
   error_log("Cannot open tracksarchive database");
   $con2 = null;
 }
-
-//Duplicate to above but in transition to newer database scheme
-require dirname(__FILE__) . '/includes/classGlidingDB.php';
-require dirname(__FILE__) . '/includes/classTracksDB.php';
-$db_params = require( dirname(__FILE__) .'/config/database.php');
-
 
 $towlaunch = $DB->getTowLaunchTypeId();
 $selflaunch = $DB->getSelfLaunchTypeId();
