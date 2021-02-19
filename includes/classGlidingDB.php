@@ -337,22 +337,22 @@ class GlidingDB extends SQLPlus
 
     public function getGlidingFlightTypeId()
     {
-        return $this->getLaunchTypeId('Glider');
+        return $this->getFlightTypeId('Glider');
     }
 
     public function getCheckFlightTypeId()
     {
-        return $this->getLaunchTypeId('Tow plane check flight');
+        return $this->getFlightTypeId('Tow plane check flight');
     }
 
     public function getRetrieveFlightTypeId()
     {
-        return $this->getLaunchTypeId('Tow plane retrieve');
+        return $this->getFlightTypeId('Tow plane retrieve');
     }
 
     public function getLandingChargeFlightTypeId()
     {
-        return $this->getLaunchTypeId('Landing Charge');
+        return $this->getFlightTypeId('Landing Charge');
     }
 
 
