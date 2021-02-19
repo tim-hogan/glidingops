@@ -135,8 +135,7 @@ $juniorclass = $DB->getJuniorClassId($org);
 $istowy = $DB->IsMemberTowy($user['member']);
 
 $member = $DB->getMember($user['member']);
-var_error_log($member,"member");
-if (!$row)
+if (!$member)
 {
     echo "<p>Error: User logged does not appear to be a member, unable to display flights.</p>";
     exit();
