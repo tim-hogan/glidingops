@@ -292,6 +292,10 @@ function printit(){window.print();}
                     echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
                     echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
                 }
+                else
+                {
+                    echo "<td></td><td></td>";
+                }
 
             echo "</tr>";
         }
@@ -455,6 +459,10 @@ function printit(){window.print();}
             {
                 echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
                 echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+            }
+            else
+            {
+                echo "<td></td><td></td>";
             }
 
             echo "</tr>";
