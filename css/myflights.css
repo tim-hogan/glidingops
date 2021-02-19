@@ -1,0 +1,11 @@
+﻿#head1 {padding-left: 10px;}
+#head1 h1 {color: #666;font-size: 18pt;}
+#head1 h2 {color: #66b;font-size: 16pt;}
+#flights1 {margin: 10px;padding: 10px;display: none;}
+#flights2 {margin: 10px;padding: 10px;}
+table {border-collapse: collapse;}
+@media only screen and (min-width: 800px) {
+#head1 {padding-left: 20px;}
+#flights1 {margin: 20px; display: block;}
+#flights2 {margin: 20px; display: block;display: none;}
+}

@@ -50,8 +50,11 @@ if ($org == 0)
 <meta name="viewport" content="width=device-width" />
 <meta name="viewport" content="initial-scale=1.0" />
 <title>MyFlights</title>
+<link rel='stylesheet' type='text/css' href='css/base.css' />
+<link rel='stylesheet' type='text/css' href='css/myflights.css' />
 <style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
 <style><?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
+
 <style>
 @media print {
     th {font-size: 12px;}
@@ -64,9 +67,7 @@ if ($org == 0)
 @media screen {
      th {font-size: 14px;padding-left:10px;}
      td {font-size: 14px;}
-     h2 {font-size: 16px;}
 }
-#head1 {padding-left:10px;}
 #flights1 {margin:12px;}
 #flights2 {padding: 10px;background-color: #e0e0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
 #summary1 {margin:12px;}
@@ -141,20 +142,6 @@ if (!$member)
     exit();
 }
 
-/*
-$sql="SELECT members.displayname, members.class, a.class from members LEFT JOIN membership_class a ON a.id = members.class where members.id = " .  $_SESSION['memberid'];
-$r = mysqli_query($con,$sql);
-$row_cnt = mysqli_num_rows($r);
-if ($row_cnt <= 0)
-{
-   echo "<p>Error: No member id available to display flights</p>";
-   echo "<p>SQL: ".$sql."</p>";
-   exit();
-}
-    $row = mysqli_fetch_array($r);
-     */
-
-
 $iScheme=0;
 $iRateGlider=0;
 $iChargeTow=1;
@@ -164,122 +151,276 @@ $clubgliders = array();
 
 //Build array of club gliders
 $r = $DB->getClubGliders($org);
-//$sql="SELECT rego_short FROM aircraft where aircraft.org = ".$org." and club_glider > 0";
-//$r = mysqli_query($con,$sql);
-//$cnt = 0;
 while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
     array_push($clubgliders,$aircraft['rego_short']);
 
     ?>
 <div id='container'>
-<div id='head1'>
-<h1>My Flights</h1>
-<h2><?php echo $dispname;?></h2>
-</div>
-<div id='flights1'>
-<div id='flights2'>
-    <?php
-$totMins=0;
-$totMinsP=0;
-$totMinsP1=0;
-$totMinsP2=0;
-$totMinsI=0;
-$cntP=0;
-$cntP1=0;
-$cntP2=0;
-$cntI=0;
-$memberInstructor = false;
-$memberInstructor = $DB->IsMemberInstructor($user['member']);
+    <div id='head1'>
+        <h1>My Flights</h1>
+        <h2><?php echo $dispname;?></h2>
+    </div>
+    <div id='flights1'>
+<?php
+        $totMins=0;
+        $totMinsP=0;
+        $totMinsP1=0;
+        $totMinsP2=0;
+        $totMinsI=0;
+        $cntP=0;
+        $cntP1=0;
+        $cntP2=0;
+        $cntI=0;
+        $memberInstructor = false;
+        $memberInstructor = $DB->IsMemberInstructor($user['member']);
 
-$rownum = 0;
-$r = $DB->allGliderFlightsForMember($user['member']);
-while ($flight = $r->fetch_array(MYSQLI_ASSOC))
-
-/*
-$sql= "SELECT flights.localdate,flights.glider,(flights.land-flights.start),flights.height, flights.pic, flights.p2, flights.comments, flights.launchtype , flights.location ,(flights.start/1000),(flights.land/1000),id FROM flights WHERE flights.type = " .$flightTypeGlider." and (flights.pic=" . $_SESSION['memberid'] .  " OR flights.p2=" .  $_SESSION['memberid'] . ") ORDER BY localdate,seq ASC";
-
-
-$r = mysqli_query($con,$sql);
-$rownum = 0;
-while ($row = mysqli_fetch_array($r) )
-*/
-
-
-{
-    $rownum = $rownum + 1;
-    if ($rownum == 1)
-    {
-        if ($istowy) echo "<h2>Gliding Flights</h2>";
-        echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
-    }
-
-
-
-    echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
-        $datestr=$flight['localdate'];
-        echo "<td>";
-            echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);
-        echo "</td>";
-        echo "<td class='right'>";
-            echo $flight['glider'];
-        echo "</td>";
-        echo "<td class='right'>";
-            echo htmlspecialchars($DB->getGliderModel($org,$flight['glider']));
-        echo "</td>";
-        echo "<td>";
-            echo htmlspecialchars($flight['location']);
-        echo "</td>";
-
-        $timeval = 'In Progress';
-        if ($flight['land'])
+        $rownum = 0;
+        $r = $DB->allGliderFlightsForMember($user['member']);
+        while ($flight = $r->fetch_array(MYSQLI_ASSOC))
         {
-            $duration = (($flight['land'] - $flight['start']) / 1000);
-            $hours = intval($duration / 3600);
-            $mins = intval(($duration % 3600) / 60);
-            $timeval = sprintf("%02d:%02d",$hours,$mins);
-            $totMins = $totMins + (($hours*60) + $mins);
+            $rownum = $rownum + 1;
+            if ($rownum == 1)
+            {
+                echo "<caption>Your Gliding Flights</caption>";
+                echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+            }
+
+            echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
+                $datestr=$flight['localdate'];
+                echo "<td>";
+                    echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);
+                echo "</td>";
+                echo "<td class='right'>";
+                    echo $flight['glider'];
+                echo "</td>";
+                echo "<td class='right'>";
+                    echo htmlspecialchars($DB->getGliderModel($org,$flight['glider']));
+                echo "</td>";
+                echo "<td>";
+                    echo htmlspecialchars($flight['location']);
+                echo "</td>";
+
+                $timeval = 'In Progress';
+                if ($flight['land'])
+                {
+                    $duration = (($flight['land'] - $flight['start']) / 1000);
+                    $hours = intval($duration / 3600);
+                    $mins = intval(($duration % 3600) / 60);
+                    $timeval = sprintf("%02d:%02d",$hours,$mins);
+                    $totMins = $totMins + (($hours*60) + $mins);
+                }
+                echo "<td class='right'>";
+                    echo $timeval;
+                echo "</td>";
+
+
+                $otherperson=0;
+                $type=0;  //1 = P1 2 = p2 3 = PIC Solo
+
+
+                $start = (new DateTime())->setTimestamp($flight['start'] / 1000);
+                $land  = (new DateTime())->setTimestamp($flight['land'] / 1000);
+
+                $nz_timezone = new DateTimeZone("Pacific/Auckland");
+                $start->setTimezone($nz_timezone);
+                $land->setTimezone($nz_timezone);
+
+                $start_time = ($flight['start'] == 0) ? "" : $start->format('G:i:s');
+                $land_time = ($flight['land'] == 0) ? "" : $land->format('G:i:s');
+
+                echo "<td class='right' style='padding-left:5px;'>{$start_time}</td>";
+                echo "<td class='right' style='padding-left:5px;'>{$land_time}</td>";
+
+                echo "<td class='right'>";
+                    if ($flight['launchtype'] == $towlaunch)
+                        echo $flight['height'];
+                    elseif ($flight['launchtype'] == $selflaunch)
+                        echo "SELF LAUNCH";
+                    elseif ($flight['launchtype'] == $winchlaunch)
+                        echo "WINCH";
+                echo "</td>";
+
+                echo "<td class='right'>";
+                    if ($flight['launchtype'] == $towlaunch)
+                        echo "A";
+                    elseif ($flight['launchtype'] == $selflaunch)
+                        echo "S";
+                    elseif ($flight['launchtype'] == $winchlaunch)
+                        echo "W";
+                echo "</td>";
+
+                echo "<td class='right'>";
+                    if ($flight['pic'] == $user['member'] && ! $flight['p2'])
+                    {
+                        echo "P";
+                        $type = 3;
+                        $totMinsP = $totMinsP + (($hours*60) + $mins);
+                        $cntP = $cntP + 1;
+                    }
+                    elseif ($flight['pic'] == $user['member'])
+                    {
+                        if ($memberInstructor)
+                        {
+                            echo "I";
+                            $cntI = $cntI + 1;
+                            $totMinsI = $totMinsI + (($hours*60) + $mins);
+                        }
+                        else
+                        {
+                            echo "P1";
+                            $cntP1 = $cntP1 + 1;
+                            $totMinsP1 = $totMinsP1 + (($hours*60) + $mins);
+                        }
+                        $otherperson=$flight['p2'];
+                        $type=1;
+                    }
+                    elseif ($flight['p2'] == $user['member'] && ! $flight['pic'] )
+                    {
+                        echo "P";
+                        $type=3;
+                        $totMinsP = $totMinsP + (($hours*60) + $mins);
+                        $cntP = $cntP + 1;
+                    }
+                    else
+                    {
+                        echo "P2";
+                        $otherperson = $flight['pic'];
+                        $type=2;
+                        $totMinsP2 = $totMinsP2 + (($hours*60) + $mins);
+                        $cntP2 = $cntP2 + 1;
+                    }
+                echo "</td>";
+
+                $comment="";
+                if ($type != 3)
+                {
+                    if ($othermember = $DB->getMember($otherperson) )
+                        $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
+                }
+                $comment .= htmlspecialchars($flight['comments']);
+                echo "<td class='cmnt'>";
+                    echo $comment;
+                echo "</td>";
+
+                //Do we have any tracking data
+                $trDateStart = new DateTime();
+                $trDateLand = new DateTime();
+                $trDateStart->setTimestamp(intval(floor($flight['start'] / 1000)));
+                $trDateLand->setTimestamp(intval(floor($flight['land'] / 1000)));
+
+                if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
+                {
+                    echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
+                    echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+                }
+
+            echo "</tr>";
         }
-        echo "<td class='right'>";
+        if ($rownum > 0)
+           echo "</table>";
+
+
+
+        $towcnt=0;
+        if ($istowy) 
+        {
+          $rownum = 0;
+          echo "<h2>Tows</h2>";
+          echo "<table><tr><th>DATE</th><th>PLANE</th><th>GLIDER</th><th>TOW HEIGHT</th></tr>";
+          $sql= "SELECT flights.localdate,a.rego_short,flights.glider,flights.height FROM flights LEFT JOIN aircraft a ON a.id = flights.towplane WHERE flights.towpilot=" . $_SESSION['memberid'] .  " ORDER BY localdate,seq ASC";
+          $r = mysqli_query($con,$sql);
+          while ($row = mysqli_fetch_array($r) )
+          {
+            $towcnt = $towcnt + 1;
+            $rownum = $rownum + 1;
+            echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
+            $datestr=$row[0];
+            echo "<td>";echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);echo "</td>";
+            echo "<td class='right'>" . $row[1] . "</td>";
+            echo "<td class='right'>" . $row[2] . "</td>";  
+            echo "<td class='right'>" . $row[3] . "</td>";
+            echo "</tr>";  
+          }
+          echo "</table>";
+        }
+?>
+    </div>
+    <div id="flights2">
+        <?php
+        $totMins=0;
+        $totMinsP=0;
+        $totMinsP1=0;
+        $totMinsP2=0;
+        $totMinsI=0;
+        $cntP=0;
+        $cntP1=0;
+        $cntP2=0;
+        $cntI=0;
+        $memberInstructor = false;
+        $memberInstructor = $DB->IsMemberInstructor($user['member']);
+
+        $rownum = 0;
+        $r = $DB->allGliderFlightsForMember($user['member']);
+        while ($flight = $r->fetch_array(MYSQLI_ASSOC))
+        {
+            $rownum = $rownum + 1;
+            if ($rownum == 1)
+            {
+                echo "<caption>Your Gliding Flights</caption>";
+                echo "<table><tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+            }
+
+            echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
+            $datestr=$flight['localdate'];
+            echo "<td>";
+            echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);
+            echo "</td>";
+            echo "<td class='right'>";
+            echo $flight['glider'];
+            echo "</td>";
+            
+            echo "<td>";
+            echo htmlspecialchars($flight['location']);
+            echo "</td>";
+
+            $timeval = 'In Progress';
+            if ($flight['land'])
+            {
+                $duration = (($flight['land'] - $flight['start']) / 1000);
+                $hours = intval($duration / 3600);
+                $mins = intval(($duration % 3600) / 60);
+                $timeval = sprintf("%02d:%02d",$hours,$mins);
+                $totMins = $totMins + (($hours*60) + $mins);
+            }
+            echo "<td class='right'>";
             echo $timeval;
-        echo "</td>";
+            echo "</td>";
 
 
-        $otherperson=0;
-        $type=0;  //1 = P1 2 = p2 3 = PIC Solo
+            $otherperson=0;
+            $type=0;  //1 = P1 2 = p2 3 = PIC Solo
 
 
-        $start = (new DateTime())->setTimestamp($flight['start'] / 1000);
-        $land  = (new DateTime())->setTimestamp($flight['land'] / 1000);
+            $start = (new DateTime())->setTimestamp($flight['start'] / 1000);
+            $land  = (new DateTime())->setTimestamp($flight['land'] / 1000);
 
-        $nz_timezone = new DateTimeZone("Pacific/Auckland");
-        $start->setTimezone($nz_timezone);
-        $land->setTimezone($nz_timezone);
+            $nz_timezone = new DateTimeZone("Pacific/Auckland");
+            $start->setTimezone($nz_timezone);
+            $land->setTimezone($nz_timezone);
 
-        $start_time = ($flight['start'] == 0) ? "" : $start->format('G:i:s');
-        $land_time = ($flight['land'] == 0) ? "" : $land->format('G:i:s');
-
-        echo "<td class='right' style='padding-left:5px;'>{$start_time}</td>";
-        echo "<td class='right' style='padding-left:5px;'>{$land_time}</td>";
-
-        echo "<td class='right'>";
-            if ($flight['launchtype'] == $towlaunch)
-                echo $flight['height'];
-            elseif ($flight['launchtype'] == $selflaunch)
-                echo "SELF LAUNCH";
-            elseif ($flight['launchtype'] == $winchlaunch)
-                echo "WINCH";
-        echo "</td>";
-
-        echo "<td class='right'>";
+            $start_time = ($flight['start'] == 0) ? "" : $start->format('G:i:s');
+            $land_time = ($flight['land'] == 0) ? "" : $land->format('G:i:s');
+            
+            echo "<td class='right'>";
             if ($flight['launchtype'] == $towlaunch)
                 echo "A";
             elseif ($flight['launchtype'] == $selflaunch)
                 echo "S";
             elseif ($flight['launchtype'] == $winchlaunch)
                 echo "W";
-        echo "</td>";
+            echo "</td>";
 
-        echo "<td class='right'>";
+            echo "<td class='right'>";
             if ($flight['pic'] == $user['member'] && ! $flight['p2'])
             {
                 echo "P";
@@ -319,63 +460,68 @@ while ($row = mysqli_fetch_array($r) )
                 $totMinsP2 = $totMinsP2 + (($hours*60) + $mins);
                 $cntP2 = $cntP2 + 1;
             }
-        echo "</td>";
+            echo "</td>";
 
-        $comment="";
-        if ($type != 3)
-        {
-            if ($othermember = $DB->getMember($otherperson) )
-                $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
-        }
-        $comment .= htmlspecialchars($flight['comments']);
-        echo "<td class='cmnt'>";
+            $comment="";
+            if ($type != 3)
+            {
+                if ($othermember = $DB->getMember($otherperson) )
+                    $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
+            }
+            $comment .= htmlspecialchars($flight['comments']);
+            echo "<td class='cmnt'>";
             echo $comment;
-        echo "</td>";
+            echo "</td>";
 
-        //Do we have any tracking data
-        $trDateStart = new DateTime();
-        $trDateLand = new DateTime();
-        $trDateStart->setTimestamp(intval(floor($flight['start'] / 1000)));
-        $trDateLand->setTimestamp(intval(floor($flight['land'] / 1000)));
+            //Do we have any tracking data
+            $trDateStart = new DateTime();
+            $trDateLand = new DateTime();
+            $trDateStart->setTimestamp(intval(floor($flight['start'] / 1000)));
+            $trDateLand->setTimestamp(intval(floor($flight['land'] / 1000)));
 
-        if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
-        {
-            echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
-            echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+            if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
+            {
+                echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
+                echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+            }
+
+            echo "</tr>";
         }
+        if ($rownum > 0)
+            echo "</table>";
 
-    echo "</tr>";
-}
-if ($rownum > 0)
-   echo "</table>";
-    ?>
 
-<?php 
-$towcnt=0;
-if ($istowy) 
-{
-  $rownum = 0;
-  echo "<h2>Tows</h2>";
-  echo "<table><tr><th>DATE</th><th>PLANE</th><th>GLIDER</th><th>TOW HEIGHT</th></tr>";
-  $sql= "SELECT flights.localdate,a.rego_short,flights.glider,flights.height FROM flights LEFT JOIN aircraft a ON a.id = flights.towplane WHERE flights.towpilot=" . $_SESSION['memberid'] .  " ORDER BY localdate,seq ASC";
-  $r = mysqli_query($con,$sql);
-  while ($row = mysqli_fetch_array($r) )
-  {
-    $towcnt = $towcnt + 1;
-    $rownum = $rownum + 1;
-    echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
-    $datestr=$row[0];
-    echo "<td>";echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);echo "</td>";
-    echo "<td class='right'>" . $row[1] . "</td>";
-    echo "<td class='right'>" . $row[2] . "</td>";  
-    echo "<td class='right'>" . $row[3] . "</td>";
-    echo "</tr>";  
-  }
-  echo "</table>";
-}
-?>
-</div>
-</div>
+
+        $towcnt=0;
+        if ($istowy)
+        {
+            $rownum = 0;
+            echo "<h2>Tows</h2>";
+            echo "<table><tr><th>DATE</th><th>PLANE</th><th>GLIDER</th><th>TOW HEIGHT</th></tr>";
+            $sql= "SELECT flights.localdate,a.rego_short,flights.glider,flights.height FROM flights LEFT JOIN aircraft a ON a.id = flights.towplane WHERE flights.towpilot=" . $_SESSION['memberid'] .  " ORDER BY localdate,seq ASC";
+            $r = mysqli_query($con,$sql);
+            while ($row = mysqli_fetch_array($r) )
+            {
+                $towcnt = $towcnt + 1;
+                $rownum = $rownum + 1;
+                echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
+                $datestr=$row[0];
+                echo "<td>";echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);echo "</td>";
+                echo "<td class='right'>" . $row[1] . "</td>";
+                echo "<td class='right'>" . $row[2] . "</td>";
+                echo "<td class='right'>" . $row[3] . "</td>";
+                echo "</tr>";
+            }
+            echo "</table>";
+        }
+        ?>
+
+    </div>
+
+
+
+
+
 <div id='summary1'>
 <div id='summary2'>
 <h2>Flights Summary</h2>
