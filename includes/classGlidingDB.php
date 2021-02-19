@@ -233,8 +233,13 @@ class GlidingDB extends SQLPlus
 
     public function allGliderFlightsForMember($memid)
     {
+        $m1 = intval($memid);
+        $m2 = intval($memid);
         $gliderFlightType = $this->getGlidingFlightTypeId();
-        $r = $this->p_query("select * from flights where type = {$gliderFlightType} and (flights.pic= ? or flights.p2 = ?)","ii",$memid,$memid);
+        $q = "select * from flights where type = {$gliderFlightType} and (flights.pic = ? or flights.p2 = ?)";
+        $r = $this->p_query($q,"ii",$m1,$m2);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r
     }
 
     //*********************************************************************
