@@ -62,6 +62,83 @@ class GlidingDB extends SQLPlus
     }
 
     //*********************************************************************
+    // Members
+    //*********************************************************************
+    public function getMember($id)
+    {
+        return $this->p_singlequery("select * from members where id = ?","i",$id);
+    }
+
+    public function getMemberWithClass($id)
+    {
+        return $this->p_singlequery("select * from members left join membership_class a ON a.id = members.class where id = ?","i",$id);
+    }
+
+    public function IsMemberTowy($memid)
+    {
+        $mid = intval($memid);
+        $roletow $this->getRoleIdByName('Tow Pilot');
+        if ( $this->rows_in_table("role_member","where member_id = {$mid} and role_id = {$roletow}") > 0)
+            return true;
+        return false;
+    }
+
+    public function IsMemberInstructor($memid)
+    {
+        $mid = intval($memid);
+        $r = $this->allRolesLike('Instructor');
+        while ($role = $r->fetch_array(MYSQLI_ASSOC))
+        {
+        if ( $this->rows_in_table("role_member","where member_id = {$mid} and role_id = {$role['id']}") > 0)
+            return true;
+        return false;
+    }
+
+    //*********************************************************************
+    // membership_class
+    //*********************************************************************
+    public function getMembershipClass($id)
+    {
+        return $this->p_singlequery("select * from membership_class where id = ?","i",$id);
+    }
+
+    public function getMembershipClassByClass($org,$class)
+    {
+        return $this->p_singlequery("select * from membership_class where org = ? and class = ?","is",$org,$class);
+    }
+
+    public function getJuniorClassId($org)
+    {
+        if ($v = getMembershipClassByClass($org,'Junior') )
+            return $v['id'];
+        return null;
+    }
+
+    //*********************************************************************
+    // roles
+    //*********************************************************************
+    public function getRole($id)
+    {
+        return $this->p_singlequery("select * from roles where id = ?","i",$id);
+    }
+
+    public function getRoleIdByName($name)
+    {
+        if ($role = $this->p_singlequery("select * from roles where name = ?","s",$name) )
+            return $role['id'];
+        return null;
+    }
+
+    public function allRolesLike($name)
+    {
+        $l = "%{$name}%";
+        $q = "SELECT * from roles where name LIKE ? ";
+        $r = $this->p_query($q,"s",$l);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+
+    //*********************************************************************
     // Messages
     //*********************************************************************
     public function getLastOrgMessage($org)
@@ -153,12 +230,26 @@ class GlidingDB extends SQLPlus
             return null;
     }
 
+    public function allGliderFlightsForMember($memid)
+    {
+        $gliderFlightType = $this->getGlidingFlightTypeId();
+        $r = $this->p_query("select * from flights where type = {$gliderFlightType} and (flights.pic= ? or flights.p2 = ?)","ii",$memid,$memid);
+    }
+
     //*********************************************************************
     // Aircraft
     //*********************************************************************
     public function getAircraft($id)
     {
         return $this->singlequery("SELECT * from aircraft where id = " . intval($id));
+    }
+
+    public function getClubGliders($org)
+    {
+        $q = "select * from aircraft where org = ? and club_glider > 0";
+        $r = $this->p_query($q,"i",$org);
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
     }
 
     public function getAircraftByRegShort($reg)
@@ -174,6 +265,13 @@ class GlidingDB extends SQLPlus
     public function getAircraftBySpotId($sid)
     {
         return $this->singlequery("SELECT * from aircraft where spot_id = '{$sid}'");
+    }
+
+    public function getGliderModel($org,$short_rego)
+    {
+        if($a = $this->p_singlequery("SELECT * FROM aircraft WHERE org = ? and rego_short = ?","is",$org,$short_rego) )
+            return $a['make_model'];
+        return null;
     }
 
     public function updateAircraftTrackStatus($aid,$status)
@@ -198,6 +296,64 @@ class GlidingDB extends SQLPlus
             return true;
         return false;
     }
+
+    //*********************************************************************
+    // Launchtypes
+    //*********************************************************************
+    public function getLaunchTypeId($type)
+    {
+        $t = $this->p_singlequery("select * from launchtype where name = ?","s",$type);
+        if ($t)
+            return $t['id'];
+        return null;
+    }
+
+    public function getTowLaunchTypeId()
+    {
+        return $this->getLaunchTypeId('Tow Plane');
+    }
+
+    public function getSelfLaunchTypeId()
+    {
+        return $this->getLaunchTypeId('Self Launch');
+    }
+
+    public function getWinchLaunchTypeId()
+    {
+        return $this->getLaunchTypeId('Winch');
+    }
+
+    //*********************************************************************
+    // Flighttypes
+    //*********************************************************************
+    public function getFlightTypeId($type)
+    {
+        $t = $this->p_singlequery("select * from flighttypes where name = ?","s",$type);
+        if ($t)
+            return $t['id'];
+        return null;
+    }
+
+    public function getGlidingFlightTypeId()
+    {
+        return $this->getLaunchTypeId('Glider');
+    }
+
+    public function getCheckFlightTypeId()
+    {
+        return $this->getLaunchTypeId('Tow plane check flight');
+    }
+
+    public function getRetrieveFlightTypeId()
+    {
+        return $this->getLaunchTypeId('Tow plane retrieve');
+    }
+
+    public function getLandingChargeFlightTypeId()
+    {
+        return $this->getLaunchTypeId('Landing Charge');
+    }
+
 
     //*********************************************************************
     // Spots

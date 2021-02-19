@@ -1,17 +1,43 @@
-<?php session_start(); ?>
-<?php $org=0; if(isset($_SESSION['org'])) $org=$_SESSION['org'];
-if(isset($_SESSION['security'])){
- if ($_SESSION['security'] < 1){die("Secruity level too low for this page");}
-}else{
- header('Location: Login.php');
- die("Please logon");
+<?php
+session_start();
+require "./includes/classSecure.php";
+require "./includes/classTime.php";
+require "./includes/classGlidingDB.php";
+$DB = new GlidingDB($devt_environment->getDatabaseParameters());
+$tracks_params = ["dbname" => $devt_environment->getkey('TRACKS_DATABASE_NAME'),
+                  "username" => $devt_environment->getkey('TRACKS_DATABASE_USER'),
+                  "password" => $devt_environment->getkey('TRACKS_DATABASE_PW'),
+                  "hostname" => $devt_environment->getkey('TRACKS_DATABASE_HOST')
+                  ];
+$DBArchive = new TracksDB($tracks_params);
+
+if (! Secure::isSignedIn())
+{
+    header("Location: Login.php");
+    exit();
 }
+
+$org = 0;
+$organistaion=null;
+$user = $DB->getUserWithMember($_SESSION['userid']);
+if ($user && isset($user['org']))
+{
+    if ($organistaion = $DB->getOrganisation($user['org']) )
+        $org = $user['org'];
+}
+
+if ($org == 0)
+{
+    header("Location: Login.php");
+    exit();
+}
+
 ?>
 <!DOCTYPE HTML>
 <html>
-<meta name="viewport" content="width=device-width">
-<meta name="viewport" content="initial-scale=1.0">
 <head>
+<meta name="viewport" content="width=device-width" />
+<meta name="viewport" content="initial-scale=1.0" />
 <title>MyFlights</title>
 <style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
 <style><?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
@@ -67,11 +93,9 @@ $pageid=22;
 $pkcol=2;
 $pagesortdata = $_SESSION['pagesortdata'];
 $colsort = $pagesortdata[$pageid];
-?>
 
-<?php
 $db_params = require('./config/database.php');
-$con_params = $db_params['gliding']; 
+$con_params = $db_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 if (mysqli_connect_errno())
 {
@@ -82,40 +106,50 @@ $con2_params = $db_params['tracks'];
 $con2=mysqli_connect($con2_params['hostname'],$con2_params['username'],$con2_params['password'],$con2_params['dbname']);
 if (mysqli_connect_errno())
 {
-  error_log("Cannot open tracksarchive database"); 
+  error_log("Cannot open tracksarchive database");
   $con2 = null;
 }
 
 //Duplicate to above but in transition to newer database scheme
 require dirname(__FILE__) . '/includes/classGlidingDB.php';
 require dirname(__FILE__) . '/includes/classTracksDB.php';
-$db_params = require( dirname(__FILE__) .'/config/database.php'); 
-$DB = new GlidingDB($db_params['gliding']);
-$DBArchive = new TracksDB($db_params['tracks']);
+$db_params = require( dirname(__FILE__) .'/config/database.php');
 
 
-$towlaunch = getTowLaunchType($con);
-$selflaunch = getSelfLaunchType($con);
-$winchlaunch = getWinchLaunchType($con);
-$flightTypeGlider = getGlidingFlightType($con); 
-$flightTypeCheck = getCheckFlightType($con); 
-$flightTypeRetrieve = getRetrieveFlightType($con); 
-        
+$towlaunch = $DB->getTowLaunchTypeId();
+$selflaunch = $DB->getSelfLaunchTypeId();
+$winchlaunch = $DB->getWinchLaunchTypeId();
+
+$flightTypeGlider = $DB->getGlidingFlightTypeId();
+$flightTypeCheck = $DB->getCheckFlightTypeId();
+$flightTypeRetrieve = $DB->getRetrieveFlightTypeId();
+
 
 //find the juinor class id
-$juniorclass = getJuniorClass($con,$org);
-$istowy = IsMemberTowy($con, $_SESSION['memberid']);
+$juniorclass = $DB->getJuniorClassId($org);
+$istowy = $DB->IsMemberTowy($user['member']);
 
+$row = $DB->getMemberWithClass($user['member']);
+if (!$row)
+{
+    echo "<p>Error: User logged does not appear to be a member, unable to display flights.</p>";
+    exit();
+}
+
+/*
 $sql="SELECT members.displayname, members.class, a.class from members LEFT JOIN membership_class a ON a.id = members.class where members.id = " .  $_SESSION['memberid'];
 $r = mysqli_query($con,$sql);
 $row_cnt = mysqli_num_rows($r);
 if ($row_cnt <= 0)
 {
-   echo "<p>Error: No member id available to display flights</p>";  
-   echo "<p>SQL: ".$sql."</p>";  
+   echo "<p>Error: No member id available to display flights</p>";
+   echo "<p>SQL: ".$sql."</p>";
    exit();
 }
 $row = mysqli_fetch_array($r);
+*/
+
+
 $iScheme=0;
 $iRateGlider=0;
 $iChargeTow=1;
@@ -125,15 +159,12 @@ $strMemberClass=$row[2];
 $clubgliders = array();
 
 //Build array of club gliders
-$sql="SELECT rego_short FROM aircraft where aircraft.org = ".$org." and club_glider > 0";
-$r = mysqli_query($con,$sql);
-$cnt = 0;
-while ($row = mysqli_fetch_array($r) )
-{
-  
-  $clubgliders[$cnt]=$row[0];
-  $cnt++;
-}
+$r = $DB->getClubGliders($org);
+//$sql="SELECT rego_short FROM aircraft where aircraft.org = ".$org." and club_glider > 0";
+//$r = mysqli_query($con,$sql);
+//$cnt = 0;
+while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
+    array_push($clubgliders,$aircraft['rego_short']);
 
 ?>
 <div id='container'>
@@ -143,7 +174,7 @@ while ($row = mysqli_fetch_array($r) )
 </div>
 <div id='flights1'>
 <div id='flights2'>
-<?php
+    <?php
 $totMins=0;
 $totMinsP=0;
 $totMinsP1=0;
@@ -154,159 +185,166 @@ $cntP1=0;
 $cntP2=0;
 $cntI=0;
 $memberInstructor = false;
-$memberInstructor = IsMemberInstructor($con,$_SESSION['memberid']);
+$memberInstructor = $DB->IsMemberInstructor($user['member'];
+
+$rownum = 0;
+$r = $DB->allGliderFlightsForMember($memid);
+while ($flight = $r->fetch_array(MYSQLI_ASSOC))
+
+/*
 $sql= "SELECT flights.localdate,flights.glider,(flights.land-flights.start),flights.height, flights.pic, flights.p2, flights.comments, flights.launchtype , flights.location ,(flights.start/1000),(flights.land/1000),id FROM flights WHERE flights.type = " .$flightTypeGlider." and (flights.pic=" . $_SESSION['memberid'] .  " OR flights.p2=" .  $_SESSION['memberid'] . ") ORDER BY localdate,seq ASC";
 
 
 $r = mysqli_query($con,$sql);
 $rownum = 0;
 while ($row = mysqli_fetch_array($r) )
+*/
+
+
 {
-  $rownum = $rownum + 1;
-  if ($rownum == 1)
-  {
-     if ($istowy) echo "<h2>Gliding Flights</h2>";
-     echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
-  } 
+    $rownum = $rownum + 1;
+    if ($rownum == 1)
+    {
+        if ($istowy) echo "<h2>Gliding Flights</h2>";
+        echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+    }
 
 
 
-  echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
-  $datestr=$row[0];
-  echo "<td>";echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);echo "</td>";
-  echo "<td class='right'>";echo $row[1];echo "</td>";
-  echo "<td class='right'>";echo getGliderModel($con,$org,$row[1]); echo "</td>"; 
+    echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
+        $datestr=$flight['localdate'];
+        echo "<td>";
+            echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);
+        echo "</td>";
+        echo "<td class='right'>";
+            echo $flight['glider'];
+        echo "</td>";
+        echo "<td class='right'>";
+            echo htmlspecialchars($DB->getGliderModel($org,$flight['rego_short']));
+        echo "</td>";
+        echo "<td class='right'>";
+            echo htmlspecialchars($flight['location']);
+        echo "</td>";
 
-
-  echo "<td class='loc'>";echo $row[8];echo "</td>";  
-  $duration = intval($row[2] / 1000);
-  $timeval = '';
-  if ($duration < 0)
-   $timeval="In Progress";
-  else
-  {
-   $hours = intval($duration / 3600);
-   $mins = intval(($duration % 3600) / 60);
-   $timeval = sprintf("%02d:%02d",$hours,$mins);
-   $totMins = $totMins + (($hours*60) + $mins);
-  }
-  $otherperson=0;
-  $type=0;  //1 = P1 2 = p2 3 = PIC Solo
-
-  echo "<td class='right'>";echo $timeval;echo "</td>";
-
-  $start_ts = (int)$row[9];
-  $land_ts  = (int)$row[10];
-  $start = (new DateTime())->setTimestamp($start_ts);
-  $land  = (new DateTime())->setTimestamp($land_ts);
-
-  $nz_timezone = new DateTimeZone("Pacific/Auckland");
-  $start->setTimezone($nz_timezone);
-  $land->setTimezone($nz_timezone);
-
-  $start_time = ($start_ts == 0) ? "" : $start->format('G:i:s');
-  $land_time = ($land_ts == 0) ? "" : $land->format('G:i:s');
-
-  echo "<td class='right' style='padding-left:5px;'>{$start_time}</td>";
-  echo "<td class='right' style='padding-left:5px;'>{$land_time}</td>";
- 
-  echo "<td class='right'>";
-  if ($row[7] == $towlaunch)
-      echo $row[3];
-  if ($row[7] == $selflaunch)
-     echo "SELF LAUNCH";		 
-  if ($row[7] == $winchlaunch)
-     echo "WINCH";
-  echo "</td>";
-  
-  echo "<td class='right'>";
-  if ($row[7] == $towlaunch)
-      echo "A";
-  if ($row[7] == $selflaunch)
-     echo "S";		 
-  if ($row[7] == $winchlaunch)
-     echo "W";
-  echo "</td>";
-  
-
-
-  echo "<td class='right'>";
-  if ($row[4] == $_SESSION['memberid'] && ($row[5]==null || $row[5]==0))
-  {
-    echo "P";
-    $type = 3;
-    $totMinsP = $totMinsP + (($hours*60) + $mins);
-    $cntP = $cntP + 1;
-  }
-  else
-  if ($row[4] == $_SESSION['memberid'])
-  {
-	if ($memberInstructor)
-        { 
-            echo "I";
-            $cntI = $cntI + 1;
-            $totMinsI = $totMinsI + (($hours*60) + $mins);
-        }
-        else
+        $timeval = 'In Progress';
+        if ($flight['land'])
         {
-            echo "P1";
-	    $cntP1 = $cntP1 + 1;
-	    $totMinsP1 = $totMinsP1 + (($hours*60) + $mins);
+            $duration = ($flight['land'] - $flight['start']) / 1000);
+            $hours = intval($duration / 3600);
+            $mins = intval(($duration % 3600) / 60);
+            $timeval = sprintf("%02d:%02d",$hours,$mins);
+            $totMins = $totMins + (($hours*60) + $mins);
         }
-        $otherperson=$row[5];
-        $type=1;
-  }
-  else
-  if ($row[5] == $_SESSION['memberid'] && ($row[4]==null || $row[4]==0))
-  {
-    echo "P";
-    $type=3;
-    $totMinsP = $totMinsP + (($hours*60) + $mins);
-    $cntP = $cntP + 1;
-  }
-  else
-  {
-    echo "P2";
-    $otherperson = $row[4];
-    $type=2;
-    $totMinsP2 = $totMinsP2 + (($hours*60) + $mins);
-    $cntP2 = $cntP2 + 1;
-  }
-  echo "</td>";
+        echo "<td class='right'>";
+            echo $timeval;
+        echo "</td>";
 
-  $comment="";
-  if ($type != 3)
-  {
-      $Q="SELECT displayname from members where id = " .  $otherperson;
-      $r2 = mysqli_query($con,$Q);
-      if (mysqli_num_rows($r2) > 0)
-      {
-	$row1 = mysqli_fetch_array($r2);
-        $comment .= "Other POB: " . $row1[0] . " " . $row[6];
-      }
- 
-  }
-  else
-	$comment .= $row[6];
-  echo "<td class='cmnt'>";echo $comment;echo "</td>";
 
-  //Do we have any tracking data
-  $trDateStart = new DateTime();
-  $trDateLand = new DateTime();
-  $trDateStart->setTimestamp(intval(floor($row[9])));
-  $trDateLand->setTimestamp(intval(floor($row[10])));
+        $otherperson=0;
+        $type=0;  //1 = P1 2 = p2 3 = PIC Solo
 
-  if ($DB->numTracksForFlight($trDateStart,$trDateLand,$row[1]) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$row[1]) > 0)
-  {
-     echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$row[1]."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$row[11]."'>MAP</a></td>";
-     echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$row[11]."'>IGC FILE</a></td>";
-  }
 
-  echo "</tr>";
+        $start = (new DateTime())->setTimestamp($flight['start'] / 1000);
+        $land  = (new DateTime())->setTimestamp($flight['land'] / 1000);
+
+        $nz_timezone = new DateTimeZone("Pacific/Auckland");
+        $start->setTimezone($nz_timezone);
+        $land->setTimezone($nz_timezone);
+
+        $start_time = ($flight['start'] == 0) ? "" : $start->format('G:i:s');
+        $land_time = ($flight['land'] == 0) ? "" : $land->format('G:i:s');
+
+        echo "<td class='right' style='padding-left:5px;'>{$start_time}</td>";
+        echo "<td class='right' style='padding-left:5px;'>{$land_time}</td>";
+
+        echo "<td class='right'>";
+            if ($flight['launchtype'] == $towlaunch)
+                echo $flight['height'];
+            elseif ($flight['launchtype'] == $selflaunch)
+                echo "SELF LAUNCH";
+            elseif (($flight['launchtype'] == $winchlaunch)
+                echo "WINCH";
+        echo "</td>";
+
+        echo "<td class='right'>";
+            if ($flight['launchtype'] == $towlaunch)
+                echo "A";
+            elseif ($flight['launchtype'] == $selflaunch)
+                echo "S";
+            elseif ($flight['launchtype'] == $winchlaunch)
+                echo "W";
+        echo "</td>";
+
+        echo "<td class='right'>";
+            if ($flight['pic'] == $user['member'] && ! $flight['p2'])
+            {
+                echo "P";
+                $type = 3;
+                $totMinsP = $totMinsP + (($hours*60) + $mins);
+                $cntP = $cntP + 1;
+            }
+            elseif ($flight['pic'] == $user['member'])
+            {
+                if ($memberInstructor)
+                {
+                    echo "I";
+                    $cntI = $cntI + 1;
+                    $totMinsI = $totMinsI + (($hours*60) + $mins);
+                }
+                else
+                {
+                    echo "P1";
+                    $cntP1 = $cntP1 + 1;
+                    $totMinsP1 = $totMinsP1 + (($hours*60) + $mins);
+                }
+                $otherperson=$flight['p2'];
+                $type=1;
+            }
+            elseif ($flight['p2'] == $user['member'] && ! $flight['pic'] )
+            {
+                echo "P";
+                $type=3;
+                $totMinsP = $totMinsP + (($hours*60) + $mins);
+                $cntP = $cntP + 1;
+            }
+            else
+            {
+                echo "P2";
+                $otherperson = $row[4];
+                $type=2;
+                $totMinsP2 = $totMinsP2 + (($hours*60) + $mins);
+                $cntP2 = $cntP2 + 1;
+            }
+        echo "</td>";
+
+        $comment="";
+        if ($type != 3)
+        {
+            if ($othermember = $DB->getMember($otherperson) )
+                $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
+        }
+        $comment .= htmlspecialchars($flight['comments']);
+        echo "<td class='cmnt'>";
+            echo $comment;
+        echo "</td>";
+
+        //Do we have any tracking data
+        $trDateStart = new DateTime();
+        $trDateLand = new DateTime();
+        $trDateStart->setTimestamp(intval(floor($flight['start'] / 1000)));
+        $trDateLand->setTimestamp(intval(floor($flight['land'] / 1000)));
+
+        if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
+        {
+            echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
+            echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+        }
+
+    echo "</tr>";
 }
 if ($rownum > 0)
    echo "</table>";
-?>
+    ?>
 
 <?php 
 $towcnt=0;
