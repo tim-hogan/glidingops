@@ -77,7 +77,7 @@ class GlidingDB extends SQLPlus
     public function IsMemberTowy($memid)
     {
         $mid = intval($memid);
-        $roletow $this->getRoleIdByName('Tow Pilot');
+        $roletow = $this->getRoleIdByName('Tow Pilot');
         if ( $this->rows_in_table("role_member","where member_id = {$mid} and role_id = {$roletow}") > 0)
             return true;
         return false;
