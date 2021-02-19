@@ -5,6 +5,15 @@ require "./includes/classTime.php";
 require "./includes/classGlidingDB.php";
 require "./includes/classTracksDB.php";
 
+function var_error_log( $object=null,$text='')
+{
+    ob_start();
+    var_dump( $object );
+    $contents = ob_get_contents();
+    ob_end_clean();
+    error_log( "{$text} {$contents}" );
+}
+
 $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 $tracks_params = ["dbname" => $devt_environment->getkey('TRACKS_DATABASE_NAME'),
                   "username" => $devt_environment->getkey('TRACKS_DATABASE_USER'),
@@ -81,7 +90,7 @@ function printit(){window.print();}
 <body>
 <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
 <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
-<?php
+    <?php
 if (intval($_SESSION['memberid']) <= 0)
 {
  echo "<p>Error: Your Login Credentials of " . $_SESSION['who'] . " are not linked to a Gliding Member</p>";
@@ -125,7 +134,8 @@ $flightTypeRetrieve = $DB->getRetrieveFlightTypeId();
 $juniorclass = $DB->getJuniorClassId($org);
 $istowy = $DB->IsMemberTowy($user['member']);
 
-$row = $DB->getMemberWithClass($user['member']);
+$member = $DB->getMemberWithClass($user['member']);
+var_error_log($member,"member");
 if (!$row)
 {
     echo "<p>Error: User logged does not appear to be a member, unable to display flights.</p>";
@@ -142,16 +152,16 @@ if ($row_cnt <= 0)
    echo "<p>SQL: ".$sql."</p>";
    exit();
 }
-$row = mysqli_fetch_array($r);
-*/
+    $row = mysqli_fetch_array($r);
+     */
 
 
 $iScheme=0;
 $iRateGlider=0;
 $iChargeTow=1;
-$dispname = $row[0];
-$memberclass=$row[1];
-$strMemberClass=$row[2];
+$dispname = $member['displayname'];
+$memberclass=$member['class'];
+//$strMemberClass=$row[2];
 $clubgliders = array();
 
 //Build array of club gliders
@@ -162,7 +172,7 @@ $r = $DB->getClubGliders($org);
 while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
     array_push($clubgliders,$aircraft['rego_short']);
 
-?>
+    ?>
 <div id='container'>
 <div id='head1'>
 <h1>My Flights</h1>
