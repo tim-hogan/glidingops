@@ -89,8 +89,9 @@ class GlidingDB extends SQLPlus
         $r = $this->allRolesLike('Instructor');
         while ($role = $r->fetch_array(MYSQLI_ASSOC))
         {
-        if ( $this->rows_in_table("role_member","where member_id = {$mid} and role_id = {$role['id']}") > 0)
-            return true;
+            if ( $this->rows_in_table("role_member","where member_id = {$mid} and role_id = {$role['id']}") > 0)
+                return true;
+        }
         return false;
     }
 
