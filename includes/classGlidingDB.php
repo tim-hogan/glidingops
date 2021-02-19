@@ -110,7 +110,7 @@ class GlidingDB extends SQLPlus
 
     public function getJuniorClassId($org)
     {
-        if ($v = getMembershipClassByClass($org,'Junior') )
+        if ($v = $this->getMembershipClassByClass($org,'Junior') )
             return $v['id'];
         return null;
     }
