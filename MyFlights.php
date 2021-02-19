@@ -351,7 +351,7 @@ function printit(){window.print();}
             {
                 echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<tr><th colspan='2'>DATE</th><th>GLIDER</th><th>DURATION</th><th>LAUNCH</th><th>TYPE</th><th>TRACK</th></tr>";
+                echo "<tr><th colspan='2'>DATE</th><th>GLIDER</th><th>DURATION</th><th>LAUNCH</th><th>TYPE</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -455,15 +455,15 @@ function printit(){window.print();}
             $trDateStart->setTimestamp(intval(floor($flight['start'] / 1000)));
             $trDateLand->setTimestamp(intval(floor($flight['land'] / 1000)));
 
-            if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
-            {
-                echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
-                echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
-            }
-            else
-            {
-                echo "<td></td><td></td>";
-            }
+            //if ($DB->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0 || $DBArchive->numTracksForFlight($trDateStart,$trDateLand,$flight['glider']) > 0)
+            //{
+            //    echo "<td class='lnk'><a href='MyFlightMap.php?glider=".$flight['glider']."&from=".$trDateStart->format('Y-m-d H:i:s')."&to=".$trDateLand->format('Y-m-d H:i:s')."&flightid=".$flight['id']."'>MAP</a></td>";
+            //    echo "<td class='lnk'><a href='OlcFile.igc?flightid=".$flight['id']."'>IGC FILE</a></td>";
+            //}
+            //else
+            //{
+            //    echo "<td></td><td></td>";
+            //}
 
             echo "</tr>";
 
@@ -473,7 +473,7 @@ function printit(){window.print();}
             echo "</td>";
 
             $comment .= htmlspecialchars($flight['comments']);
-            echo "<td colspan='6'>";
+            echo "<td colspan='4'>";
             echo $comment;
             echo "</td>";
 
@@ -546,6 +546,9 @@ if ($istowy)
 </table>
 </div>
 </div>
+
+<!--         
+
 <div id='charges1'>
 <div id='charges2'>
 <h2>My Charges</h2>
@@ -561,7 +564,12 @@ if ($istowy)
 <th>TOTAL</th>
 <th>COMMENTS</th>
 </tr>
+-->
+
+
+
 <?php
+/*
 $sumtow=0.0;
 $sumglid=0.0;
 $sumairways=0.0;
@@ -743,6 +751,7 @@ echo "<td class='right bordertop'>$";
 echo sprintf("%01.2f",($sumtow+$sumglid+$sumairways));
 echo "</td>";
 echo "</tr>";
+*/
 ?>
 </table>
 </div>
