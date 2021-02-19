@@ -229,7 +229,7 @@ while ($row = mysqli_fetch_array($r) )
         $timeval = 'In Progress';
         if ($flight['land'])
         {
-            $duration = ($flight['land'] - $flight['start']) / 1000);
+            $duration = (($flight['land'] - $flight['start']) / 1000);
             $hours = intval($duration / 3600);
             $mins = intval(($duration % 3600) / 60);
             $timeval = sprintf("%02d:%02d",$hours,$mins);
