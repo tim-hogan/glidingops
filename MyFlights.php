@@ -123,9 +123,6 @@ while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
 #charges2 {padding: 10px;background-color: #e0f0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
 .right {text-align: right;}
 .bordertop {border-top: black;border-top-style: solid;border-top-width: 1px;}
-td.cmnt {padding-left: 10px;}
-td.loc {padding-left: 10px;}
-td.lnk {padding-left: 10px;}
 a {text-decoration: none;}
 </style>
 <script>
@@ -280,7 +277,7 @@ function printit(){window.print();}
                         $comment .= "Other POB: " . htmlspecialchars($othermember['displayname']) . " ";
                 }
                 $comment .= htmlspecialchars($flight['comments']);
-                echo "<td class='cmnt'>";
+                echo "<td>";
                     echo $comment;
                 echo "</td>";
 
@@ -468,7 +465,7 @@ function printit(){window.print();}
             echo "</td>";
 
             $comment .= htmlspecialchars($flight['comments']);
-            echo "<td colspan="5" class='cmnt'>";
+            echo "<td colspan='5'>";
             echo $comment;
             echo "</td>";
 
