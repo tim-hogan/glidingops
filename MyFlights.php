@@ -161,7 +161,7 @@ function printit(){window.print();}
             {
                 echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+                echo "<tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH</th><th>LAND</th><th>HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -473,7 +473,7 @@ function printit(){window.print();}
             echo "</td>";
 
             $comment .= htmlspecialchars($flight['comments']);
-            echo "<td colspan='5'>";
+            echo "<td colspan='6'>";
             echo $comment;
             echo "</td>";
 
