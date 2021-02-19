@@ -117,27 +117,10 @@ while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
 <link rel='stylesheet' type='text/css' href='css/heading.css' />
 <link rel='stylesheet' type='text/css' href='css/myflights.css' />
 <style>
-@media print {
-    th {font-size: 12px;}
-    td {font-size: 12px;}
-    h2 {font-size: 14px;}
-    #print-button {display: none;}
-    #head {display: none;}
-    @page {size: landscape;}
-}
-@media screen {
-     th {font-size: 14px;padding-left:10px;}
-     td {font-size: 14px;}
-}
-#flights1 {margin:12px;}
-#flights2 {padding: 10px;background-color: #e0e0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
 #summary1 {margin:12px;}
 #summary2 {padding: 10px;background-color: #f0f0e0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
 #charges1 {margin:12px;}
 #charges2 {padding: 10px;background-color: #e0f0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
-h1 {font-family: Calibri, Arial, Helvetica, sans-serif;}
-table {border-collapse: collapse;}
 .right {text-align: right;}
 .bordertop {border-top: black;border-top-style: solid;border-top-width: 1px;}
 td.cmnt {padding-left: 10px;}
@@ -159,7 +142,7 @@ function printit(){window.print();}
         <h2><?php echo $dispname;?></h2>
     </div>
     <div id='flights1'>
-<?php
+        <?php
         $totMins=0;
         $totMinsP=0;
         $totMinsP1=0;
@@ -179,8 +162,9 @@ function printit(){window.print();}
             $rownum = $rownum + 1;
             if ($rownum == 1)
             {
+                echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<table><tr><th>DATE</th><th>GLIDER</th><th>MAKE/MODEL</th><th>LOCATION</th><th>DURATION</th><th>START</th><th>LAND</th><th>TOW HEIGHT</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+                echo "<tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -320,7 +304,7 @@ function printit(){window.print();}
 
 
         $towcnt=0;
-        if ($istowy) 
+        if ($istowy)
         {
           $rownum = 0;
           echo "<h2>Tows</h2>";
@@ -335,13 +319,13 @@ function printit(){window.print();}
             $datestr=$row[0];
             echo "<td>";echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);echo "</td>";
             echo "<td class='right'>" . $row[1] . "</td>";
-            echo "<td class='right'>" . $row[2] . "</td>";  
+            echo "<td class='right'>" . $row[2] . "</td>";
             echo "<td class='right'>" . $row[3] . "</td>";
-            echo "</tr>";  
+            echo "</tr>";
           }
           echo "</table>";
         }
-?>
+        ?>
     </div>
     <div id="flights2">
         <?php
@@ -364,8 +348,9 @@ function printit(){window.print();}
             $rownum = $rownum + 1;
             if ($rownum == 1)
             {
+                echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<table><tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+                echo "<tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -376,7 +361,7 @@ function printit(){window.print();}
             echo "<td class='right'>";
             echo $flight['glider'];
             echo "</td>";
-            
+
             echo "<td>";
             echo htmlspecialchars($flight['location']);
             echo "</td>";
@@ -408,7 +393,7 @@ function printit(){window.print();}
 
             $start_time = ($flight['start'] == 0) ? "" : $start->format('G:i:s');
             $land_time = ($flight['land'] == 0) ? "" : $land->format('G:i:s');
-            
+
             echo "<td class='right'>";
             if ($flight['launchtype'] == $towlaunch)
                 echo "A";

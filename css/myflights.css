@@ -3,9 +3,47 @@
 #head1 h2 {color: #66b;font-size: 16pt;}
 #flights1 {margin: 10px;padding: 10px;display: none;}
 #flights2 {margin: 10px;padding: 10px;}
-table {border-collapse: collapse;}
+table {border-collapse: collapse;table-layout: fixed;}
+th {
+    font-size: 9pt;
+}
+td {
+    font-size: 9pt;
+}
 @media only screen and (min-width: 800px) {
 #head1 {padding-left: 20px;}
 #flights1 {margin: 20px; display: block;}
 #flights2 {margin: 20px; display: block;display: none;}
+table {border-collapse: collapse;table-layout: auto;}
+    th {
+        font-size: 10pt;
+    }
+    td {
+        font-size: 10pt;
+    }
+}
+@media print {
+    th {
+        font-size: 12px;
+    }
+
+    td {
+        font-size: 12px;
+    }
+
+    h2 {
+        font-size: 14px;
+    }
+
+    #print-button {
+        display: none;
+    }
+
+    #head {
+        display: none;
+    }
+
+    @page {
+        size: landscape;
+    }
 }
