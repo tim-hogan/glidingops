@@ -185,7 +185,7 @@ $cntP1=0;
 $cntP2=0;
 $cntI=0;
 $memberInstructor = false;
-$memberInstructor = $DB->IsMemberInstructor($user['member'];
+$memberInstructor = $DB->IsMemberInstructor($user['member']);
 
 $rownum = 0;
 $r = $DB->allGliderFlightsForMember($memid);
