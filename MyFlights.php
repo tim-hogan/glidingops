@@ -224,9 +224,9 @@ while ($row = mysqli_fetch_array($r) )
             echo $flight['glider'];
         echo "</td>";
         echo "<td class='right'>";
-            echo htmlspecialchars($DB->getGliderModel($org,$flight['rego_short']));
+            echo htmlspecialchars($DB->getGliderModel($org,$flight['glider']));
         echo "</td>";
-        echo "<td class='right'>";
+        echo "<td>";
             echo htmlspecialchars($flight['location']);
         echo "</td>";
 
@@ -314,7 +314,7 @@ while ($row = mysqli_fetch_array($r) )
             else
             {
                 echo "P2";
-                $otherperson = $row[4];
+                $otherperson = $flight['pic'];
                 $type=2;
                 $totMinsP2 = $totMinsP2 + (($hours*60) + $mins);
                 $cntP2 = $cntP2 + 1;
