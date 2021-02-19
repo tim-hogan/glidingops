@@ -350,7 +350,7 @@ function printit(){window.print();}
             {
                 echo "<table>";
                 echo "<caption>Your Gliding Flights</caption>";
-                echo "<tr><th>DATE</th><th>GLIDER</th><th>LOCATION</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
+                echo "<tr><th colspan='2'>DATE</th><th>GLIDER</th><th>DURATION</th><th>LAUNCH TYPE</th><th>TYPE</th><th>COMMENTS</th><th>TRACK</th></tr>";
             }
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
@@ -360,10 +360,6 @@ function printit(){window.print();}
             echo "</td>";
             echo "<td class='right'>";
             echo $flight['glider'];
-            echo "</td>";
-
-            echo "<td>";
-            echo htmlspecialchars($flight['location']);
             echo "</td>";
 
             $timeval = 'In Progress';
@@ -469,6 +465,13 @@ function printit(){window.print();}
             }
 
             echo "</tr>";
+
+            echo "<tr>";
+            echo "<td></td><td>";
+            echo htmlspecialchars($flight['location']);
+            echo "</td>";
+            echo "</tr>";
+
         }
         if ($rownum > 0)
             echo "</table>";
