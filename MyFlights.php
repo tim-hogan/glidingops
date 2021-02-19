@@ -355,7 +355,7 @@ function printit(){window.print();}
 
             echo "<tr class='";if (($rownum % 2) == 0)echo "even";else echo "odd";  echo "'>";
             $datestr=$flight['localdate'];
-            echo "<td>";
+            echo "<td colspan='2'>";
             echo substr($datestr,6,2) . "/" . substr($datestr,4,2) . "/" . substr($datestr,0,4);
             echo "</td>";
             echo "<td class='right'>";
