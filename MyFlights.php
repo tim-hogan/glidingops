@@ -43,54 +43,6 @@ if ($org == 0)
     exit();
 }
 
-?>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta name="viewport" content="width=device-width" />
-<meta name="viewport" content="initial-scale=1.0" />
-<title>MyFlights</title>
-<link rel='stylesheet' type='text/css' href='css/base.css' />
-<link rel='stylesheet' type='text/css' href='css/myflights.css' />
-<style><?php $inc = "./orgs/" . $org . "/heading2.css"; include $inc; ?></style>
-<style><?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?></style>
-
-<style>
-@media print {
-    th {font-size: 12px;}
-    td {font-size: 12px;}
-    h2 {font-size: 14px;}
-    #print-button {display: none;}
-    #head {display: none;}
-    @page {size: landscape;}
-}
-@media screen {
-     th {font-size: 14px;padding-left:10px;}
-     td {font-size: 14px;}
-}
-#flights1 {margin:12px;}
-#flights2 {padding: 10px;background-color: #e0e0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
-#summary1 {margin:12px;}
-#summary2 {padding: 10px;background-color: #f0f0e0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
-#charges1 {margin:12px;}
-#charges2 {padding: 10px;background-color: #e0f0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
-h1 {font-family: Calibri, Arial, Helvetica, sans-serif;}
-table {border-collapse: collapse;}
-.right {text-align: right;}
-.bordertop {border-top: black;border-top-style: solid;border-top-width: 1px;}
-td.cmnt {padding-left: 10px;}
-td.loc {padding-left: 10px;}
-td.lnk {padding-left: 10px;}
-a {text-decoration: none;}
-</style>
-<script>
-function printit(){window.print();}
-</script>
-</head>
-<body>
-<?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
-<?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
     <?php
 if (intval($_SESSION['memberid']) <= 0)
 {
@@ -154,8 +106,55 @@ $r = $DB->getClubGliders($org);
 while ($aircraft = $r->fetch_array(MYSQLI_ASSOC) )
     array_push($clubgliders,$aircraft['rego_short']);
 
-    ?>
+?>
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<meta name="viewport" content="initial-scale=1.0" />
+<title>MyFlights</title>
+<link rel='stylesheet' type='text/css' href='css/base.css' />
+<link rel='stylesheet' type='text/css' href='css/heading.css' />
+<link rel='stylesheet' type='text/css' href='css/myflights.css' />
+<style>
+@media print {
+    th {font-size: 12px;}
+    td {font-size: 12px;}
+    h2 {font-size: 14px;}
+    #print-button {display: none;}
+    #head {display: none;}
+    @page {size: landscape;}
+}
+@media screen {
+     th {font-size: 14px;padding-left:10px;}
+     td {font-size: 14px;}
+}
+#flights1 {margin:12px;}
+#flights2 {padding: 10px;background-color: #e0e0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
+#summary1 {margin:12px;}
+#summary2 {padding: 10px;background-color: #f0f0e0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
+#charges1 {margin:12px;}
+#charges2 {padding: 10px;background-color: #e0f0f0;border-radius: 8px;box-shadow: 10px 10px 5px #888888;}
+body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+h1 {font-family: Calibri, Arial, Helvetica, sans-serif;}
+table {border-collapse: collapse;}
+.right {text-align: right;}
+.bordertop {border-top: black;border-top-style: solid;border-top-width: 1px;}
+td.cmnt {padding-left: 10px;}
+td.loc {padding-left: 10px;}
+td.lnk {padding-left: 10px;}
+a {text-decoration: none;}
+</style>
+<script>
+function printit(){window.print();}
+</script>
+</head>
+<body>
 <div id='container'>
+    <div id="heading">
+        <?php include "./orgs/{$org}/heading.php" ?>
+    </div>
     <div id='head1'>
         <h1>My Flights</h1>
         <h2><?php echo $dispname;?></h2>
