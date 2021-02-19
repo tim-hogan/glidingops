@@ -71,7 +71,7 @@ class GlidingDB extends SQLPlus
 
     public function getMemberWithClass($id)
     {
-        return $this->p_singlequery("select * from members left join membership_class a ON a.id = members.class where id = ?","i",$id);
+        return $this->p_singlequery("select * from members left join membership_class a ON a.id = members.class where members.id = ?","i",$id);
     }
 
     public function IsMemberTowy($memid)
