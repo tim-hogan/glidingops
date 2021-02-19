@@ -262,7 +262,7 @@ while ($row = mysqli_fetch_array($r) )
                 echo $flight['height'];
             elseif ($flight['launchtype'] == $selflaunch)
                 echo "SELF LAUNCH";
-            elseif (($flight['launchtype'] == $winchlaunch)
+            elseif ($flight['launchtype'] == $winchlaunch)
                 echo "WINCH";
         echo "</td>";
 
