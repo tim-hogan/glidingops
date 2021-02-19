@@ -303,7 +303,7 @@ class GlidingDB extends SQLPlus
     //*********************************************************************
     public function getLaunchTypeId($type)
     {
-        $t = $this->p_singlequery("select * from launchtype where name = ?","s",$type);
+        $t = $this->p_singlequery("select * from launchtypes where name = ?","s",$type);
         if ($t)
             return $t['id'];
         return null;
