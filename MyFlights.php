@@ -43,7 +43,6 @@ if ($org == 0)
     exit();
 }
 
-    <?php
 if (intval($_SESSION['memberid']) <= 0)
 {
  echo "<p>Error: Your Login Credentials of " . $_SESSION['who'] . " are not linked to a Gliding Member</p>";
