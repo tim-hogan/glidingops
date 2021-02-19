@@ -134,7 +134,7 @@ $flightTypeRetrieve = $DB->getRetrieveFlightTypeId();
 $juniorclass = $DB->getJuniorClassId($org);
 $istowy = $DB->IsMemberTowy($user['member']);
 
-$member = $DB->getMemberWithClass($user['member']);
+$member = $DB->getMember($user['member']);
 var_error_log($member,"member");
 if (!$row)
 {
@@ -161,7 +161,6 @@ $iRateGlider=0;
 $iChargeTow=1;
 $dispname = $member['displayname'];
 $memberclass=$member['class'];
-//$strMemberClass=$row[2];
 $clubgliders = array();
 
 //Build array of club gliders
