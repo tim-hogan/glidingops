@@ -768,7 +768,7 @@ if (isset($_SESSION['filename']))
                         echo "<div class='form'>";
                         echo "<form method='POST' autocomplete='off' action='{$_SERVER["PHP_SELF"]}'>";
                         $FL = new FormList($g_def[$g_table]);
-                        $FL->buildFormFields(null,$DB);
+                        $FL->buildFormFields(null,null);
                         echo "<div class='submit'>";
                             $v = FormList::encryptParam("table=server&action=create");
                             echo "<input type='hidden' name='v' value='{$v}' />";
