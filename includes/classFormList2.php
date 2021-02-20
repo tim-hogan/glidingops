@@ -1370,8 +1370,8 @@ private function buildChoiceField($n,$f,$data=null)
                 foreach($fields as $name => $field)
                 {
 
-                    if ($table == "aircrafttype")
-                        error_log("Field name {$name}");
+if ($table == "aircrafttype")
+    error_log("Field name {$name}");
 
 
                     $tdClass='';
@@ -1403,12 +1403,18 @@ private function buildChoiceField($n,$f,$data=null)
                         }
 
                         $strData = '';
+if ($table == "aircrafttype")
+    error_log(" strdata1  {$strData}");
+
+
                         if (isset($d[$name]))
                         {
                             switch ($field['type'])
                             {
                                 case 'text':
                                     $strData = htmlspecialchars($d[$name]);
+if ($table == "aircrafttype")
+    error_log(" strdata2  {$strData}");
                                     break;
                                 case 'integer':
                                     $strData = htmlspecialchars(intval($d[$name]));
@@ -1452,6 +1458,9 @@ private function buildChoiceField($n,$f,$data=null)
                             }
 
                         }
+if ($table == "aircrafttype")
+    error_log(" strdata3  {$strData}");
+
                         echo $strData;
                         if ($table == "aircrafttype")
                             error_log(" display data {$strData}");
