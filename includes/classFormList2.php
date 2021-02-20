@@ -1404,6 +1404,14 @@ private function buildChoiceField($n,$f,$data=null)
                                         $decimals = intval($field['decimalplaces']);
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
+                                case 'fk':
+                                    $v = intval($d[$name]);
+                                    $data = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
+                                    if ($data && isset($data[$field['fk_display']]))
+                                    {
+                                        $strData = htmlspecialchars($data[$field['fk_display']]);
+                                    }
+                                    break;
                                 default:
                                     $strData = htmlspecialchars($d[$name]);
                                     break;
