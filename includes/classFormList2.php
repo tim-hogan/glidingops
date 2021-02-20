@@ -1058,14 +1058,17 @@ private function buildChoiceField($n,$f,$data=null)
                         $where = trim($order);
                     if ( ! isset($form['required']) ||  ! $form['required'])
                         echo "<option value='0'></option>";
-                    $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
-                    foreach ($d as $a)
+                    if ($DB)
                     {
-                        $selected = '';
-                        if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
-                            $selected = 'selected';
-                        $strV = htmlspecialchars($a[$f['fk_display']]);
-                        echo "<option value='{$a[$f['fk_index']]}' {$selected}>{$strV}</option>";
+                        $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
+                        foreach ($d as $a)
+                        {
+                            $selected = '';
+                            if (isset($f['value']) && $f['value'] == $a[$f['fk_index']])
+                                $selected = 'selected';
+                            $strV = htmlspecialchars($a[$f['fk_display']]);
+                            echo "<option value='{$a[$f['fk_index']]}' {$selected}>{$strV}</option>";
+                        }
                     }
                 }
                 echo "</select>";
