@@ -1060,7 +1060,13 @@ private function buildChoiceField($n,$f,$data=null)
                         echo "<option value='0'></option>";
                     if ($DB)
                     {
-                        $d = $DB->every($f['fk_table'],'where category_deleted = 0','order by category_name');
+                        $where = '';
+                        $order = '';
+                        if (isset($f['fk_where']) && strlen($f['fk_where']) > 0)
+                            $where = $f['fk_where'];
+                        if (isset($f['fk_order']) && strlen($f['fk_order']) > 0)
+                            $order = $f['fk_order'];
+                        $d = $DB->every($f['fk_table'],$where,$order);
                         foreach ($d as $a)
                         {
                             $selected = '';
@@ -1405,10 +1411,12 @@ private function buildChoiceField($n,$f,$data=null)
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
                                 case 'fk':
+                                    error_log("List fk");
                                     $v = intval($d[$name]);
                                     $data = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
                                     if ($data && isset($data[$field['fk_display']]))
                                     {
+                                        error_log("Have data");
                                         $strData = htmlspecialchars($data[$field['fk_display']]);
                                     }
                                     break;
