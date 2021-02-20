@@ -31,7 +31,7 @@ $selff = trim($_SERVER["PHP_SELF"],"/");
 $user = null;
 if (isset($_SESSION['userid']))
     $user = $DB->getUser($_SESSION['userid']);
-Secure::CheckPage2($user,SECURITY_ADMIN);
+//Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
 $pageData ['select'] = 'global';
