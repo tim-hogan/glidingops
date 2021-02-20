@@ -115,6 +115,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
     <link rel='stylesheet' type='text/css' href='css/parameters.css' />
+    <script>
+        var g_pageState = JSON.parse('<?php echo json_encode($pageData);?>');
+    </script>
     <script src="/js/MultiForm.js"></script>
 </head>
 <body onload="start()">
