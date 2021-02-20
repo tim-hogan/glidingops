@@ -22,7 +22,9 @@
 .form input[type='submit'] {}
 .form label {display: block;font-size: 9pt;color: #888;}
 .form span {margin-left: 8px;}
-.list td.r {text-align: right;}
+.detailEntityFirst {padding-right: 20px; display: block;}
+.detailEntity {padding-right: 20px;display: none;}
+
 #formheading h1 {color: #777;font-size: 16pt; margin-bottom: 20px;}
 #formheadingintroduction {background-color: #eeeeee;padding: 20px;margin-bottom: 20px;font-size: 12pt;color: #555;}
 .form p.formgroupname {

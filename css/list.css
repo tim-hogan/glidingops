@@ -9,10 +9,13 @@
 .list td:last-child {border-right: solid 1px #888;}
 .list tr:last-child td {border-bottom: solid 1px #888;}
 .list tr:hover {background-color: white;}
-.list .rtEntity {margin: 24px;}
+.list .rtEntityFirst {margin: 24px;display: block;}
+.list .rtEntity {margin: 24px; display: none;}
 .list .listactions {padding: 10px;border: solid 1px #888;margin-bottom: 10px;border-radius: 5px;background-color: #ededed;min-width: 580px;}
 .list .listactions form {display: inline-block;}
 .list .listactions button {margin-right: 14px;}
 .list button.listDelete {}
+.list td.r {text-align: right;}
+
 @media only screen and (min-width: 800px) {
 }

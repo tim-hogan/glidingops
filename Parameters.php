@@ -111,6 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
     <link rel='stylesheet' type='text/css' href='css/main.css' />
+    <link rel='stylesheet' type='text/css' href='css/framework.css' />
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
     <link rel='stylesheet' type='text/css' href='css/parameters.css' />
@@ -139,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="aircrafttype" class="rtEntity">
+                        <div id="aircrafttype" class="rtEntityFirst">
                             <div id="listglobals">
                                 <?php
                                 $FL = new FormList($formdata['aircrafttype']);
