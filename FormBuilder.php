@@ -250,8 +250,10 @@ function updateTextFieldListInfo($table,$field,$attribute)
 function updateBooleanFieldListInfo($table,$field,$attribute)
 {
     global $g_def;
+    error_log("Get boolean list field");
     if (isset($_POST["{$table}_{$field}_list_{$attribute}"]) )
     {
+        error_log(" Post Is Set {$table}_{$field}_list_{$attribute}");
         $b = boolval(FormList::getCheckboxField("{$table}_{$field}_list_{$attribute}"));
         $g_def[$table] ['fields'] [$field] ['list'] [$attribute] = $b;
     }
