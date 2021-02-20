@@ -19,8 +19,13 @@ function var_error_log( $object=null,$text='')
 require_once "./includes/classSecure.php";
 require_once "./includes/classRolling.php";
 require "./includes/classFormList2.php";
-$formdata = require("./forms/**EDIT**.php");
+$formdata = require("./forms/formparams.php");
 
+/**
+ * Database
+*/
+require "./includes/classGlidingDB.php";
+$DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
 $selff = trim($_SERVER["PHP_SELF"],"/");
 $user = null;
@@ -95,20 +100,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
-    <title>**EDIT**</title>
+    <title>GlidingOps Settings</title>
     <link rel='stylesheet' type='text/css' href='css/base.css' />
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
     <link rel='stylesheet' type='text/css' href='css/main.css' />
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
-    <link rel='stylesheet' type='text/css' href='css/**EDIT**.css' />
-    **EDIT**<script src="/js/MultiForm.js"></script>
+    <link rel='stylesheet' type='text/css' href='css/parameters.css' />
+    <script src="/js/MultiForm.js"></script>
 </head>
 <body onload="start()">
     <div id="container">
         <div id="heading">
-            <h1>**EDIT**HEADING</h1>
+            <?php include "./orgs/{$org}/heading.php" ?>
         </div>
         <div id="menu">
             <p>**EDIT**MENU</p>
@@ -118,28 +123,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="left">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"><<</div>
                     <div class="panel">
-                        <p class="lefttitle">**EDIT**</p>
+                        <p class="lefttitle">SETTINGS</p>
                         <ul>
-                            <li id="selglobal" class="liselector" onclick="selectRight(this,'global')">**EDIT**Global Parameters</li>
-                            <li id="selserver" class="liselector" onclick="selectRight(this,'server')">**EDIT**Servers</li>
+                            <li id="selaircrafttype" class="liselector" onclick="selectRight(this,'aircrafttype')">Aircraft Types</li>
+                            <li id="selaircraft" class="liselector" onclick="selectRight(this,'aircraft')">Aircraft</li>
                         </ul>
                     </div>
                 </div>
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="global" class="rtEntity">
+                        <div id="aircrafttype" class="rtEntity">
                             <div id="listglobals">
                                 <?php
-                                $FL = new FormList($formdata['global']);
+                                $FL = new FormList($formdata['aircrafttype']);
                                 $FL->buildList($DB,null);
                                 ?>
                             </div>
                         </div>
-                        <div id="server" class="rtEntity">
+                        <div id="aircraft" class="rtEntity">
                             <div id="listservers">
                                 <?php
-                                $FL = new FormList($formdata['server']);
+                                $FL = new FormList($formdata['aircraft']);
                                 $FL->buildList($DB,null);
                                 ?>
                             </div>
@@ -149,26 +154,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
-                        <div id="globalform" class="detailEntity">
+                        <div id="aircrafttypeform" class="detailEntity">
                             <div class="form">
                             <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                 <?php
-                                if ($pageData ['select'] == 'global')
+                                if ($pageData ['select'] == 'aircrafttype')
                                 {
-                                    $FL = new FormList($formdata['global']);
+                                    $FL = new FormList($formdata['aircrafttype']);
                                     if ($pageData ['form'] ['mode'] == "edit")
                                         $FL->getTableData($DB,$pageData ['form'] ['recid']);
                                     $FL->buildFormFields(null,$DB);
                                     echo "<div class='submit'>";
                                     if ($pageData ['form'] ['mode'] == "edit")
                                     {
-                                        $v = FormList::encryptParam("table=globalr&action=change&recid={$pageData ['form'] ['recid']}");
+                                        $v = FormList::encryptParam("table=aircrafttype&action=change&recid={$pageData ['form'] ['recid']}");
                                         echo "<input type='hidden' name='v' value='{$v}' />";
                                         echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
                                     }
                                     else
                                     {
-                                        $v = FormList::encryptParam("table=global&action=create");
+                                        $v = FormList::encryptParam("table=aircrafttype&action=create");
                                         echo "<input type='hidden' name='v' value='{$v}' />";
                                         echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
                                     }
@@ -178,28 +183,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             </form>
                             </div>
                         </div>
-                        <div id="serverform" class="detailEntity">
+                        <div id="aircraftform" class="detailEntity">
                             <div class="form">
                             <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                 <?php
-                                if ($pageData ['select'] == 'server')
+                                if ($pageData ['select'] == 'aircraft')
                                 {
-                                    $FL = new FormList($formdata['server']);
+                                    $FL = new FormList($formdata['aircraft']);
                                     if ($pageData ['form'] ['mode'] == "edit")
                                         $FL->getTableData($DB,$pageData ['form'] ['recid']);
                                     $FL->buildFormFields(null,$DB);
                                     echo "<div class='submit'>";
                                     if ($pageData ['form'] ['mode'] == "edit")
                                     {
-                                        $v = FormList::encryptParam("table=server&action=change&recid={$pageData ['form'] ['recid']}");
+                                        $v = FormList::encryptParam("table=aircraft&action=change&recid={$pageData ['form'] ['recid']}");
                                         echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                                        echo "<input type='submit' name='_aircraft_change' value='CONFIRM CHANGE' />";
                                     }
                                     else
                                     {
-                                        $v = FormList::encryptParam("table=server&action=create");
+                                        $v = FormList::encryptParam("table=aircraft&action=create");
                                         echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                                        echo "<input type='submit' name='_aircraft_new' value='CREATE NEW' />";
                                     }
                                     echo "</div>";
                                 }
