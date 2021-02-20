@@ -1416,8 +1416,8 @@ private function buildChoiceField($n,$f,$data=null)
                                     $data = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
                                     if ($data && isset($data[$field['fk_display']]))
                                     {
-                                        error_log("Have data");
                                         $strData = htmlspecialchars($data[$field['fk_display']]);
+                                        error_log(" Have data {$strData}");
                                     }
                                     break;
                                 default:
@@ -1426,7 +1426,6 @@ private function buildChoiceField($n,$f,$data=null)
 
                             }
 
-                            $strData = htmlspecialchars($d[$name]);
                         }
                         echo $strData;
 
