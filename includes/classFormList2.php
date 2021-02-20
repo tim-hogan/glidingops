@@ -1351,6 +1351,8 @@ private function buildChoiceField($n,$f,$data=null)
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
+if ($table == "aircrafttype")
+    var_error_log($d,"d");
                 $recid="";
                 if ($this->haveParameterBoolean($global,"single_record") )
                 {
@@ -1445,10 +1447,10 @@ if ($table == "aircrafttype")
                                     break;
                                 case 'fk':
                                     $v = intval($d[$name]);
-                                    $d = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
-                                    if ($d && isset($d[$field['fk_display']]))
+                                    $d2 = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
+                                    if ($d2 && isset($d2[$field['fk_display']]))
                                     {
-                                        $strData = htmlspecialchars($d[$field['fk_display']]);
+                                        $strData = htmlspecialchars($d2[$field['fk_display']]);
                                     }
                                     break;
                                 default:
