@@ -31,6 +31,12 @@ $selff = trim($_SERVER["PHP_SELF"],"/");
 $user = null;
 if (isset($_SESSION['userid']))
     $user = $DB->getUser($_SESSION['userid']);
+if (!$user)
+{
+    header("Location: Login.php");
+    exit();
+}
+
 //Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
