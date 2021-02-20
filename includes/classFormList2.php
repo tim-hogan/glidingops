@@ -1369,6 +1369,10 @@ private function buildChoiceField($n,$f,$data=null)
 
                 foreach($fields as $name => $field)
                 {
+
+                    error_log("Field name {$name}");
+
+
                     $tdClass='';
                     switch ($field['type'])
                     {
@@ -1392,8 +1396,8 @@ private function buildChoiceField($n,$f,$data=null)
                         echo">";
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
-                            $v = urlencode($recid);
-                            $url = "{$selff}?v={$v}";
+                            $vrec = urlencode($recid);
+                            $url = "{$selff}?v={$vrec}";
                             echo "<a href='{$url}'>";
                         }
 
@@ -1448,6 +1452,7 @@ private function buildChoiceField($n,$f,$data=null)
 
                         }
                         echo $strData;
+                        error_log(" displat data {$strData}");
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
