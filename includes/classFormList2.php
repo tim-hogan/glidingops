@@ -1414,7 +1414,7 @@ if ($table == "aircrafttype")
                                 case 'text':
                                     $strData = htmlspecialchars($d[$name]);
 if ($table == "aircrafttype")
-    error_log(" strdata2  {$strData}");
+    error_log(" strdata2  {$strData}: name = {$name}: d[name] = {$d[$name]}");
                                     break;
                                 case 'integer':
                                     $strData = htmlspecialchars(intval($d[$name]));
