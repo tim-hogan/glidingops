@@ -11,7 +11,7 @@ function deleteButtonChange(tbl) {
     }
 }
 //This page
-var g_pageState = JSON.parse('<?php echo json_encode($pageAdminHome);?>');
+var g_pageState = JSON.parse('<?php echo json_encode($pageData);?>');
 function minmaxwinddow(n) {
     //Get the parenet div
     var e = parseInt(n.getAttribute("expanded"));
