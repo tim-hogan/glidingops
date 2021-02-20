@@ -29,15 +29,22 @@ $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
 $selff = trim($_SERVER["PHP_SELF"],"/");
 $user = null;
+$org = 0;
+$organistaion=null;
+
 if (isset($_SESSION['userid']))
     $user = $DB->getUser($_SESSION['userid']);
-if (!$user)
+if ($user && isset($user['org']))
+{
+    if ($organistaion = $DB->getOrganisation($user['org']) )
+        $org = $user['org'];
+}
+
+if ($org == 0)
 {
     header("Location: Login.php");
     exit();
 }
-
-//Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
 $pageData ['select'] = 'aircrafttype';
@@ -99,6 +106,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
     }
 }
+
+//Build any global data
+$g_data = array();
+$g_data['org'] = $org;
+
 ?>
 
 <!DOCTYPE HTML>
@@ -147,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             <div id="listglobals">
                                 <?php
                                 $FL = new FormList($formdata['aircrafttype']);
-                                $FL->buildList($DB,null);
+                                $FL->buildList($DB,$g_data);
                                 ?>
                             </div>
                         </div>
@@ -155,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                             <div id="listservers">
                                 <?php
                                 $FL = new FormList($formdata['aircraft']);
-                                $FL->buildList($DB,null);
+                                $FL->buildList($DB,$g_data);
                                 ?>
                             </div>
                         </div>
