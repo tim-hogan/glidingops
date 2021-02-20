@@ -1,0 +1,40 @@
+﻿#main {padding-left: 8px;padding-right: 8px;}
+.form {} 
+.form div.d_inputtext {margin-bottom: 14px;}
+.form div.d_emailtext {margin-bottom: 14px;}
+.form div.d_passwordtext {margin-bottom: 14px;}
+.form div.d_checkbox {margin-bottom: 14px;}
+.form div.d_choice {margin-bottom: 14px;}
+.form div.d_inputsubmit {}
+.form div.d_textarea {margin-bottom: 10px;}
+.form div.d_dropdown {margin-bottom: 14px;font-size: 14pt;}
+.form div.d_dropdown select {margin-top: 12px;font-size: 14pt;padding-left: 10px; padding-right: 10px; color: #555;}
+.form div.formgroup {border: solid 1px #888;padding: 8px;border-radius: 8px;margin-bottom: 20px;}
+.form input[type='text'] {border: none;border-bottom: solid 1pt #d7912f;outline: none;padding-top: 10px;padding-left: 10px;font-size: 14pt;color: #666;}
+.form input[type='text'].err {background-color: antiquewhite;}
+.form input[type='text'].integer {text-align: right; padding-right: 10px;}
+.form input[type='text'].decimal {text-align: right;padding-right: 10px;}
+.form input[type='text'].currency {text-align: right;padding-right: 10px;}
+.form input[type='email'] {border: none;border-bottom: solid 1pt #d7912f;outline: none;padding-top: 10px;padding-left: 10px;font-size: 14pt;color: #666;}
+.form input[type='email'].err {background-color: antiquewhite;}
+.form input[type='radio'] {}
+.form input[type='radio'].err {background-color: antiquewhite;}
+.form input[type='submit'] {}
+.form label {display: block;font-size: 9pt;color: #888;}
+.form span {margin-left: 8px;}
+.list td.r {text-align: right;}
+#formheading h1 {color: #777;font-size: 16pt; margin-bottom: 20px;}
+#formheadingintroduction {background-color: #eeeeee;padding: 20px;margin-bottom: 20px;font-size: 12pt;color: #555;}
+.form p.formgroupname {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    top: -28px;
+    background-color: #f8f8f8;
+    color: #000000;
+}
+@media only screen and (min-width: 800px) {
+#main {padding-left: 40px;padding-right: 40px;}
+.form div.formgroup {border: solid 1px #888;padding: 20px;border-radius: 8px;margin-bottom: 20px;}
+#formheading h1 {color: #777;font-size: 16pt; margin-bottom: 20px;}
+}

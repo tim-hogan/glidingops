@@ -1,0 +1,18 @@
+﻿.list {padding: 10px;}
+._listHead h1 {font-size: 16pt; color: #888;}
+.list table {border-collapse: collapse;min-width: 600px;}
+.list th {padding: 10px;border-top: solid 1px #888; border-bottom: solid 1px #888; background-color: #fff5db;color: #167729;text-align: left;}
+.list tr:first-child th:first-child {border-left: solid 1px #888;}
+.list tr:first-child th:last-child {border-right: solid 1px #888;}
+.list td {padding: 8px;color: #555;}
+.list td:first-child {border-left: solid 1px #888;}
+.list td:last-child {border-right: solid 1px #888;}
+.list tr:last-child td {border-bottom: solid 1px #888;}
+.list tr:hover {background-color: white;}
+.list .rtEntity {margin: 24px;}
+.list .listactions {padding: 10px;border: solid 1px #888;margin-bottom: 10px;border-radius: 5px;background-color: #ededed;min-width: 580px;}
+.list .listactions form {display: inline-block;}
+.list .listactions button {margin-right: 14px;}
+.list button.listDelete {}
+@media only screen and (min-width: 800px) {
+}
