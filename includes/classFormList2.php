@@ -61,11 +61,11 @@ class FormList
                 if (($end = strpos($str,"}",$start)) !== false)
                 {
                     error_log("End = {$end}");
-                    $v = substr($str,$start,$end-$start);
+                    $v = substr($str,$start,($end-$start)+1);
                     error_log(" v = {$v}");
                     $v = $this->getVariable($data,$v);
                     error_log(" v = {$v}");
-                    $ret = substr($str,0,$start+1) . substr($str,$end+1);
+                    $ret = substr($str,0,$start) . $v . substr($str,$end+1);
                     error_log(" ret = {$ret}");
                     return $ret;
                 }
