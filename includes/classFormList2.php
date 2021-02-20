@@ -61,7 +61,7 @@ class FormList
                 {
                     $v = substr($str,$start,$end-$start);
                     $v = $this->getVariable($data,$v);
-                    return = substr($str,0,$start+1) . substr($str,$end+1);
+                    return substr($str,0,$start+1) . substr($str,$end+1);
                 }
             }
         }
