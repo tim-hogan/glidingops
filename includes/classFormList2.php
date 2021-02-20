@@ -57,7 +57,7 @@ class FormList
         {
             if (($start = strpos($str,"{")) !== false)
             {
-                if (($end = strpos($str,"}",$start) !== false)
+                if (($end = strpos($str,"}",$start)) !== false)
                 {
                     $v = substr($str,$start,$end-$start);
                     $v = $this->getVariable($data,$v);
