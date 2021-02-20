@@ -40,7 +40,7 @@ if (!$user)
 //Secure::CheckPage2($user,SECURITY_ADMIN);
 
 $pageData = array();
-$pageData ['select'] = 'global';
+$pageData ['select'] = 'aircrafttype';
 $pageData ['form'] = array();
 $pageData ['form'] ['display'] = false;
 $pageData ['form'] ['mode'] = "";
@@ -143,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <div id="aircrafttype" class="rtEntityFirst">
+                        <div id="aircrafttype" class="rtEntity first">
                             <div id="listglobals">
                                 <?php
                                 $FL = new FormList($formdata['aircrafttype']);

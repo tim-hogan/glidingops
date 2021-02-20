@@ -9,7 +9,7 @@
 .list td:last-child {border-right: solid 1px #888;}
 .list tr:last-child td {border-bottom: solid 1px #888;}
 .list tr:hover {background-color: white;}
-.list .rtEntityFirst {margin: 24px;display: block;}
+.list .first {display: block;}
 .list .rtEntity {margin: 24px; display: none;}
 .list .listactions {padding: 10px;border: solid 1px #888;margin-bottom: 10px;border-radius: 5px;background-color: #ededed;min-width: 580px;}
 .list .listactions form {display: inline-block;}
