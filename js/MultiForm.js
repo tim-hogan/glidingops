@@ -19,12 +19,14 @@ function minmaxwinddow(n) {
     if (e == 1) {
         p.fullwidth = p.style.width;
         p.style.width = m + "px";
+        p.style.overflow = "hidden";
         n.innerHTML = ">>";
         n.setAttribute("expanded", "0");
         n.setAttribute("title", "Maximise Panel");
     }
     else {
         p.style.width = p.fullwidth;
+        p.style.overflow = "auto";
         n.innerHTML = "<<";
         n.setAttribute("expanded", "1");
         n.setAttribute("title", "Minimise Panel");
