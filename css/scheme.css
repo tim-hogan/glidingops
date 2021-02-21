@@ -11,3 +11,19 @@
     --border-bottom: solid 1px #888;
 }
 
+#right {
+    --bk-color: #f8f8f8;
+    --border-top: solid 1px #888;
+    --border-bottom: solid 1px #888;
+}
+
+#rightdetail {
+    --bk-color: #e8e8e8;
+    --border-top: solid 1px #888;
+    --border-bottom: solid 1px #888;
+}
+
+.list th {
+    --bk-color: #fff5db;
+    --text-color: #167729;
+}
