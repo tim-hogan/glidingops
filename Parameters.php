@@ -155,7 +155,7 @@ $g_data['org'] = $org;
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <?php FormList::buildPanel($DB,$g_data"aircrafttype",$formdata,true); ?>
+                        <?php FormList::buildPanel($DB,$g_data,"aircrafttype",$formdata,true); ?>
                         <!--
                         <div id="aircrafttype" class="rtEntity first">
                             <div id="listaircrafttype">
