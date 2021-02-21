@@ -11,7 +11,7 @@
     border-bottom: var(--border-bottom);
 }
 #left p {margin-right: 4px;}
-    #left p.lefttitle {
+    #left h1 {
         margin-right: 0;
         margin-bottom: 0;
         color: var(--heading-color);
