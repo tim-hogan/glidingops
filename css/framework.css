@@ -2,6 +2,7 @@
 #flexcontainer {display: flex;}
 .flexMinimse1 {display: flex;flex-direction: row-reverse;}
 .panel {margin-bottom: 20px;padding-left: 20px;}
+.panel2 {padding: 10px;}
 #left {
     background-color: var(--bk-color,#a0a0a0);
     flex-basis: 200px;

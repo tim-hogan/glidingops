@@ -146,17 +146,20 @@ $g_data['org'] = $org;
                 <div id="left">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"><<</div>
                     <div class="panel">
+                        <div class="panel2">
                         <h1>SETTINGS</h1>
                         <ul>
                             <li id="selaircrafttype" class="liselector" onclick="selectRight(this,'aircrafttype')">Aircraft Types</li>
                             <li id="selaircraft" class="liselector" onclick="selectRight(this,'aircraft')">Aircraft</li>
                         </ul>
+                        </div>
                     </div>
                 </div>
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
                         <?php FormList::buildPanel($DB,$g_data,"aircrafttype",$formdata,true); ?>
+                        <?php FormList::buildPanel($DB,$g_data,"aircraft",$formdata,true); ?>
                         <!--
                         <div id="aircrafttype" class="rtEntity first">
                             <div id="listaircrafttype">
@@ -166,7 +169,6 @@ $g_data['org'] = $org;
                                 ?>
                             </div>
                         </div>
-                        -->
                         <div id="aircraft" class="rtEntity">
                             <div id="listaircraft">
                                 <?php
@@ -175,7 +177,8 @@ $g_data['org'] = $org;
                                 ?>
                             </div>
                         </div>
-                    </div>
+                        -->
+                </div>
                 </div>
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
