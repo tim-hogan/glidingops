@@ -119,6 +119,7 @@ $g_data['org'] = $org;
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
     <title>GlidingOps Settings</title>
+    <link rel='stylesheet' type='text/css' href='css/scheme.css' />
     <link rel='stylesheet' type='text/css' href='css/base.css' />
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
