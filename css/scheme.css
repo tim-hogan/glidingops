@@ -1,11 +1,13 @@
 ﻿::root {
-    --left-bk-color: #91cffc;
-    --right-bk-color: #f8f8f8;
-    --rightdetail-bk-color: #ffffff;
+    --heading-color: #444;
+    --heading-font-size: 14pt;
+    --heading-font-weight: bold;
+    --heading-font-familiy: Calibri;
 }
 
 #left {
-    --bk-color: #91cffc;
+    --bk-color: #afdcfd;
     --border-top: solid 1px #888;
     --border-bottom: solid 1px #888;
 }
+

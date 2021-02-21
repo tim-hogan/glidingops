@@ -24,7 +24,11 @@
 .detailEntityFirst {padding-right: 20px; display: block;}
 .detailEntity {padding-right: 20px;display: none;}
 
-#formheading h1 {color: #777;font-size: 16pt; margin-bottom: 20px;}
+#formheading h1 {
+    color: var(--heading-color);
+    font-size: var(--heading-font-size);
+    margin-bottom: 20px;
+}
 #formheadingintroduction {background-color: #eeeeee;padding: 20px;margin-bottom: 20px;font-size: 12pt;color: #555;}
 .form p.formgroupname {
     display: inline-block;

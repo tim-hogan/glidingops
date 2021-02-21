@@ -1,5 +1,10 @@
 ﻿.list {padding: 10px;}
-._listHead h1 {font-size: 16pt; color: #888;}
+._listHead h1 {
+    font-size: var(--heading-font-size,14pt);
+    color: var(--heading-color,#888);
+    font-weight: var(--heading-font-weight);
+    font-familiy: var(--heading-font-familiy);
+}
 .list table {border-collapse: collapse;min-width: 600px;}
 .list th {padding: 10px;border-top: solid 1px #888; border-bottom: solid 1px #888; background-color: #fff5db;color: #167729;text-align: left;}
 .list tr:first-child th:first-child {border-left: solid 1px #888;}
