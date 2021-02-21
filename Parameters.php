@@ -146,7 +146,7 @@ $g_data['org'] = $org;
                 <div id="left">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"><<</div>
                     <div class="panel">
-                        <p class="lefttitle">SETTINGS</p>
+                        <h1>SETTINGS</h1>
                         <ul>
                             <li id="selaircrafttype" class="liselector" onclick="selectRight(this,'aircrafttype')">Aircraft Types</li>
                             <li id="selaircraft" class="liselector" onclick="selectRight(this,'aircraft')">Aircraft</li>

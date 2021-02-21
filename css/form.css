@@ -7,14 +7,39 @@
 .form div.d_inputsubmit {}
 .form div.d_textarea {margin-bottom: 10px;}
 .form div.d_dropdown {margin-bottom: 14px;font-size: 14pt;}
-.form div.d_dropdown select {margin-top: 12px;font-size: 14pt;padding-left: 10px; padding-right: 10px; color: #555;}
+    .form div.d_dropdown select {
+        margin-top: 0px;
+        font-size: 14pt;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 5px;
+        padding-bottom 5px;
+        color: #555;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+    }
 .form div.formgroup {border: solid 1px #888;padding: 8px;border-radius: 8px;margin-bottom: 20px;}
-.form input[type='text'] {border: none;border-bottom: solid 1pt #d7912f;outline: none;padding-top: 10px;padding-left: 10px;font-size: 14pt;color: #666;}
+    .form input[type='text'] {
+        border: none;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+        outline: none;
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 14pt;
+        color: #666;
+    }
 .form input[type='text'].err {background-color: antiquewhite;}
 .form input[type='text'].integer {text-align: right; padding-right: 10px;}
 .form input[type='text'].decimal {text-align: right;padding-right: 10px;}
 .form input[type='text'].currency {text-align: right;padding-right: 10px;}
-.form input[type='email'] {border: none;border-bottom: solid 1pt #d7912f;outline: none;padding-top: 10px;padding-left: 10px;font-size: 14pt;color: #666;}
+    .form input[type='email'] {
+        border: none;
+        border-bottom: solid 1pt var(--field-border-color-botton);
+        outline: none;
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: 14pt;
+        color: #666;
+    }
 .form input[type='email'].err {background-color: antiquewhite;}
 .form input[type='radio'] {}
 .form input[type='radio'].err {background-color: antiquewhite;}
@@ -40,5 +65,9 @@
 }
 @media only screen and (min-width: 800px) {
 .form div.formgroup {border: solid 1px #888;padding: 20px;border-radius: 8px;margin-bottom: 20px;}
-#formheading h1 {color: #777;font-size: 16pt; margin-bottom: 20px;}
+    #formheading h1 {
+        color: var(--heading-color);
+        font-size: var(--heading-font-size);
+        margin-bottom: 20px;
+    }
 }
