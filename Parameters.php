@@ -111,6 +111,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 $g_data = array();
 $g_data['org'] = $org;
 
+
+//Declare all tables to be managed
+$g_FormTables = ['aircrafttype','aircraft'];
 ?>
 
 <!DOCTYPE HTML>
@@ -149,8 +152,11 @@ $g_data['org'] = $org;
                         <div class="panel2">
                         <h1>SETTINGS</h1>
                         <ul>
+                            <?php FormList::buildAllSelectEntries($g_FormTables,$formdata); ?>
+                            <!-- 
                             <li id="selaircrafttype" class="liselector" onclick="selectRight(this,'aircrafttype')">Aircraft Types</li>
                             <li id="selaircraft" class="liselector" onclick="selectRight(this,'aircraft')">Aircraft</li>
+                            -->
                         </ul>
                         </div>
                     </div>
@@ -158,87 +164,74 @@ $g_data['org'] = $org;
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
-                        <?php FormList::buildPanel($DB,$g_data,"aircrafttype",$formdata,true); ?>
-                        <?php FormList::buildPanel($DB,$g_data,"aircraft",$formdata,true); ?>
-                        <!--
-                        <div id="aircrafttype" class="rtEntity first">
-                            <div id="listaircrafttype">
-                                <?php
-                                //$FL = new FormList($formdata['aircrafttype']);
-                                //$FL->buildList($DB,$g_data);
-                                ?>
-                            </div>
-                        </div>
-                        <div id="aircraft" class="rtEntity">
-                            <div id="listaircraft">
-                                <?php
-                                $FL = new FormList($formdata['aircraft']);
-                                $FL->buildList($DB,$g_data);
-                                ?>
-                            </div>
-                        </div>
+                        <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
+                        <!-- 
+                        <?php //FormList::buildPanel($DB,$g_data,"aircrafttype",$formdata,true); ?>
+                        <?php //FormList::buildPanel($DB,$g_data,"aircraft",$formdata,true); ?>
                         -->
                 </div>
                 </div>
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
-                        <div id="aircrafttypeform" class="detailEntity">
-                            <div class="form">
-                            <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                                <?php
-                                if ($pageData ['select'] == 'aircrafttype')
-                                {
-                                    $FL = new FormList($formdata['aircrafttype']);
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                    $FL->buildFormFields(null,$DB);
-                                    echo "<div class='submit'>";
-                                    if ($pageData ['form'] ['mode'] == "edit")
+                        <div class="panel2">
+                            <div id="aircrafttypeform" class="detailEntity">
+                                <div class="form">
+                                <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                                    <?php
+                                    if ($pageData ['select'] == 'aircrafttype')
                                     {
-                                        $v = FormList::encryptParam("table=aircrafttype&action=change&recid={$pageData ['form'] ['recid']}");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                                        $FL = new FormList($formdata['aircrafttype']);
+                                        if ($pageData ['form'] ['mode'] == "edit")
+                                            $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                                        $FL->buildFormFields(null,$DB);
+                                        echo "<div class='submit'>";
+                                        if ($pageData ['form'] ['mode'] == "edit")
+                                        {
+                                            $v = FormList::encryptParam("table=aircrafttype&action=change&recid={$pageData ['form'] ['recid']}");
+                                            echo "<input type='hidden' name='v' value='{$v}' />";
+                                            echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                                        }
+                                        else
+                                        {
+                                            $v = FormList::encryptParam("table=aircrafttype&action=create");
+                                            echo "<input type='hidden' name='v' value='{$v}' />";
+                                            echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                                        }
+                                        echo "</div>";
                                     }
-                                    else
-                                    {
-                                        $v = FormList::encryptParam("table=aircrafttype&action=create");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
-                                    }
-                                    echo "</div>";
-                                }
-                                ?>
-                            </form>
+                                    ?>
+                                </form>
+                                </div>
                             </div>
-                        </div>
-                        <div id="aircraftform" class="detailEntity">
-                            <div class="form">
-                            <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                                <?php
-                                if ($pageData ['select'] == 'aircraft')
-                                {
-                                    $FL = new FormList($formdata['aircraft']);
-                                    if ($pageData ['form'] ['mode'] == "edit")
-                                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                    $FL->buildFormFields(null,$DB);
-                                    echo "<div class='submit'>";
-                                    if ($pageData ['form'] ['mode'] == "edit")
+                            <div id="aircraftform" class="detailEntity">
+                                <div class="form">
+                                <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                                    <?php
+                                    if ($pageData ['select'] == 'aircraft')
                                     {
-                                        $v = FormList::encryptParam("table=aircraft&action=change&recid={$pageData ['form'] ['recid']}");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_aircraft_change' value='CONFIRM CHANGE' />";
+                                        $FL = new FormList($formdata['aircraft']);
+                                        if ($pageData ['form'] ['mode'] == "edit")
+                                            $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                                        $FL->buildFormFields(null,$DB);
+                                        echo "<div class='submit'>";
+                                        if ($pageData ['form'] ['mode'] == "edit")
+                                        {
+                                            $v = FormList::encryptParam("table=aircraft&action=change&recid={$pageData ['form'] ['recid']}");
+                                            echo "<input type='hidden' name='v' value='{$v}' />";
+                                            echo "<input type='submit' name='_aircraft_change' value='CONFIRM CHANGE' />";
+                                        }
+                                        else
+                                        {
+                                            $v = FormList::encryptParam("table=aircraft&action=create");
+                                            echo "<input type='hidden' name='v' value='{$v}' />";
+                                            echo "<input type='submit' name='_aircraft_new' value='CREATE NEW' />";
+                                        }
+                                        echo "</div>";
                                     }
-                                    else
-                                    {
-                                        $v = FormList::encryptParam("table=aircraft&action=create");
-                                        echo "<input type='hidden' name='v' value='{$v}' />";
-                                        echo "<input type='submit' name='_aircraft_new' value='CREATE NEW' />";
-                                    }
-                                    echo "</div>";
-                                }
-                                ?>
-                            </form>
+                                    ?>
+                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>

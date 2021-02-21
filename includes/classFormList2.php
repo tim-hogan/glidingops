@@ -1472,6 +1472,22 @@ private function buildChoiceField($n,$f,$data=null)
 
     }
 
+    static function buildSelectEntry($tablenname,$formdata)
+    {
+        $strText = $tablenname;
+        if (isset($formdata[$tablename] ['global'] ['selector_text'] ))
+            $strText = htmlspecialchars($formdata[$tablename] ['global'] ['selector_text']);
+        echo "<li id='sel{$tablenname}' class='liselector' onclick='selectRight(this,\"{$tablenname}\")'>{$strText}</li>";
+    }
+
+    static function buildAllSelectEntries($FormTables,$formdata)
+    {
+        foreach ($FormTables as $t)
+        {
+            FormList::buildSelectEntry($,$formdata)
+        }
+    }
+
     static public function buildPanel($DB,$data,$tablename,$formdata,$first=false)
     {
         echo "<div id='{$tablename}' class='rtEntity";
@@ -1479,9 +1495,20 @@ private function buildChoiceField($n,$f,$data=null)
             echo " first";
         echo "'>";
         echo "<div id='list{$tablename}'>";
-        (new FormList($formdata[$tablename]))->buildList($DB,$data);    
+        (new FormList($formdata[$tablename]))->buildList($DB,$data);
         echo "</div>";
         echo "</div>";
+    }
+
+
+    static public function buildAllPanels($DB,$data,$FormTables,$formdata)
+    {
+        $first = true;
+        foreach ($FormTables as $t)
+        {
+            FormList::buildPanel($DB,$data,$t,$formdata,$first);
+            $first = false;
+        }
     }
 
     static public function encryptParam($v)
