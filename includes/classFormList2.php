@@ -1354,18 +1354,12 @@ private function buildChoiceField($n,$f,$data=null)
                 $recid="";
                 if ($this->haveParameterBoolean($global,"single_record") )
                 {
-if ($table == "aircrafttype")
-error_log("Construct encrypted parameter for single_record table {$table}");
                     $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
                 }
                 else
                 {
-if ($table == "aircrafttype")
-    error_log("Construct encrypted parameter for primary key table {$table}");
                     if (isset($d[$global['primary_key']]))
                     {
-if ($table == "aircrafttype")
-    error_log("Global PK is set {$table}");
                         $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
                     }
                 }
@@ -1373,8 +1367,6 @@ if ($table == "aircrafttype")
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' class='listcheck{$table}' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
 
-if ($table == "aircrafttype")
-    error_log("Recid is {$recid}");
                 foreach($fields as $name => $field)
                 {
 
@@ -1460,9 +1452,6 @@ if ($table == "aircrafttype")
                         }
 
                         echo $strData;
-                        if ($table == "aircrafttype")
-                            error_log(" display data {$strData}");
-
 
                         if ($this->haveParameterBoolean($list_attr,'anchor'))
                         {
@@ -1481,6 +1470,18 @@ if ($table == "aircrafttype")
 
         echo "</div>";
 
+    }
+
+    static public function buildPanel($DB,$data,$tablename,$formdata,$first=false)
+    {
+        echo "<div id='{$tablename}' class='rtEntity";
+        if ($first)
+            echo " first";
+        echo "'>";
+        echo "<div id='list{$tablename}'>";
+        (new FormList($formdata[$tablename]))->buildList($DB,$data);    
+        echo "</div>";
+        echo "</div>";
     }
 
     static public function encryptParam($v)

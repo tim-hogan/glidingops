@@ -155,16 +155,19 @@ $g_data['org'] = $org;
                 <div id="right">
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
+                        <?php FormList::buildPanel($DB,$g_data"aircrafttype",$formdata,true); ?>
+                        <!--
                         <div id="aircrafttype" class="rtEntity first">
-                            <div id="listglobals">
+                            <div id="listaircrafttype">
                                 <?php
-                                $FL = new FormList($formdata['aircrafttype']);
-                                $FL->buildList($DB,$g_data);
+                                //$FL = new FormList($formdata['aircrafttype']);
+                                //$FL->buildList($DB,$g_data);
                                 ?>
                             </div>
                         </div>
+                        -->
                         <div id="aircraft" class="rtEntity">
-                            <div id="listservers">
+                            <div id="listaircraft">
                                 <?php
                                 $FL = new FormList($formdata['aircraft']);
                                 $FL->buildList($DB,$g_data);
