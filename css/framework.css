@@ -14,10 +14,10 @@
     #left p.lefttitle {
         margin-right: 0;
         margin-bottom: 0;
-        color: var(--heading-color,#555);
-        font-weight: var(--heading-font-weight,bold);
-        font-size: var(--heading-font-size,14pt);
-        font-family: var(--heading-font-family,Arial);
+        color: var(--heading-color);
+        font-weight: var(--heading-font-weight);
+        font-size: var(--heading-font-size);
+        font-family: var(--heading-font-family);
     }
 #left ul {list-style-type: none;padding: 0;}
 #left li {cursor: pointer; font-size: 12pt;padding-left: 8px;}
