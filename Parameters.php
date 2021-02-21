@@ -113,7 +113,7 @@ $g_data['org'] = $org;
 
 
 //Declare all tables to be managed
-$g_FormTables = ['aircrafttype','aircraft'];
+$g_FormTables = ['aircrafttype','aircraft','vectors'];
 ?>
 
 <!DOCTYPE HTML>
