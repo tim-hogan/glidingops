@@ -1351,17 +1351,21 @@ private function buildChoiceField($n,$f,$data=null)
 
             while ($d = $r->fetch_array(MYSQLI_ASSOC))
             {
-if ($table == "aircrafttype")
-    var_error_log($d,"d");
                 $recid="";
                 if ($this->haveParameterBoolean($global,"single_record") )
                 {
-                        $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
+if ($table == "aircrafttype")
+error_log("Construct encrypted parameter for single_record table {$table}");
+                    $recid = FormList::encryptParam("table={$table}&onerec=1,action=edit");
                 }
                 else
                 {
+if ($table == "aircrafttype")
+    error_log("Construct encrypted parameter for primary key table {$table}");
                     if (isset($d[$global['primary_key']]))
                     {
+if ($table == "aircrafttype")
+    error_log("Global PK is set {$table}");
                         $recid = FormList::encryptParam("table={$table}&id={$d[$global['primary_key']]}&action=edit");
                     }
                 }
@@ -1369,11 +1373,10 @@ if ($table == "aircrafttype")
                 if ($this->haveParameterText($list,'type') && $list['type'] == "checkbox")
                     echo "<td><input type='checkbox' class='listcheck{$table}' value='{$recid}' onchange='deleteButtonChange(\"{$table}\")'/></td>";
 
+if ($table == "aircrafttype")
+    error_log("Recid is {$recid}");
                 foreach($fields as $name => $field)
                 {
-
-if ($table == "aircrafttype")
-    error_log("Field name {$name}");
 
 
                     $tdClass='';
@@ -1405,9 +1408,6 @@ if ($table == "aircrafttype")
                         }
 
                         $strData = '';
-if ($table == "aircrafttype")
-    error_log(" strdata1  {$strData}");
-
 
                         if (isset($d[$name]))
                         {
@@ -1415,8 +1415,6 @@ if ($table == "aircrafttype")
                             {
                                 case 'text':
                                     $strData = htmlspecialchars($d[$name]);
-if ($table == "aircrafttype")
-    error_log(" strdata2  {$strData}: name = {$name}: d[name] = {$d[$name]}");
                                     break;
                                 case 'integer':
                                     $strData = htmlspecialchars(intval($d[$name]));
@@ -1460,8 +1458,6 @@ if ($table == "aircrafttype")
                             }
 
                         }
-if ($table == "aircrafttype")
-    error_log(" strdata3  {$strData}");
 
                         echo $strData;
                         if ($table == "aircrafttype")
