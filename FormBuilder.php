@@ -309,7 +309,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
             $cnt = 0;
             $newname = "newgroup" . strval($cnt);
-            while (isset(g_def[$g_table] ['form'] ['groups'] [$newname]))
+            while (isset($g_def[$g_table] ['form'] ['groups'] [$newname]))
             {
                 $cnt++;
                 $newname = "newgroup" . strval($cnt);
