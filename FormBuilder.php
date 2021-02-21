@@ -329,6 +329,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
             $g_table = $_POST['table'];
             updateTextrec($g_def[$g_table] ['global'] ['primary_key'],'primary_key');
+            updateTextrec($g_def[$g_table] ['global'] ['selector_text'],'selector_text');
             updateBoolanrec($g_def[$g_table] ['global'] ['single_record'],'single_record');
 
             updateTextrec($g_def[$g_table] ['form'] ['heading'],'formheading');
@@ -594,6 +595,7 @@ if (isset($_SESSION['filename']))
                                     if (isset($global['primary_key']))
                                         $prim_key = $global['primary_key'];
                                     bTF('primary_key','primary_key',$prim_key);
+                                    bTF('selector_text','selector_text',$global['selector_text']);
                                     bBF('single_record','single_record',$global['single_record']);
                                     echo "</table>";
                                 echo "</div>";
