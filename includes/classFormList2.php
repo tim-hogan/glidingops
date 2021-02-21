@@ -1484,7 +1484,7 @@ private function buildChoiceField($n,$f,$data=null)
     {
         foreach ($FormTables as $t)
         {
-            FormList::buildSelectEntry($,$formdata)
+            FormList::buildSelectEntry($t,$formdata);
         }
     }
 
