@@ -19,6 +19,7 @@ function minmaxwinddow(n) {
     if (e == 1) {
         p.fullwidth = p.style.width;
         p.style.width = m + "px";
+        p.style.flexBasis = m + "px";
         p.style.overflow = "hidden";
         n.innerHTML = ">>";
         n.setAttribute("expanded", "0");
@@ -26,6 +27,7 @@ function minmaxwinddow(n) {
     }
     else {
         p.style.width = p.fullwidth;
+        p.style.flexBasis = p.fullwidth;
         p.style.overflow = "auto";
         n.innerHTML = "<<";
         n.setAttribute("expanded", "1");
