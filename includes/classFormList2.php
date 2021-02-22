@@ -1130,12 +1130,13 @@ private function buildChoiceField($n,$f,$data=null)
         {
             if (isset($f['form'] ['default']))
             {
+                //For hidden fields we encrypt
+                $defValue =null;
                 if ($this->isVariable($f['form'] ['default']) )
-                {
-                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
-                }
+                    $defValue = $this->getVariable($data,$f['form'] ['default']);
                 else
-                    $f['value'] = $f['form'] ['default'];
+                    $defValue = $f['form'] ['default'];
+                $f['value'] = FormList::encryptParam($defValue);
             }
         }
 
@@ -1306,7 +1307,7 @@ private function buildChoiceField($n,$f,$data=null)
                         $this->buildFKField($name,$field,$data,$DB);
                         break;
                     case "hidden":
-                        buildHiddenField($name,$field,$data,$DB);
+                        $this->buildHiddenField($name,$field,$data,$DB);
                         break;
                     default:
                         break;
