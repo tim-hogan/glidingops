@@ -1,5 +1,5 @@
 <?php
-require_once "./includes/classTimeHelpers.php";
+require_once "./includes/classTime.php";
 class FormList
 {
     private $config;
