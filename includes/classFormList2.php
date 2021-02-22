@@ -1,4 +1,5 @@
 <?php
+require_once "./includes/classTimeHelpers.php";
 class FormList
 {
     private $config;
@@ -278,9 +279,7 @@ class FormList
                         break;
                     case "hidden":
                         $hiddenValue = FormList::getField($name . "_f",false);
-                        error_log("Input: Hidden value in field {$hiddenValue}");
                         $decode = FormList::decryptParamRaw($hiddenValue);
-                        var_error_log($decode,"Input Decode of hidden");
                         $this->config['fields'] [$name] ["value"] = $decode['hidden'];
                         break;
 
@@ -899,7 +898,94 @@ class FormList
         echo "</div>";
     }
 
-private function buildChoiceField($n,$f,$data=null)
+    private function buildDateField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        if (isset($f['tag']))
+            $tag = $f['tag'];
+
+        echo "<div id='{$divid}'";
+        if ($formclassesdiv && isset($formclassesdiv['inputtext']))
+            echo " class='{$formclassesdiv['inputtext']}'";
+        echo ">";
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+        $subtag = "date";
+        if (isset($f['sub-tag']))
+            $subtag = $f['sub-tag'];
+        echo "<input class='date";
+        if (isset($f['error']) && $f['error'])
+            echo " err'";
+        else
+            echo "'";
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $tz = 'UTC';
+            //This relies on the $_SESSION Variable tz
+            if (isset($_SESSION['tz']))
+                $tz = = $_SESSION['tz'];
+
+            $v = classTimeHelpers::timeFormat($f['value'],'Y-m-d',$tz);
+
+            echo "value='{$v}' ";
+        }
+        if (isset($f['size']))
+            echo " size='{$f['size']}' ";
+        if (isset ($f['form'] ['title']) && strlen($f['form'] ['title'] ) > 0)
+            echo "title='{$f['form'] ['title']}' ";
+        echo " />";
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+
+    private function buildChoiceField($n,$f,$data=null)
     {
         $fid = $n . "_id";
         $divid = $n . "_divid";
@@ -1133,22 +1219,15 @@ private function buildChoiceField($n,$f,$data=null)
             $defValue =null;
             if ($this->isVariable($f['form'] ['default']) )
             {
-                error_log("Default is variable {$defValue}");
                 $defValue = $this->getVariable($data,$f['form'] ['default']);
-                error_log("Default variable value {$defValue}");
             }
             else
             {
                 $defValue = $f['form'] ['default'];
-                error_log("Default is not variable {$defValue}");
             }
             $defValue = "hidden={$defValue}";
-            error_log("Hidden default = {$defValue}");
             $f['value'] = FormList::encryptParam($defValue);
-            error_log("Hidden default encrypted = {$f['value']}");
         }
-        else
-            error_log("No default for field");
 
         $subtag = "hidden";
         echo "<input ";
@@ -1293,6 +1372,9 @@ private function buildChoiceField($n,$f,$data=null)
                         break;
                     case "currency":
                         $this->buildCurrencyField($name,$field);
+                        break;
+                    case "date":
+                        $this->buildDateField($name,$field);
                         break;
                     case "percent":
                         $this->buildPercentField($name,$field);

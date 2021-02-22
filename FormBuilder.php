@@ -480,6 +480,8 @@ if (isset($_SESSION['filename']))
     <meta name="viewport" content="width=device-width" />
     <meta name="viewport" content="initial-scale=1.0" />
     <title>FormBuilder</title>
+    <link rel='stylesheet' type='text/css' href='css/scheme.css' />
+    <link rel='stylesheet' type='text/css' href='css/framework.css' />
     <link rel='stylesheet' type='text/css' href='css/form.css' />
     <link rel='stylesheet' type='text/css' href='css/list.css' />
     <style>
@@ -689,7 +691,7 @@ if (isset($_SESSION['filename']))
                         echo "<p class='secheading'>FIELD DATA FOR {$g_field}</p>";
                         echo "<form method='POST' action='{$_SERVER["PHP_SELF"]}'>";
                         echo "<table>";
-                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','decimal','percent','currency','button','choice','fk','hidden']);
+                        bDDF('type',"{$g_table}_{$g_field}_type",$fields[$g_field] ['type'],['text','boolean','integer','decimal','percent','currency','date', 'time', 'datetime','button','choice','fk','hidden']);
                         bDDF('tag',"{$g_table}_{$g_field}_tag",$fields[$g_field] ['tag'],['input','textarea']);
                         bTF('sub-tag',"{$g_table}_{$g_field}_sub-tag",$fields[$g_field] ['sub-tag']);
                         bBF('dbfield',"{$g_table}_{$g_field}_dbfield",$fields[$g_field] ['dbfield']);
