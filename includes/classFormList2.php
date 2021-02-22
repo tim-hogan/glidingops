@@ -1595,7 +1595,7 @@ private function buildChoiceField($n,$f,$data=null)
                     $FL = new FormList($formdata[$tablename]);
                     if ($pageData ['form'] ['mode'] == "edit")
                         $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                    $FL->buildFormFields(null,$DB);
+                    $FL->buildFormFields($data,$DB);
                     echo "<div class='submit'>";
                     if ($pageData ['form'] ['mode'] == "edit")
                     {
