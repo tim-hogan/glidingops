@@ -276,6 +276,12 @@ class FormList
                     case "fk":
                         $this->config['fields'] [$name] ["value"] = FormList::getIntegerField($name . "_f",$trim);
                         break;
+                    case "hidden":
+                        $hiddenValue = FormList::getField($name . "_f",false);
+                        $decode = FormList::decryptParamRaw($hiddenValue);
+                        error_log("Decode of hidden = {$decode}");
+                        $this->config['fields'] [$name] ["value"] = $decode;
+                        break;
 
                 }
 
@@ -1118,12 +1124,6 @@ private function buildChoiceField($n,$f,$data=null)
                     $formclassesdiv = $formclasses['div'];
             }
         }
-
-        $prefix = "";
-        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
-            $prefix="* ";
-        if (isset($f ['form'] ['formlabel']))
-            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
 
         //Default values
         if (! isset ($f['value']))
