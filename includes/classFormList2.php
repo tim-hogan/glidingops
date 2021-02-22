@@ -280,7 +280,7 @@ class FormList
                         $hiddenValue = FormList::getField($name . "_f",false);
                         $decode = FormList::decryptParamRaw($hiddenValue);
                         error_log("Decode of hidden = {$decode}");
-                        $this->config['fields'] [$name] ["value"] = $decode;
+                        $this->config['fields'] [$name] ["value"] = $decode['hidden'];
                         break;
 
                 }
@@ -1136,6 +1136,8 @@ private function buildChoiceField($n,$f,$data=null)
                     $defValue = $this->getVariable($data,$f['form'] ['default']);
                 else
                     $defValue = $f['form'] ['default'];
+                $defValue = "hidden={$defValue}";
+                error_log("Hidden default = {$defValue}");
                 $f['value'] = FormList::encryptParam($defValue);
             }
         }
