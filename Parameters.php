@@ -175,6 +175,9 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
                         <div class="panel2">
+                            <?php FormList::buildForm($DB,$g_data,"vector",$formdata,$pagedata); ?>
+                            
+                            
                             <div id="aircrafttypeform" class="detailEntity">
                                 <div class="form">
                                 <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">

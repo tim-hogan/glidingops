@@ -1516,6 +1516,37 @@ private function buildChoiceField($n,$f,$data=null)
         }
     }
 
+    static public function buildForm($DB,$data,$tablename,$formdata,$pagedata)
+    {
+        echo "<div id='{$tablename}form' class='detailEntity'>";
+            echo "<div class='form'>";
+            echo "<form method='POST' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>";
+                if ($pageData ['select'] == $tablename)
+                {
+                    $FL = new FormList($formdata[$tablename]);
+                    if ($pageData ['form'] ['mode'] == "edit")
+                        $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                    $FL->buildFormFields(null,$DB);
+                    echo "<div class='submit'>";
+                    if ($pageData ['form'] ['mode'] == "edit")
+                    {
+                        $v = FormList::encryptParam("table={$tablename}&action=change&recid={$pageData ['form'] ['recid']}");
+                        echo "<input type='hidden' name='v' value='{$v}' />";
+                        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                    }
+                    else
+                    {
+                        $v = FormList::encryptParam("table={$tablename}&action=create");
+                        echo "<input type='hidden' name='v' value='{$v}' />";
+                        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                    }
+                    echo "</div>";
+                }
+            echo "</form>";
+            echo "</div>";
+        echo "</div>";
+    }
+
     static public function encryptParam($v)
     {
         // Remove the base64 encoding from our key
