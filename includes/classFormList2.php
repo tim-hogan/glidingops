@@ -1516,7 +1516,7 @@ private function buildChoiceField($n,$f,$data=null)
         }
     }
 
-    static public function buildForm($DB,$data,$tablename,$formdata,$pagedata)
+    static public function buildForm($DB,$data,$tablename,$formdata,$pageData)
     {
         echo "<div id='{$tablename}form' class='detailEntity'>";
             echo "<div class='form'>";
