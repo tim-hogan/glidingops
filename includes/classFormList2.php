@@ -956,9 +956,11 @@ class FormList
         if (isset ($f['value']))
         {
             $tz = 'UTC';
-            //This relies on the $_SESSION Variable tz
+            //This relies on the $_SESSION Variable tz or timezone
             if (isset($_SESSION['tz']))
-                $tz = = $_SESSION['tz'];
+                $tz = $_SESSION['tz'];
+            elseif (isset($_SESSION['timezone']))
+                $tz = $_SESSION['timezone'];
 
             $v = classTimeHelpers::timeFormat($f['value'],'Y-m-d',$tz);
 
