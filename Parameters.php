@@ -175,7 +175,7 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
                         <div class="panel2">
-                            <?php FormList::buildForm($DB,$g_data,"vector",$formdata,$pagedata); ?>
+                            <?php FormList::buildForm($DB,$g_data,"vector",$formdata,$pageData); ?>
                             
                             
                             <div id="aircrafttypeform" class="detailEntity">
