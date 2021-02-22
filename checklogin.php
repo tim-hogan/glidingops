@@ -33,6 +33,7 @@ if ($row['password'] == $mypassword)
   $_SESSION['memberid']=$row['member'];
   $_SESSION['org']=$row['org'];
   $_SESSION['session_key']=base64_encode(openssl_random_pseudo_bytes(32));
+  $_SESSION['csrf_key'] = base64_encode(openssl_random_pseudo_bytes(32));
   if ($_SESSION['org'] === NULL)
     $_SESSION['org'] = 0;
   $_SESSION['security']=$row['securitylevel'];
