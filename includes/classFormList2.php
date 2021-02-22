@@ -1472,7 +1472,7 @@ private function buildChoiceField($n,$f,$data=null)
 
     }
 
-    static function buildSelectEntry($tablenname,$formdata)
+    static function buildSelectEntry($tablename,$formdata)
     {
         $strText = $tablenname;
         if (isset($formdata[$tablename] ['global'] ['selector_text'] ))
