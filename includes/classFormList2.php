@@ -1480,9 +1480,9 @@ private function buildChoiceField($n,$f,$data=null)
             $strText = htmlspecialchars($formdata[$tablename] ['global'] ['selector_text']);
         }
         if (strlen($strText) == 0)
-            $strText = $tablenname;
+            $strText = $tablename;
 
-        echo "<li id='sel{$tablenname}' class='liselector' onclick='selectRight(this,\"{$tablenname}\")'>{$strText}</li>";
+        echo "<li id='sel{$tablename}' class='liselector' onclick='selectRight(this,\"{$tablename}\")'>{$strText}</li>";
     }
 
     static function buildAllSelectEntries($FormTables,$formdata)
