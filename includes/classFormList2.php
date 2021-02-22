@@ -1134,15 +1134,26 @@ private function buildChoiceField($n,$f,$data=null)
                 //For hidden fields we encrypt
                 $defValue =null;
                 if ($this->isVariable($f['form'] ['default']) )
+                {
+                    error_log("Default is variable {$defValue}");
                     $defValue = $this->getVariable($data,$f['form'] ['default']);
+                    error_log("Default variable value {$defValue}");
+                }
                 else
+                {
                     $defValue = $f['form'] ['default'];
+                    error_log("Default is not variable {$defValue}");
+                }
                 $defValue = "hidden={$defValue}";
                 error_log("Hidden default = {$defValue}");
                 $f['value'] = FormList::encryptParam($defValue);
                 error_log("Hidden default encrypted = {$f['value']}");
             }
+            else
+                error_log("No default for field");
         }
+        else
+            error_log("Value is already set");
 
         $subtag = "hidden";
         echo "<input ";
