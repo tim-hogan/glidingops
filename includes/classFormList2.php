@@ -1101,6 +1101,76 @@ private function buildChoiceField($n,$f,$data=null)
         echo "</div>";
     }
 
+    private function buildHiddenField($n,$f,$data=null)
+    {
+        $fid = $n . "_id";
+        $divid = $n . "_divid";
+        $fname = $n ."_f";
+        $tag = 'input';
+
+        if (isset($this->config['form']))
+        {
+            $form = $this->config['form'];
+            if (isset($form['classes']))
+            {
+                $formclasses = $form['classes'];
+                if (isset($formclasses['div']))
+                    $formclassesdiv = $formclasses['div'];
+            }
+        }
+
+        $prefix = "";
+        if (isset($f ['form'] ['required']) && $f ['form'] ['required'])
+            $prefix="* ";
+        if (isset($f ['form'] ['formlabel']))
+            echo "<label for='{$fid}'>{$prefix}{$f ['form'] ['formlabel']}</label>";
+
+        //Default values
+        if (! isset ($f['value']))
+        {
+            if (isset($f['form'] ['default']))
+            {
+                if ($this->isVariable($f['form'] ['default']) )
+                {
+                    $f['value'] = $this->getVariable($data,$f['form'] ['default']);
+                }
+                else
+                    $f['value'] = $f['form'] ['default'];
+            }
+        }
+
+        $subtag = "hidden";
+        if (isset($f['sub-tag']))
+            $subtag = $f['sub-tag'];
+        echo "<input ";
+        if (isset($f['error']) && $f['error'])
+        {
+            echo "class='err'";
+        }
+        echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
+        if (isset ($f['value']))
+        {
+            $v = htmlspecialchars($f['value']);
+            echo "value='{$v}' ";
+        }
+        echo " />";
+
+
+
+        //Check for post text
+        if ( isset ($f['form'] ['posttext']) && strlen($f['form'] ['posttext']) > 0)
+        {
+            $v = $f['form'] ['posttext'];
+            if ($data && $this->isVariable($v))
+            {
+                $v = $this->getVariable($data,$v);
+            }
+            echo "<span>{$v}</span>";
+        }
+
+        echo "</div>";
+    }
+
     public function getTableData($DB,$recid)
     {
         if (! $this->config)
@@ -1234,6 +1304,9 @@ private function buildChoiceField($n,$f,$data=null)
                         break;
                     case "fk":
                         $this->buildFKField($name,$field,$data,$DB);
+                        break;
+                    case "hidden":
+                        buildHiddenField($name,$field,$data,$DB);
                         break;
                     default:
                         break;
