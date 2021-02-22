@@ -1141,17 +1141,11 @@ private function buildChoiceField($n,$f,$data=null)
         }
 
         $subtag = "hidden";
-        if (isset($f['sub-tag']))
-            $subtag = $f['sub-tag'];
         echo "<input ";
-        if (isset($f['error']) && $f['error'])
-        {
-            echo "class='err'";
-        }
         echo "type='{$subtag}' id='{$fid}' name='{$fname}'";
         if (isset ($f['value']))
         {
-            $v = htmlspecialchars($f['value']);
+            $v = $f['value'];
             echo "value='{$v}' ";
         }
         echo " />";
@@ -1169,7 +1163,6 @@ private function buildChoiceField($n,$f,$data=null)
             echo "<span>{$v}</span>";
         }
 
-        echo "</div>";
     }
 
     public function getTableData($DB,$recid)
