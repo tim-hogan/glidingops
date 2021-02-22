@@ -153,10 +153,6 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
                         <h1>SETTINGS</h1>
                         <ul>
                             <?php FormList::buildAllSelectEntries($g_FormTables,$formdata); ?>
-                            <!-- 
-                            <li id="selaircrafttype" class="liselector" onclick="selectRight(this,'aircrafttype')">Aircraft Types</li>
-                            <li id="selaircraft" class="liselector" onclick="selectRight(this,'aircraft')">Aircraft</li>
-                            -->
                         </ul>
                         </div>
                     </div>
@@ -165,77 +161,75 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
                     <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><<</div>
                     <div class="panel">
                         <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
-                        <!-- 
-                        <?php //FormList::buildPanel($DB,$g_data,"aircrafttype",$formdata,true); ?>
-                        <?php //FormList::buildPanel($DB,$g_data,"aircraft",$formdata,true); ?>
-                        -->
                 </div>
                 </div>
                 <div id="rightdetail">
                     <div class="hider" expanded="1" minsize="20" onclick="hidewinddow(this)">X</div>
                     <div class="panel">
                         <div class="panel2">
-                            <?php FormList::buildForm($DB,$g_data,"vectors",$formdata,$pageData); ?>
+                            <?php FormList::buildAllForms($DB,$g_data,$g_FormTables,$formdata,$pageData); ?>
                             
-                            
+                            <!-- 
                             <div id="aircrafttypeform" class="detailEntity">
                                 <div class="form">
-                                <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                                <form method="POST" autocomplete="off" action="<?php //echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                     <?php
-                                    if ($pageData ['select'] == 'aircrafttype')
-                                    {
-                                        $FL = new FormList($formdata['aircrafttype']);
-                                        if ($pageData ['form'] ['mode'] == "edit")
-                                            $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                        $FL->buildFormFields(null,$DB);
-                                        echo "<div class='submit'>";
-                                        if ($pageData ['form'] ['mode'] == "edit")
-                                        {
-                                            $v = FormList::encryptParam("table=aircrafttype&action=change&recid={$pageData ['form'] ['recid']}");
-                                            echo "<input type='hidden' name='v' value='{$v}' />";
-                                            echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
-                                        }
-                                        else
-                                        {
-                                            $v = FormList::encryptParam("table=aircrafttype&action=create");
-                                            echo "<input type='hidden' name='v' value='{$v}' />";
-                                            echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
-                                        }
-                                        echo "</div>";
-                                    }
+                                    //if ($pageData ['select'] == 'aircrafttype')
+                                    //{
+                                    //    $FL = new FormList($formdata['aircrafttype']);
+                                    //    if ($pageData ['form'] ['mode'] == "edit")
+                                    //        $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                                    //    $FL->buildFormFields(null,$DB);
+                                    //    echo "<div class='submit'>";
+                                    //    if ($pageData ['form'] ['mode'] == "edit")
+                                    //    {
+                                    //        $v = FormList::encryptParam("table=aircrafttype&action=change&recid={$pageData ['form'] ['recid']}");
+                                    //        echo "<input type='hidden' name='v' value='{$v}' />";
+                                    //        echo "<input type='submit' name='_server_change' value='CONFIRM CHANGE' />";
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        $v = FormList::encryptParam("table=aircrafttype&action=create");
+                                    //        echo "<input type='hidden' name='v' value='{$v}' />";
+                                    //        echo "<input type='submit' name='_server_new' value='CREATE NEW' />";
+                                    //    }
+                                    //    echo "</div>";
+                                    //}
                                     ?>
                                 </form>
                                 </div>
                             </div>
+                            
                             <div id="aircraftform" class="detailEntity">
                                 <div class="form">
-                                <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                                <form method="POST" autocomplete="off" action="<?php //echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                     <?php
-                                    if ($pageData ['select'] == 'aircraft')
-                                    {
-                                        $FL = new FormList($formdata['aircraft']);
-                                        if ($pageData ['form'] ['mode'] == "edit")
-                                            $FL->getTableData($DB,$pageData ['form'] ['recid']);
-                                        $FL->buildFormFields(null,$DB);
-                                        echo "<div class='submit'>";
-                                        if ($pageData ['form'] ['mode'] == "edit")
-                                        {
-                                            $v = FormList::encryptParam("table=aircraft&action=change&recid={$pageData ['form'] ['recid']}");
-                                            echo "<input type='hidden' name='v' value='{$v}' />";
-                                            echo "<input type='submit' name='_aircraft_change' value='CONFIRM CHANGE' />";
-                                        }
-                                        else
-                                        {
-                                            $v = FormList::encryptParam("table=aircraft&action=create");
-                                            echo "<input type='hidden' name='v' value='{$v}' />";
-                                            echo "<input type='submit' name='_aircraft_new' value='CREATE NEW' />";
-                                        }
-                                        echo "</div>";
-                                    }
+                                    //if ($pageData ['select'] == 'aircraft')
+                                    //{
+                                    //    $FL = new FormList($formdata['aircraft']);
+                                    //    if ($pageData ['form'] ['mode'] == "edit")
+                                    //        $FL->getTableData($DB,$pageData ['form'] ['recid']);
+                                    //    $FL->buildFormFields(null,$DB);
+                                    //    echo "<div class='submit'>";
+                                    //    if ($pageData ['form'] ['mode'] == "edit")
+                                    //    {
+                                    //        $v = FormList::encryptParam("table=aircraft&action=change&recid={$pageData ['form'] ['recid']}");
+                                    //        echo "<input type='hidden' name='v' value='{$v}' />";
+                                    //        echo "<input type='submit' name='_aircraft_change' value='CONFIRM CHANGE' />";
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        $v = FormList::encryptParam("table=aircraft&action=create");
+                                    //        echo "<input type='hidden' name='v' value='{$v}' />";
+                                    //        echo "<input type='submit' name='_aircraft_new' value='CREATE NEW' />";
+                                    //    }
+                                    //    echo "</div>";
+                                    //}
                                     ?>
                                 </form>
                                 </div>
                             </div>
+                            -->
                         </div>
                     </div>
                 </div>

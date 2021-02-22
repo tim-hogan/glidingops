@@ -1547,6 +1547,15 @@ private function buildChoiceField($n,$f,$data=null)
         echo "</div>";
     }
 
+    static public function buildAllForms($DB,$data,$FormTables,$formdata,$pageData)
+    {
+        foreach ($FormTables as $t)
+        {
+            FormList::buildForm($DB,$data,$,$formdata,$pageData)
+        }
+
+    }
+
     static public function encryptParam($v)
     {
         // Remove the base64 encoding from our key
