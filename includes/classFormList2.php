@@ -1467,7 +1467,7 @@ class FormList
                         $this->buildDateField($name,$field);
                         break;
                     case "datetime":
-                        $this->buildDateTimeField($name,$field)
+                        $this->buildDateTimeField($name,$field);
                         break;
                     case "percent":
                         $this->buildPercentField($name,$field);
