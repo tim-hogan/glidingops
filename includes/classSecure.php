@@ -166,7 +166,6 @@ class Secure
 
     static public function CheckSecurity($seclevel)
     {
-        $ret = false;
         $uid = 0;
         if(isset($_SESSION['userid']))
             $uid=intval($_SESSION['userid']);
