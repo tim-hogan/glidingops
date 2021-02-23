@@ -68,6 +68,15 @@ if ($org == 0)
                     <button>LIST</button>
                     <button>MAP</button>
                 </div>
+                <?php
+                if ( CheckSecurity(SECUIRTY_CFO) || CheckSecurity(SECURITY_CFI) || CheckSecurity(SECURITY_ADMIN) || CheckSecurity(SECURITY_GOD) )
+                {
+                    echo "<div class='tile' onclick='window.location=\"Parameters.php\"'>";
+                    echo "<h1>PARAMETERS</h1>";
+                    echo "<p>View, create and change the system parameters</p>";
+                    echo "</div>";
+                }
+                ?>
             </div>
         </div>
     </div>
