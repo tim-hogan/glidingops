@@ -326,6 +326,11 @@ class classTimeHelpers
         return classTimeHelpers::timeFormat($time,"D jS M Y H:i:s",$strTimeZone);
     }
 
+    public static function  timeFormatDateTimeLocal($time,$strTimeZone=null)
+    {
+        return classTimeHelpers::timeFormat($time,"Y-m-d\TH:i:s",$strTimeZone);
+    }
+
     public static function timeFormatISO8601($Time,$strTimeZone=null)
     {
         $date = null;

@@ -1047,7 +1047,7 @@ class FormList
             elseif (isset($_SESSION['timezone']))
                 $tz = $_SESSION['timezone'];
 
-            $v = classTimeHelpers::timeFormatISO8601($f['value']);
+            $v = classTimeHelpers::timeFormatDateTimeLocal($f['value'],$tz);
 
             echo "value='{$v}' ";
         }
