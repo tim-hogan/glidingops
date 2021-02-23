@@ -945,8 +945,6 @@ class FormList
         }
 
         $subtag = "date";
-        if (isset($f['sub-tag']))
-            $subtag = $f['sub-tag'];
         echo "<input class='date";
         if (isset($f['error']) && $f['error'])
             echo " err'";
@@ -1034,8 +1032,6 @@ class FormList
         }
 
         $subtag = "datetime-local";
-        if (isset($f['sub-tag']))
-            $subtag = $f['sub-tag'];
         echo "<input class='date";
         if (isset($f['error']) && $f['error'])
             echo " err'";
