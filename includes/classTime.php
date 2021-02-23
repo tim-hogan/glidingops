@@ -326,6 +326,35 @@ class classTimeHelpers
         return classTimeHelpers::timeFormat($time,"D jS M Y H:i:s",$strTimeZone);
     }
 
+    public static function timeFormatISO8601($Time,$strTimeZone=null)
+    {
+        $date = null;
+        if (gettype($Time) !== "string")
+        {
+            $date = $Time;
+        }
+        else
+        {
+            if (null != $Time && strlen($Time) > 0)
+            {
+                if ($strTimeZone== NULL || strlen($strTimeZone)==0)
+                    $strTimeZone = 'UTC';
+                $date = new DateTime($Time);
+            }
+        }
+
+        if ($date)
+        {
+            if ($strTimeZone== NULL || strlen($strTimeZone)==0)
+                $strTimeZone = 'UTC';
+            $date->setTimezone(new DateTimeZone($strTimeZone));
+            return $date->format('Y-M-d') . "T" . $date->format('H:i:s') . "Z";
+        }
+
+        return null;
+
+    }
+
     public static function smartTime($strTime,$strTimeZone=null)
     {
        if ($strTimeZone==null || strlen($strTimeZone)==0)
