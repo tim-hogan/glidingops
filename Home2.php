@@ -69,7 +69,7 @@ if ($org == 0)
                     <button>MAP</button>
                 </div>
                 <?php
-                if ( CheckSecurity(SECUIRTY_CFO) || CheckSecurity(SECURITY_CFI) || CheckSecurity(SECURITY_ADMIN) || CheckSecurity(SECURITY_GOD) )
+                if ( Secure::CheckSecurity(SECUIRTY_CFO) || Secure::CheckSecurity(SECURITY_CFI) || Secure::CheckSecurity(SECURITY_ADMIN) || Secure::CheckSecurity(SECURITY_GOD) )
                 {
                     echo "<div class='tile' onclick='window.location=\"Parameters.php\"'>";
                     echo "<h1>PARAMETERS</h1>";
