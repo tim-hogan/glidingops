@@ -348,7 +348,7 @@ class classTimeHelpers
             if ($strTimeZone== NULL || strlen($strTimeZone)==0)
                 $strTimeZone = 'UTC';
             $date->setTimezone(new DateTimeZone($strTimeZone));
-            return $date->format('Y-M-d') . "T" . $date->format('H:i:s') . "Z";
+            return $date->format('Y-m-d') . "T" . $date->format('H:i:s') . "Z";
         }
 
         return null;
