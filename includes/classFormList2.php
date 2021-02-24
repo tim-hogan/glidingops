@@ -138,7 +138,7 @@ class FormList
         if (isset($_POST[$f]))
         {
             $data = FormList::getField($f,$trimit);
-            error_log("POST DATA FOR DATE FIELD IS {$data}");
+            error_log("POST DATA FOR DATE FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
             return $date->format('Y-m-d H:i:s');
         }
@@ -156,7 +156,7 @@ class FormList
         if (isset($_POST[$f]))
         {
             $data = FormList::getField($f,$trimit);
-            error_log("POST DATA FOR DATETIME FIELD IS {$data}");
+            error_log("POST DATA FOR DATETIME FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
             return $date->format('Y-m-d H:i:s');
         }
