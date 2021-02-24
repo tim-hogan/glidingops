@@ -140,6 +140,7 @@ class FormList
             $data = FormList::getField($f,$trimit);
             error_log("POST DATA FOR DATE FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
+            $date->setTimezone(new DateTimeZone('UTC'));
             return $date->format('Y-m-d H:i:s');
         }
         return null;
@@ -158,6 +159,7 @@ class FormList
             $data = FormList::getField($f,$trimit);
             error_log("POST DATA FOR DATETIME FIELD IS {$data} for timezone {$tz}");
             $date = new DateTime($data,new DateTimeZone($tz));
+            $date->setTimezone(new DateTimeZone('UTC'));
             return $date->format('Y-m-d H:i:s');
         }
         return null;
