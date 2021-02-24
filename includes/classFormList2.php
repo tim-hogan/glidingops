@@ -133,7 +133,7 @@ class FormList
         $tz = 'UTC';
         if (isset($_SESSION['tz']))
             $tz = $_SESSION['tz'];
-        elseif isset($_SESSION['timezone'])
+        elseif (isset($_SESSION['timezone']))
             $tz = $_SESSION['timezone'];
         if (isset($_POST[$f]))
         {
@@ -151,7 +151,7 @@ class FormList
         $tz = 'UTC';
         if (isset($_SESSION['tz']))
             $tz = $_SESSION['tz'];
-        elseif isset($_SESSION['timezone'])
+        elseif (isset($_SESSION['timezone']))
             $tz = $_SESSION['timezone'];
         if (isset($_POST[$f]))
         {
