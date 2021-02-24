@@ -1731,6 +1731,22 @@ class FormList
                                         $decimals = intval($field['decimalplaces']);
                                     $strData = number_format($v,$decimals) . "%";
                                     break;
+                                case 'date':
+                                    $tz = 'UTC';
+                                    if (isset($_SESSION['tz']))
+                                        $tz = $_SESSION['tz'];
+                                    elseif (isset($_SESSION['timezone']))
+                                        $tz = $_SESSION['timezone'];
+                                    $strData = classTimeHelpers::timeFormatnthDate($d[$name],$tz);
+                                    break;
+                                case 'datetime':
+                                    $tz = 'UTC';
+                                    if (isset($_SESSION['tz']))
+                                        $tz = $_SESSION['tz'];
+                                    elseif (isset($_SESSION['timezone']))
+                                        $tz = $_SESSION['timezone'];
+                                    $strData = classTimeHelpers::timeFormatnthDateTime1($d[$name],$tz);
+                                    break;
                                 case 'fk':
                                     $v = intval($d[$name]);
                                     $d2 = $DB->getFromTable($field['fk_table'],$field['fk_index'],$v);
