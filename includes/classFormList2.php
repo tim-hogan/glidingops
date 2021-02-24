@@ -127,6 +127,43 @@ class FormList
         return $data;
     }
 
+    static public function getDateField($f,$trimit=true)
+    {
+        //Uses $_SESSION['tz'] or $_SESSION['timezone']
+        $tz = 'UTC';
+        if (isset($_SESSION['tz']))
+            $tz = $_SESSION['tz'];
+        elseif isset($_SESSION['timezone'])
+            $tz = $_SESSION['timezone'];
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f,$trimit);
+            error_log("POST DATA FOR DATE FIELD IS {$data}");
+            $date = new DateTime($data,new DateTimeZone($tz));
+            return $date->format('Y-m-d H:i:s');
+        }
+        return null;
+    }
+
+    static public function getDateTimeField($f,$trimit=true)
+    {
+        //Uses $_SESSION['tz'] or $_SESSION['timezone']
+        $tz = 'UTC';
+        if (isset($_SESSION['tz']))
+            $tz = $_SESSION['tz'];
+        elseif isset($_SESSION['timezone'])
+            $tz = $_SESSION['timezone'];
+        if (isset($_POST[$f]))
+        {
+            $data = FormList::getField($f,$trimit);
+            error_log("POST DATA FOR DATETIME FIELD IS {$data}");
+            $date = new DateTime($data,new DateTimeZone($tz));
+            return $date->format('Y-m-d H:i:s');
+        }
+        return null;
+
+    }
+
     static public function getCheckboxField($f)
     {
         if (isset($_POST[$f]))
@@ -264,6 +301,15 @@ class FormList
                         break;
                     case "percent":
                         $this->config['fields'] [$name] ["value"] = FormList::getPercentField($name . "_f",$trim,$symbol);
+                        break;
+                    case "date":
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateField($name . "_f",$trim,$symbol);
+                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
+                        break;
+                    case "datetime":
+                        $this->config['fields'] [$name] ["value"] = FormList::getDateTimeField($name . "_f",$trim,$symbol);
+                        error_log("Decoded date value from form is {$this->config['fields'] [$name] ["value"]}");
+                        break;
                         break;
                     case "choice":
                         $this->config['fields'] [$name] ["value"] = FormList::getField($name . "_f",$trim);
