@@ -122,6 +122,7 @@ class FormList
         {
             $data = FormList::getField($f,$trimit);
             $data = str_replace($symbol,"",$data);
+            $data = str_replace(",","",$data);
             $data = floatval($data);
         }
         return $data;
