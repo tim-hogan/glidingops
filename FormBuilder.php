@@ -435,6 +435,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             updateBooleanFieldListInfo($table,$field,"anchor");
             updateTextFieldListInfo($table,$field,"displayoption");
 
+
+            //Loop here lloking for choice fields
+            if (isset($_POST["{$table}_{$field}_type"]) && $_POST["{$table}_{$field}_type"] == "choice")
+            {
+                $g_def[$table] ['fields'] [$field] ['choice'] = array();
+
+                for ($cnt = 0; $cnt < 50; $cnt++)
+                {
+                    if (isset($_POST["{$table}_{$field}_form_choice_text{$cnt}"]) )
+                    {
+                        $ch = array();
+                        $ch ['text'] = $_POST["{$table}_{$field}_form_choice_text{$cnt}"];
+                        $ch ['value'] = $_POST["{$table}_{$field}_form_choice_value{$cnt}"];
+                        $ch ['selected'] = $_POST["{$table}_{$field}_form_choice_selected{$cnt}"];
+                        array_push($g_def[$table] ['fields'] [$field] ['choice'] ,$ch);
+                    }
+                }
+            }
         }
     }
 
