@@ -52,6 +52,19 @@
         $con->query("UPDATE flights SET pic = {$genuine_id} WHERE pic={$id}");
         $con->query("UPDATE flights SET p2 = {$genuine_id} WHERE p2={$id}");
         $con->query("UPDATE flights SET towpilot = {$genuine_id} WHERE towpilot={$id}");
+
+        //If the new genuine_id already has at least one of the same roles that id has, then we must delete the roles of the old id.
+        //Otherwise, if we just update, the constraint unique(role_id, member_id) would clash.
+        $con->query(
+          "DELETE FROM role_member "
+          . "WHERE member_id = {$id} "
+          . "AND role_id IN ( "
+            . "SELECT role_id FROM( "
+            . "SELECT role_id FROM role_member "
+            . "WHERE member_id = {$genuine_id} "
+          . ") as new_roles "
+		    . ")"
+        );
         
         $con->query("UPDATE role_member SET member_id = {$genuine_id} WHERE member_id={$id}");
         $con->query("UPDATE texts SET txt_member_id = {$genuine_id} WHERE txt_member_id={$id}");
