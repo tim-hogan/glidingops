@@ -30,7 +30,7 @@
     border-top: var(--border-top);
     border-bottom: var(--border-bottom);
 }
-#rightdetail {
+#formdetails {
     display: none;
     background-color: var(--bk-color);
     flex-shrink: 0;

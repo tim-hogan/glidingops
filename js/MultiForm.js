@@ -36,7 +36,7 @@ function minmaxwinddow(n) {
 }
 
 function hideAllRightForms() {
-    document.getElementById('rightdetail').style.display = 'none';
+    document.getElementById('formdetails').style.display = 'none';
     var l = document.getElementsByClassName('detailEntity');
     for (var i = 0; i < l.length; i++) {
         l[i].style.display = "none";
@@ -94,7 +94,7 @@ function start() {
     var n = document.getElementById('sel' + g_pageState.select);
     selectRight(n, g_pageState.select);
     if (g_pageState.form.display) {
-        document.getElementById('rightdetail').style.display = 'block';
+        document.getElementById('formdetails').style.display = 'block';
         document.getElementById(g_pageState.select + 'form').style.display = 'block';
     }
 }
