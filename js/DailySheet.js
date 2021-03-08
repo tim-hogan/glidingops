@@ -130,7 +130,7 @@ var DailySheet = function() {
         r1.appendChild(entryTypeSelect.domNode)
 
         var r2 = row.insertCell(2);
-        r2.innerHTML = "<input type='text' name='glider[]' class='upper ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' maxlength='3' size='4' onchange='fieldchange(this)'>";
+        r2.innerHTML = "<input type='text' name='glider[]' class='upper ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' maxlength='3' size='4' onchange='fieldchange(this)' autocomplete='off'>";
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
@@ -151,7 +151,8 @@ var DailySheet = function() {
 
         vectorCell.innerHTML =
 `<div class="input-group">
-  <input type='text' id='${id}'
+  <input 
+id='${id}'
         class='form-control upper ui-corner-all ui-widget ui-widget-content'
         style='padding: 4px; min-width: 30px' maxlength='3'
         name='vector[]' size='3' onchange='fieldchange(this, ${nextRow})' value='${vector}'>
@@ -321,7 +322,7 @@ var DailySheet = function() {
 
         r11 = row.insertCell(nextCol);
         nextCol++;
-        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='30' onchange='fieldchange(this)'>";
+        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='30' onchange='fieldchange(this)' autocomplete='off'>";
         r11.firstChild.setAttribute("value", unescape(comments));
         r11.firstChild.setAttribute("id", "l" + nextRow);
 
