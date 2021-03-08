@@ -151,8 +151,7 @@ var DailySheet = function() {
 
         vectorCell.innerHTML =
 `<div class="input-group">
-  <input 
-id='${id}'
+  <input id='${id}'
         class='form-control upper ui-corner-all ui-widget ui-widget-content'
         style='padding: 4px; min-width: 30px' maxlength='3'
         name='vector[]' size='3' onchange='fieldchange(this, ${nextRow})' value='${vector}'>
