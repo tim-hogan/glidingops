@@ -266,18 +266,20 @@ if (strlen($consumerKey) > 0)
  echo "<table><tr><td class='td1'><input type='checkbox' name='member[]' value='twitter' checked>Twitter</td></tr></table>";
 }
 ?>
-<?php
+    <?php
 $roles = array();
 $rolename = array();
 $rolename[0] = 'A/B Cat Instructor';
 $roles[0] = getRoleId($con,$rolename[0]);
 $rolename[1] = 'C Cat Instructor';
 $roles[1] = getRoleId($con,$rolename[1]);
-$rolename[2] = 'Tow Pilot';
+$rolename[2] = 'D Cat Instructor';
 $roles[2] = getRoleId($con,$rolename[2]);
+$rolename[3] = 'Tow Pilot';
+$roles[3] = getRoleId($con,$rolename[3]);
 
 
-for ($roleidx=0;$roleidx<3;$roleidx++)
+for ($roleidx=0;$roleidx<4;$roleidx++)
 {
  echo "<h2>";
  echo $rolename[$roleidx];
@@ -378,7 +380,7 @@ while ($row = mysqli_fetch_array($r) )
 echo "</table>";
 
 mysqli_close($con);
-?>
+    ?>
 <table>
 <tr><td><input type='submit' value='Send'></td>
 <?php echo "<td class = 'rederr'>" . $errtxt . "</td>"; ?>
