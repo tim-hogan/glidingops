@@ -476,7 +476,12 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
         // Update Roles collection from roles[] POST parameter
         if (is_array($roleIds)) {
           $member =  App\Models\Member::find($recid);
-          $member->roles()->sync($roleIds);
+          // $user->roles()->sync([1 => ['org' => $org], 2 => ['org' => $org], 3 => ['org' => $org]]);
+          $updates = collect($roleIds)->reduce(function($carry, $roleId) use ($org) {
+            $carry[$roleId] = ['org' => $org];
+            return $carry;
+          }, array());
+          $member->roles()->sync($updates);
         }
       }
 

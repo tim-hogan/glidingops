@@ -46,7 +46,7 @@ function InputChecker($data)
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET")
 {
- if($_GET['id'] != "" && $_GET['id'] != null)
+ if(isset($_GET['id']) && $_GET['id'] != "" && $_GET['id'] != null)
  {
   $recid = $_GET['id'];
   if ($recid >= 0)
