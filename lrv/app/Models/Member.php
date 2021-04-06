@@ -54,4 +54,13 @@ class Member extends Model
     {
         return $this->belongsTo('App\Models\MembershipStatus', 'status');
     }
+    
+    public function setRoles($org, $roleIds)
+    {
+        $updates = collect($roleIds)->reduce(function($carry, $roleId) use ($org) {
+            $carry[$roleId] = ['org' => $org];
+            return $carry;
+        }, array());
+        $this->roles()->sync($updates);
+    }
 }
