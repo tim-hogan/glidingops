@@ -95,9 +95,9 @@ class GlidingDB extends SQLPlus
         return false;
     }
 
-    public function allOrgMembersForRole($org,$roleid)
+    public function allOrgActiveMembersForRole($org,$roleid)
     {
-        return $this->p_query("select a.id as idmember, a.displayname from role_member left join members a ON a.id = role_member.member_id where role_id = ? and a.org = ?","ii",$roleid,$org);
+        return $this->p_query("select a.id as idmember, a.displayname from role_member left join members a ON a.id = role_member.member_id left join membership_status b on b.id = a.status where b.status_name = 'Active' and role_id = ? and a.org = ?","ii",$roleid,$org);
     }
 
     //*********************************************************************

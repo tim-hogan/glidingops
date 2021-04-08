@@ -274,7 +274,7 @@ if (strlen($consumerKey) > 0)
 $roles = $DB->everyRole();
 foreach($roles as $role)
 {
-    $r = $DB->allOrgMembersForRole($org,$role['id']);
+    $r = $DB->allOrgActiveMembersForRole($org,$role['id']);
     if ($r && $r->num_rows > 0)
     {
         $rolename = htmlspecialchars($role['name']);
@@ -305,7 +305,7 @@ foreach($roles as $role)
  echo "<h2>Members</h2>";
  echo "</h2>";
  echo "<table>";
-  $colm = 0;
+$colm = 0;
 
 $sql2 = "SELECT members.id,members.displayname,members.surname,membership_class.disp_message_broadcast
         FROM members
