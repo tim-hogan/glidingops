@@ -462,7 +462,7 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
     $sqltext = $Q;
     if(isset($_POST["del"])) {
       $member =  App\Models\Member::find($recid);
-      $member->roles()->sync([]);
+      $member->setRoles($org, []);
     }
     if(!mysqli_query($con,$Q) )
     {
@@ -472,11 +472,14 @@ if ($_SESSION['security'] & 16) {       $Q.= ",";
         $recid = $con->insert_id;
       }
 
-      if(!isset($_POST["del"]) && isset($_POST["roles"])) {
+      if(!isset($_POST["del"])) {
+        $member =  App\Models\Member::find($recid);
         // Update Roles collection from roles[] POST parameter
         if (is_array($roleIds)) {
-          $member =  App\Models\Member::find($recid);
-          $member->roles()->sync($roleIds);
+          $member->setRoles($org, $roleIds);
+        }
+        else {
+          $member->setRoles($org, []);
         }
       }
 
