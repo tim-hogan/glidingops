@@ -95,6 +95,11 @@ class GlidingDB extends SQLPlus
         return false;
     }
 
+    public function allOrgMembersForRole($org,$roleid)
+    {
+        return $this->p_query("select a.id as idmember, a.displayname from role_member left join members a ON a.id = role_member.member_id where role_id = ? and a.org = ?","ii",$roleid,$org);
+    }
+
     //*********************************************************************
     // membership_class
     //*********************************************************************

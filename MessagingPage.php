@@ -1,7 +1,7 @@
 <?php
   include './helpers/session_helpers.php';
   include 'helpers.php';
-
+  require dirname(__FILE__) . '/includes/classGlidingDB.php';
   session_start();
   require_security_level(4);
 
@@ -21,6 +21,10 @@ $r = mysqli_query($con,$q);
 $row = mysqli_fetch_array($r);
 $strOrgName = $row[0];
 $consumerKey= $row[1];
+
+$DB = new GlidingDB($con_params);
+
+
 ?>
 
 <!DOCTYPE HTML>
@@ -266,54 +270,36 @@ if (strlen($consumerKey) > 0)
  echo "<table><tr><td class='td1'><input type='checkbox' name='member[]' value='twitter' checked>Twitter</td></tr></table>";
 }
 ?>
-    <?php
-$roles = array();
-$rolename = array();
-$rolename[0] = 'A/B Cat Instructor';
-$roles[0] = getRoleId($con,$rolename[0]);
-$rolename[1] = 'C Cat Instructor';
-$roles[1] = getRoleId($con,$rolename[1]);
-$rolename[2] = 'D Cat Instructor';
-$roles[2] = getRoleId($con,$rolename[2]);
-$rolename[3] = 'Tow Pilot';
-$roles[3] = getRoleId($con,$rolename[3]);
-
-
-for ($roleidx=0;$roleidx<4;$roleidx++)
+<?php
+$roles = $DB->everyRole();
+foreach($roles as $role)
 {
- echo "<h2>";
- echo $rolename[$roleidx];
- echo "s";
- echo "</h2>";
- echo "<table>";
-  $colm = 0;
-
-
-  $sql2= "SELECT a.id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and role_id = " .$roles[$roleidx] . " order by a.surname,a.firstname";
-
-
-  $r2 = mysqli_query($con,$sql2);
-  while ($row2 = mysqli_fetch_array($r2) )
-  {
-    if ($colm == 0)
-        echo "<tr>";
-    echo "<td class='td1'>";
-    echo "<input type='checkbox' name='member[]' value='";
-    echo $row2[0];
-    echo "'>";
-    echo $row2[1];
-    echo "</td>";
-    $colm = $colm + 1;
-    if ($colm == 6)
+    $r = $DB->allOrgMembersForRole($org,$roleid);
+    if ($r->num_rows > 0)
     {
+        $rolename = htmlspecialchars($role['name']);
+        echo "<h2>{$rolename}s</h2>";
+        echo "<table>";
         $colm = 0;
-        echo "</tr>";
+        while ($member = $r->fecth_array(MYSQLI_ASSOC))
+        {
+            if ($colm == 0)
+                echo "<tr>";
+            echo "<td class='td1'>";
+                echo "<input type='checkbox' name='member[]' value='{$member['idmember']}' />";
+                echo htmlspecialchars($member['displayname']);
+            echo "</td>";
+            $colm = $colm + 1;
+            if ($colm == 6)
+            {
+                $colm = 0;
+                echo "</tr>";
+            }
+        }
+        if ($colm !=0)
+            echo "</tr>";
+        echo "</table>";
     }
-  }
-  if ($colm !=0)
-      echo "</tr>";
-  echo "</table>";
-
 }
 
  echo "<h2>Members</h2>";
