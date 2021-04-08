@@ -267,29 +267,26 @@ if (strlen($consumerKey) > 0)
 }
 ?>
     <?php
-$roles = array();
-$rolename = array();
-$rolename[0] = 'A/B Cat Instructor';
-$roles[0] = getRoleId($con,$rolename[0]);
-$rolename[1] = 'C Cat Instructor';
-$roles[1] = getRoleId($con,$rolename[1]);
-$rolename[2] = 'D Cat Instructor';
-$roles[2] = getRoleId($con,$rolename[2]);
-$rolename[3] = 'Tow Pilot';
-$roles[3] = getRoleId($con,$rolename[3]);
+$q_retrieve_roles_used_by_current_org = <<<SQL
+SELECT id, name
+FROM  roles
+WHERE id in(
+    SELECT DISTINCT role_id FROM gliding.role_member WHERE org = {$_SESSION['org']}
+)
+SQL;
+$roles = mysqli_fetch_all(mysqli_query($con, $q_retrieve_roles_used_by_current_org), MYSQLI_ASSOC);
 
 
 for ($roleidx=0;$roleidx<4;$roleidx++)
 {
  echo "<h2>";
- echo $rolename[$roleidx];
- echo "s";
+ echo $roles[$roleidx]['name'];
  echo "</h2>";
  echo "<table>";
   $colm = 0;
 
 
-  $sql2= "SELECT a.id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and role_id = " .$roles[$roleidx] . " order by a.surname,a.firstname";
+  $sql2= "SELECT a.id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and role_id = " .$roles[$roleidx]['id'] . " order by a.surname,a.firstname";
 
 
   $r2 = mysqli_query($con,$sql2);
