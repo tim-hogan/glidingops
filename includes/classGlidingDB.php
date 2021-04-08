@@ -139,6 +139,11 @@ class GlidingDB extends SQLPlus
         return $r;
     }
 
+    public function everyRole()
+    {
+        return $this->every("roles");
+    }
+
     //*********************************************************************
     // Messages
     //*********************************************************************
