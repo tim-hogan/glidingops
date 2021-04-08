@@ -274,7 +274,7 @@ if (strlen($consumerKey) > 0)
 $roles = $DB->everyRole();
 foreach($roles as $role)
 {
-    $r = $DB->allOrgMembersForRole($org,$roleid);
+    $r = $DB->allOrgMembersForRole($org,$role['id']);
     if ($r->num_rows > 0)
     {
         $rolename = htmlspecialchars($role['name']);
