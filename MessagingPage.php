@@ -275,13 +275,13 @@ $roles = $DB->everyRole();
 foreach($roles as $role)
 {
     $r = $DB->allOrgMembersForRole($org,$role['id']);
-    if ($r->num_rows > 0)
+    if ($r && $r->num_rows > 0)
     {
         $rolename = htmlspecialchars($role['name']);
         echo "<h2>{$rolename}s</h2>";
         echo "<table>";
         $colm = 0;
-        while ($member = $r->fecth_array(MYSQLI_ASSOC))
+        while ($member = $r->fetch_array(MYSQLI_ASSOC))
         {
             if ($colm == 0)
                 echo "<tr>";
