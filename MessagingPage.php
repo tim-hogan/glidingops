@@ -277,7 +277,7 @@ SQL;
 $roles = mysqli_fetch_all(mysqli_query($con, $q_retrieve_roles_used_by_current_org), MYSQLI_ASSOC);
 
 
-for ($roleidx=0;$roleidx<4;$roleidx++)
+for ($roleidx=0;$roleidx<count($roles);$roleidx++)
 {
  echo "<h2>";
  echo $roles[$roleidx]['name'];
