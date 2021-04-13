@@ -61,6 +61,15 @@ function textCounter(field, cnt, maxlimit)
     cntfield.innerHTML = maxlimit - field.value.length;
  }
 </script>
+<script>
+function selectUnselectAll(element, role_id){
+  var isChecked = element.checked;
+  var checkboxes = document.querySelectorAll("#role_" + role_id + " input[type=checkbox]")
+  for(var i = 0; i < checkboxes.length; i++){
+	  checkboxes[i].checked = isChecked;
+  }
+};
+</script>
 </head>
 <body id="body">
 <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
@@ -279,10 +288,11 @@ $roles = mysqli_fetch_all(mysqli_query($con, $q_retrieve_roles_used_by_current_o
 
 for ($roleidx=0;$roleidx<count($roles);$roleidx++)
 {
- echo "<h2>";
+ echo "<h2><b>";
+ echo "<input type='checkbox' onchange='selectUnselectAll(this, ".$roles[$roleidx]['id'] .")'/>";
  echo $roles[$roleidx]['name'];
- echo "</h2>";
- echo "<table>";
+ echo "s</b></h2>";
+ echo "<table id='role_".$roles[$roleidx]['id'] ."'>";
   $colm = 0;
 
 
