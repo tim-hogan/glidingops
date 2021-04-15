@@ -1,15 +1,21 @@
-<?php 
-  include '../helpers/session_helpers.php';
-  session_start();
-  require_security_level(64);
-  $current_org = current_org();
+<?php
+session_start();
+require_once "../includes/classSecure.php";
+include '../helpers/session_helpers.php';
+require "../includes/classFormList2.php";
+require "../includes/classGlidingDB.php";
+
+require_security_level(SECURITY_ADMIN);
+$current_org = current_org();
+$DB = new GlidingDB($devt_environment->getDatabaseParameters());
+
 ?>
 
 <!DOCTYPE HTML>
 <html>
-  <meta name="viewport" content="width=device-width">
-  <meta name="viewport" content="initial-scale=1.0">
   <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="initial-scale=1.0" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style type="text/css">
       table { 
@@ -34,23 +40,6 @@
     </style>
   </head>
 
-<?php
-  $con_params = require('../config/database.php'); $con_params = $con_params['gliding']; 
-  $con=mysqli_connect($con_params['hostname'],$con_params['username'],
-                      $con_params['password'],$con_params['dbname']);
-
-  $q = "
-        SELECT 
-            firstname, surname, org, COUNT(*) AS dup_count, organisations.name AS org_name
-        FROM
-            members
-        JOIN organisations 
-        ON members.org = organisations.id
-        WHERE members.org = {$current_org}
-        GROUP BY firstname , surname , org
-        HAVING COUNT(*) > 1";
-?>
-
   <body>
     <table>
       <thead>
@@ -62,31 +51,24 @@
         </tr>
       </thead>
       <tbody>
-<?php
-  $tr_class = 'even';
-  $result = mysqli_query($con,$q);
-  while($row = $result->fetch_assoc())
-  {
-    $tr_class = ($tr_class == 'even') ? 'odd' : 'even';
-?>
-      <tr class='<?php echo $tr_class ?>'>
-        <td><?php echo $row['firstname'] ?></td>
-        <td><?php echo $row['surname'] ?></td>
-        <td><?php echo $row['org_name'] ?></td>
-<?php
-      $firstname=urlencode($row['firstname']);
-      $surname=urlencode($row['surname']);
-      $query = "firstname={$firstname}&surname={$surname}&org={$row['org']}"
-?>
-        <td>
-          <a href='./duplicates_show.php?<?php echo $query ?>'><?php echo $row['dup_count'] ?></a>
-        </td>
-      </tr>
-<?php
-  }
-  mysqli_free_result($result);
-  mysqli_close($con);
-?>
+        <?php
+            $tr_class = 'even';
+            $result = $DB->allDuplicateMembers($current_org);
+            while($row = $result->fetch_assoc())
+            {
+                $tr_class = ($tr_class == 'even') ? 'odd' : 'even';
+                echo "<tr class='{$tr_class}'>";
+                    $strfirstname = htmlspecialchars($row['firstname']);
+                    $strsurname = htmlspecialchars($row['surname']);
+                    $strorg_name = htmlspecialchars($row['org_name']);
+                    echo "<td>{$strfirstname}</td><td>{$strsurname}</td><td>{$strorg_name}</td>";
+                    $firstname=urlencode($row['firstname']);
+                    $surname=urlencode($row['surname']);
+                    $e = FormList::encryptParam("firstname={$firstname}&surname={$surname}&org={$row['org']}");
+                    echo "<td><a href='./duplicates_show.php?v={$e}'>{$row['dup_count']}</a></td>";
+                echo "</tr>";
+            }
+        ?>
       </tbody>
     </table>
     <div>

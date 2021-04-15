@@ -5,7 +5,7 @@
       die("Please logon");
     }
 
-    if (!($_SESSION['security'] & $security_level)){
+    if (!($_SESSION['security'] & intval($security_level))){
       die("Secruity level too low for this page");
     }
   }

@@ -1,15 +1,22 @@
-<?php 
-  include '../helpers/session_helpers.php';
-  session_start();
-  require_security_level(64);
-  $current_org = current_org();
+<?php
+session_start();
+require_once "../includes/classSecure.php";
+include '../helpers/session_helpers.php';
+require "../includes/classFormList2.php";
+require "../includes/classGlidingDB.php";
+
+require_security_level(SECURITY_ADMIN);
+$current_org = current_org();
+
+$DB = new GlidingDB($devt_environment->getDatabaseParameters());
+
 ?>
 
 <!DOCTYPE HTML>
 <html>
-  <meta name="viewport" content="width=device-width">
-  <meta name="viewport" content="initial-scale=1.0">
   <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="initial-scale=1.0" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <script type="text/javascript">
       function genuineIdChanged() {
@@ -41,34 +48,25 @@
   </head>
 
 <?php
-  $con_params = require('../config/database.php'); $con_params = $con_params['gliding']; 
-  $con=mysqli_connect($con_params['hostname'],$con_params['username'],
-                      $con_params['password'],$con_params['dbname']);
-  $firstname = urldecode($_GET['firstname']);
-  $surname = urldecode($_GET['surname']);
-  $org = $_GET['org'];
+if (! isset($_GET['v']))
+    die('Invalid input parameter');
 
-  if($org != $current_org) {
-    die('You can only delete members from your own organisation.');
-  }
+$a = FormList::decryptParamRaw($_GET['v']);
+$firstname = $a['firstname'];
+$surname = $a['surname'];
+$org = $a['org'];
 
-  $columns = array("id", "create_time", "member_id", 
-                    "firstname", "surname", 
-                    "org_name", "date_of_birth", "phone_home", 
-                    "phone_mobile",
-                    "phone_work",
-                    "email", "class", "status", "gnz_number");
-  
-  $q =<<<SQL
-    SELECT members.*, organisations.name AS org_name
-    FROM
-        members
-        JOIN organisations 
-        ON members.org = organisations.id
-        WHERE members.firstname = "{$firstname}"
-        AND   members.surname   = "{$surname}"
-        AND   members.org       = {$org};
-SQL;
+if($org != $current_org) {
+die('You can only delete members from your own organisation.');
+}
+
+$columns = array("id", "create_time", "member_id",
+                "firstname", "surname",
+                "org_name", "date_of_birth", "phone_home",
+                "phone_mobile",
+                "phone_work",
+                "email", "class", "status", "gnz_number");
+
 ?>
 
   <body>
@@ -76,42 +74,38 @@ SQL;
     <table>
       <thead>
         <tr>
-          <?php foreach ($columns as $column): ?>
-          <th><?php echo $column ?></th>
-          <?php endforeach ?>
+          <?php 
+          foreach ($columns as $column)
+            echo "<th>{$column}</th>";
+          ?>
           <th>Keep</th>
         </tr>
       </thead>
       <tbody>
 <?php
-  $tr_class = 'even';
-  $ids = array();
-  $result = mysqli_query($con,$q);
-  while($row = $result->fetch_assoc())
-  {
-    $tr_class = ($tr_class == 'even') ? 'odd' : 'even';
-    // print_r(array_keys($row));
-?>
-    <tr class='<?php echo $tr_class ?>'>
-    <?php foreach ($columns as $column): ?>
-      <td><?php echo $row[$column] ?></td>
-    <?php endforeach ?>
-      <td>
-        <input type='radio' name='genuine_id' value='<?php echo $row['id'] ?>' onClick='genuineIdChanged();'/>
-      </td>
-    </tr>
-<?php
-    array_push($ids, $row['id']);
-  }
-  mysqli_free_result($result);
-  mysqli_close($con);
+$tr_class = 'even';
+$ids = array();
+$result = $DB->DuplicateMember($firstname,$surname,$org);
+while($row = $result->fetch_assoc())
+{
+$tr_class = ($tr_class == 'even') ? 'odd' : 'even';
+echo "<tr class='{$tr_class}'>";
+foreach ($columns as $column)
+{
+    $str = htmlspecialchars($row[$column]);
+    echo "<td>{$str}</td>";
+}
+echo "<input type='radio' name='genuine_id' value='{$row['id']}' onClick='genuineIdChanged();' />";
+echo "</tr>";
+array_push($ids, $row['id']);
+}
 ?>
       </tbody>
     </table>
     <input type="hidden" name="ids" value="<?php echo implode(",", $ids) ?>"/>
     <input type="hidden" name="org" value="<?php echo implode(",", $org) ?>"/>
     <div style="margin-top: 10px;">
-      <input type="submit" name="Clean" id="submit" disabled="true" style="font-size: x-large;" />
+      <input type="submit" name="Clean" id="submit" disabled style="font-size: x-large;" />
     </div>
     </form>
     <div style="width: 100%; margin-top: 20px;">

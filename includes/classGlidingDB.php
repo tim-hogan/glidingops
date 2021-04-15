@@ -9,6 +9,27 @@ class GlidingDB extends SQLPlus
     }
 
     //*********************************************************************
+    // audit
+    //*********************************************************************
+    public function creatAudit($description,$userid=null,$memberid=null)
+    {
+        if ($userid && $memberid)
+            return $this->p_create("insert into audit (description,userid,memberid) values (?,?,?)","sii",$description,$userid,$memberid);
+        elseif ($userid)
+            return $this->p_create("insert into audit (description,userid) values (?,?)","si",$description,$userid);
+        elseif ($memberid)
+            return $this->p_create("insert into audit (description,memberid) values (?,?)","si",$description,$memberid);
+        else
+            return $this->p_create("insert into audit (description) values (?)","s",$description);
+    }
+
+
+    public function replaceAuditMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE texts SET memberid = ? WHERE memberid = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+    //*********************************************************************
     // Organistaion
     //*********************************************************************
     public function getOrganisation($org)
@@ -61,6 +82,11 @@ class GlidingDB extends SQLPlus
         return $this->p_singlequery("select * from users left join members a on a.id = member where users.id = ?","i",$id);
     }
 
+    public function replaceUsersMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE users SET member = ? WHERE member = ?","ii",$newMemberid,$srcMemberid);
+    }
+
     //*********************************************************************
     // Members
     //*********************************************************************
@@ -100,6 +126,29 @@ class GlidingDB extends SQLPlus
         return $this->p_query("select a.id as idmember, a.displayname from role_member left join members a ON a.id = role_member.member_id left join membership_status b on b.id = a.status where b.status_name = 'Active' and role_id = ? and a.org = ?","ii",$roleid,$org);
     }
 
+    public function allDuplicateMembers($org)
+    {
+        return $this->p_all("SELECT firstname, surname, org, COUNT(*) AS dup_count, organisations.name AS org_name FROM members JOIN organisations ON members.org = organisations.id WHERE members.org = ? GROUP BY firstname , surname , org HAVING COUNT(*) > 1","i",$org);
+    }
+
+    public function DuplicateMember($firstname,$surname,$org)
+    {
+        return $this->p_all("SELECT members.*, organisations.name AS org_name FROM members JOIN organisations ON members.org = organisations.id WHERE members.firstname = ? AND members.surname = ? AND members.org = ?","ssi",$firstname,$surname,$org);
+    }
+
+    public function countOrgsNotMineFromList($myorg,$list)
+    {
+        $row = $this->p_singlequery("SELECT count(*) AS CNT FROM members WHERE id IN {$list} AND org != ? ","i",$myorg);
+        if ($row)
+            return intval($row['CNT']);
+        return null;
+    }
+
+    public function deleteUser($id)
+    {
+        return $this->p_delete("delete from users where id = ?","i",$id);
+    }
+
     //*********************************************************************
     // membership_class
     //*********************************************************************
@@ -119,6 +168,28 @@ class GlidingDB extends SQLPlus
             return $v['id'];
         return null;
     }
+
+    //*********************************************************************
+    // group_member
+    //*********************************************************************
+    public function replaceGroupMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE group_member SET gm_member_id = ? WHERE gm_member_id = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+    //*********************************************************************
+    // role_member
+    //*********************************************************************
+    function deleteRoleMemberDuplicate($srcMemberid, $newMemberid)
+    {
+        return $this->p_delete("DELETE FROM role_member WHERE member_id = ? AND role_id IN ( SELECT role_id FROM (SELECT role_id FROM role_member WHERE member_id = ?  ) as new_roles )","ii",$srcMemberid,$newMemberid);
+    }
+
+    public function replaceRoleMemberMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE role_member SET member_id = ? WHERE member_id = ?","ii",$newMemberid,$srcMemberid);
+    }
+
 
     //*********************************************************************
     // roles
@@ -250,6 +321,17 @@ class GlidingDB extends SQLPlus
         $r = $this->p_query($q,"ii",$m1,$m2);
         if (!$r) {$this->sqlError($q); return null;}
         return $r;
+    }
+
+    public function replaceFlightsMemberWith($srcMemberid, $newMemberid)
+    {
+        $flights_fields = ["towpilot","pic","p2","billing_member1","billing_member2"];
+        foreach($flights_fields as $f)
+        {
+            if (! $this->p_update("UPDATE flights SET {$f} = ? WHERE {$f} = ?","ii",$newMemberid,$srcMemberid) )
+                return false;
+        }
+        return true;
     }
 
     //*********************************************************************
@@ -447,5 +529,42 @@ class GlidingDB extends SQLPlus
     {
         return $this->delete("DELETE from tracks where point_time < '".$strdate."'");
     }
+
+    //*********************************************************************
+    // bookings
+    //*********************************************************************
+    public function replaceBookingsMemberWith($srcMemberid, $newMemberid)
+    {
+        if (! $this->p_update("UPDATE bookings SET member = ? WHERE member = ?","ii",$newMemberid,$srcMemberid) )
+            return false;
+        return $this->p_update("UPDATE bookings SET instructor = ? WHERE instructor = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+    //*********************************************************************
+    // duty
+    //*********************************************************************
+    public function replaceDutyMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE duty SET member = ? WHERE member = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+    //*********************************************************************
+    // Texts
+    //*********************************************************************
+    public function replaceTextsMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE texts SET txt_member_id = ? WHERE txt_member_id = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+    //*********************************************************************
+    // scheme_subs
+    //*********************************************************************
+    public function replaceSchemeSubsMemberWith($srcMemberid, $newMemberid)
+    {
+        return $this->p_update("UPDATE scheme_subs SET member = ? WHERE member = ?","ii",$newMemberid,$srcMemberid);
+    }
+
+
+
 }
 ?>

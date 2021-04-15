@@ -1,122 +1,109 @@
-<?php 
-  include '../helpers/session_helpers.php';
-  include '../helpers/audit_helpers.php';
-  session_start();
-  require_security_level(64);
-  $current_org = current_org();
-?>
+<?php
+ session_start();
+ require_once "../includes/classSecure.php";
+ include '../helpers/session_helpers.php';
+ require "../includes/classGlidingDB.php";
 
+ require_security_level(SECURITY_ADMIN);
+ $current_org = current_org();
+
+ $DB = new GlidingDB($devt_environment->getDatabaseParameters());
+
+?>
 <!DOCTYPE HTML>
 <html>
-  <meta name="viewport" content="width=device-width">
-  <meta name="viewport" content="initial-scale=1.0">
-  <head>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="initial-scale=1.0" />
     <link rel="icon" type="image/png" href="favicon.png" />
-  </head>
+</head>
 
 <?php
-  function purge() {
+function purge() {
+    global $DB;
     global $current_org;
 
-    $con_params = require('../config/database.php'); $con_params = $con_params['gliding'];
-    mysqli_report(MYSQLI_REPORT_ALL); 
-    $con=mysqli_connect($con_params['hostname'],$con_params['username'],
-                        $con_params['password'],$con_params['dbname']);
-
-    
     if(is_null($_POST['ids'])) {
-      return "Member ids are mandatory!";
+        return "Member ids are mandatory!";
     }
 
     if(is_null($_POST['genuine_id'])) {
-      return "One member has to selected as the genuine one!";
+        return "One member has to selected as the genuine one!";
     }
 
     $ids = explode(',', $_POST['ids']);
     $genuine_id = $_POST['genuine_id'];
 
+
     try {
-      $result = $con->query("SELECT count(*) AS org_count FROM members WHERE id IN ({$_POST['ids']}) AND org != {$current_org}");
-      $row = $result->fetch_assoc();
-      if(0 != $row['org_count']) die('You can only manage members in your own organisation.');
+        if (! $DB->countOrgsNotMineFromList($current_org,$_POST['ids']))
+            die('You can only manage members in your own organisation.');
+        $DB->BeginTransaction();
+        foreach ($ids as $id)
+        {
+            if($id == $genuine_id)
+            {
+                continue;
+            }
 
-      $con->begin_transaction();
-
-      foreach ($ids as $id) {
-        if($id == $genuine_id) {
-          continue;
+            if (! $DB->replaceFlightsMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if ( ! $DB->deleteRoleMemberDuplicate($id, $genuine_id) )
+                $DB->TransactionError();
+            if ( ! $DB->replaceRoleMemberMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceTextsMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceAuditMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceBookingsMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceDutyMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceGroupMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceSchemeSubsMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if (! $DB->replaceUsersMemberWith($id, $genuine_id) )
+                $DB->TransactionError();
+            if ( ! $DB->deleteUser($id) )
+                $DB->TransactionError();
         }
-
-        $con->query("UPDATE flights SET billing_member2 = {$genuine_id} WHERE billing_member2 = {$id}");
-        $con->query("UPDATE flights SET billing_member1 = {$genuine_id} WHERE billing_member1 = {$id}");
-        $con->query("UPDATE flights SET pic = {$genuine_id} WHERE pic={$id}");
-        $con->query("UPDATE flights SET p2 = {$genuine_id} WHERE p2={$id}");
-        $con->query("UPDATE flights SET towpilot = {$genuine_id} WHERE towpilot={$id}");
-
-        //If the new genuine_id already has at least one of the same roles that id has, then we must delete the roles of the old id.
-        //Otherwise, if we just update, the constraint unique(role_id, member_id) would clash.
-        $con->query(
-          "DELETE FROM role_member "
-          . "WHERE member_id = {$id} "
-          . "AND role_id IN ( "
-            . "SELECT role_id FROM( "
-            . "SELECT role_id FROM role_member "
-            . "WHERE member_id = {$genuine_id} "
-          . ") as new_roles "
-		    . ")"
-        );
-        
-        $con->query("UPDATE role_member SET member_id = {$genuine_id} WHERE member_id={$id}");
-        $con->query("UPDATE texts SET txt_member_id = {$genuine_id} WHERE txt_member_id={$id}");
-
-        $con->query("UPDATE audit SET memberid = {$genuine_id} WHERE memberid={$id}");
-
-        $con->query("UPDATE bookings SET member = {$genuine_id} WHERE member={$id}");
-        $con->query("UPDATE bookings SET instructor = {$genuine_id} WHERE instructor={$id}");
-
-        $con->query("UPDATE duty SET member = {$genuine_id} WHERE member={$id}");
-
-        $con->query("UPDATE group_member SET gm_member_id = {$genuine_id} WHERE gm_member_id={$id}");
-
-        $con->query("UPDATE scheme_subs SET member = {$genuine_id} WHERE member={$id}");
-
-        $con->query("UPDATE users SET member = {$genuine_id} WHERE member={$id}");
-
-        $con->query("DELETE FROM members WHERE id = {$id}");
-        audit_log($con, "Merged member with id {$id} into member with id {$genuine_id}");
-      }
-
-      $con->commit();
-    } catch(mysqli_sql_exception $e) {
-      $con->rollback();
-      return "Error: {$e->getMessage()}; Code: {$e->getCode()}";
-    } finally {
-      mysqli_close($con);
+        $DB->EndTransaction();
+    }
+    catch (Exception $e) {
+        $DB->EndTransaction();
+        return "Exception in deleting duplicate member {$e->getMessage()}, refer error log";
     }
 
+    //Create the audit
+    //We have this outside the transaction as we dont want the failure of a audit record creation prevent the real work.
+    $DB->creatAudit("Merged member with id {$id} into member with id {$genuine_id}",$_SESSION['userid']);
+
     return NULL;
-  }
+}
 
   $error = purge();
 ?>
 
-  <body>
-    <div style="width: 100%">
-    <?php if (!is_null(($error))): ?>
-      <p><?php echo $error ?></p>
-    <?php else: ?>
-      <p>Success</p>
-    <?php endif ?>
-    </div>
-    <div style="width: 100%; margin-top: 20px;">
-      <div style="float: left; margin-right: 20px;">
-        <a href='./duplicates_index.php'>BACK</a>
-      </div>
-      <div style="float: left;">
-        <a href="/">HOME</a>
-      </div>
-    </div>
-  </body>
+    <body>
+        <div style="width: 100%">
+        <?php
+        if ($error)
+            echo "<p>{$error}</p>";
+        else
+            echo "<p>Success</p>";
+        ?>
+        </div>
+        <div style="width: 100%; margin-top: 20px;">
+          <div style="float: left; margin-right: 20px;">
+            <a href='./duplicates_index.php'>BACK</a>
+          </div>
+          <div style="float: left;">
+            <a href="/">HOME</a>
+          </div>
+        </div>
+    </body>
 </html>
 
 <?php
