@@ -103,7 +103,6 @@ array_push($ids, $row['id']);
       </tbody>
     </table>
     <input type="hidden" name="ids" value="<?php echo implode(",", $ids) ?>"/>
-    <input type="hidden" name="org" value="<?php echo implode(",", $org) ?>"/>
     <div style="margin-top: 10px;">
       <input type="submit" name="Clean" id="submit" disabled style="font-size: x-large;" />
     </div>
