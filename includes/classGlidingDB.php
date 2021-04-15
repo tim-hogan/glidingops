@@ -87,6 +87,11 @@ class GlidingDB extends SQLPlus
         return $this->p_update("UPDATE users SET member = ? WHERE member = ?","ii",$newMemberid,$srcMemberid);
     }
 
+    public function deleteUser($id)
+    {
+        return $this->p_delete("delete form users where id = ?","i",$id);    
+    }
+
     //*********************************************************************
     // Members
     //*********************************************************************
@@ -144,9 +149,9 @@ class GlidingDB extends SQLPlus
         return null;
     }
 
-    public function deleteUser($id)
+    public function deleteMember($id)
     {
-        return $this->p_delete("delete from users where id = ?","i",$id);
+        return $this->p_delete("delete from members where id = ?","i",$id);
     }
 
     //*********************************************************************

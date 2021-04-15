@@ -47,10 +47,7 @@ function purge() {
                 continue;
             }
 
-            error_log("Start the delete process");
-            error_log(" Filgts");
             $DB->replaceFlightsMemberWith($id, $genuine_id);
-            error_log(" Role Member");
             $DB->deleteRoleMemberDuplicate($id, $genuine_id);
             $DB->replaceRoleMemberMemberWith($id, $genuine_id);
             $DB->replaceTextsMemberWith($id, $genuine_id);
@@ -61,9 +58,7 @@ function purge() {
             $DB->replaceSchemeSubsMemberWith($id, $genuine_id);
             $DB->replaceUsersMemberWith($id, $genuine_id);
 
-            error_log(" Delete User {$id}");
-            $rlt = $DB->deleteUser($id);
-            error_log(" Delete complete {$rlt}");
+            $DB->deleteMember($id);
 
         }
 
