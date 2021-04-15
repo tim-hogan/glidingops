@@ -61,9 +61,9 @@ function purge() {
             $DB->replaceSchemeSubsMemberWith($id, $genuine_id);
             $DB->replaceUsersMemberWith($id, $genuine_id);
 
-            error_log(" Delete User");
-            $DB->deleteUser($id);
-            error_log(" Delete complete");
+            error_log(" Delete User {$id}");
+            $rlt = $DB->deleteUser($id);
+            error_log(" Delete complete {$rlt}");
 
         }
 
