@@ -138,7 +138,7 @@ class GlidingDB extends SQLPlus
 
     public function countOrgsNotMineFromList($myorg,$list)
     {
-        $row = $this->p_singlequery("SELECT count(*) AS CNT FROM members WHERE id IN {$list} AND org != ? ","i",$myorg);
+        $row = $this->p_singlequery("SELECT count(*) AS CNT FROM members WHERE id IN ({$list}) AND org != ? ","i",$myorg);
         if ($row)
             return intval($row['CNT']);
         return null;
