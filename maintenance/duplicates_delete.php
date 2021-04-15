@@ -47,28 +47,19 @@ function purge() {
                 continue;
             }
 
-            if (! $DB->replaceFlightsMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if ( ! $DB->deleteRoleMemberDuplicate($id, $genuine_id) )
-                $DB->TransactionError();
-            if ( ! $DB->replaceRoleMemberMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceTextsMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceAuditMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceBookingsMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceDutyMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceGroupMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceSchemeSubsMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if (! $DB->replaceUsersMemberWith($id, $genuine_id) )
-                $DB->TransactionError();
-            if ( ! $DB->deleteUser($id) )
-                $DB->TransactionError();
+            $DB->replaceFlightsMemberWith($id, $genuine_id);
+            $DB->deleteRoleMemberDuplicate($id, $genuine_id);
+            $DB->replaceRoleMemberMemberWith($id, $genuine_id);
+            $DB->replaceTextsMemberWith($id, $genuine_id);
+            $DB->replaceAuditMemberWith($id, $genuine_id);
+            $DB->replaceBookingsMemberWith($id, $genuine_id);
+            $DB->replaceDutyMemberWith($id, $genuine_id);
+            $DB->replaceGroupMemberWith($id, $genuine_id);
+            $DB->replaceSchemeSubsMemberWith($id, $genuine_id);
+            $DB->replaceUsersMemberWith($id, $genuine_id);
+            
+            $DB->deleteUser($id);
+
         }
 
         if ($DB->isTransactionError())
@@ -79,8 +70,6 @@ function purge() {
         $DB->EndTransaction();
         return "Exception in deleting duplicate member {$e->getMessage()}, refer error log";
     }
-
-
 
     //Create the audit
     //We have this outside the transaction as we dont want the failure of a audit record creation prevent the real work.
