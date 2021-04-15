@@ -6,7 +6,6 @@
 
  require_security_level(SECURITY_ADMIN);
  $current_org = current_org();
- error_log("Current org = {$current_org}");
  $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
 ?>
@@ -36,7 +35,7 @@ function purge() {
 
 
     try {
-        if (! $DB->countOrgsNotMineFromList($current_org,$_POST['ids']))
+        if ($DB->countOrgsNotMineFromList($current_org,$_POST['ids']))
             die('You can only manage members in your own organisation.');
         $DB->BeginTransaction();
         foreach ($ids as $id)
