@@ -20,8 +20,7 @@ $DB = new GlidingDB($devt_environment->getDatabaseParameters());
     <link rel="icon" type="image/png" href="favicon.png" />
     <script type="text/javascript">
       function genuineIdChanged() {
-        var submitBtn = document.getElementById('submit');
-        submitBtn.disabled = false;
+        document.getElementById('submit').disabled = false;
       }
     </script>
     <style type="text/css">
@@ -95,7 +94,7 @@ foreach ($columns as $column)
     $str = htmlspecialchars($row[$column]);
     echo "<td>{$str}</td>";
 }
-echo "<td><input type='radio' name='genuine_id' value='{$row['id']}' onClick='genuineIdChanged();' /></td>";
+echo "<td><input class='rad' type='radio' name='genuine_id' value='{$row['id']}' onClick='genuineIdChanged();' /></td>";
 echo "</tr>";
 array_push($ids, $row['id']);
 }
