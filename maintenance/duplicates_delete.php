@@ -6,7 +6,7 @@
 
  require_security_level(SECURITY_ADMIN);
  $current_org = current_org();
-
+ error_log("Current org = {$current_org}");
  $DB = new GlidingDB($devt_environment->getDatabaseParameters());
 
 ?>
