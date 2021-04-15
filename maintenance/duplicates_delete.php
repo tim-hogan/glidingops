@@ -22,6 +22,8 @@ function purge() {
     global $DB;
     global $current_org;
 
+    $error=null;
+
     if(is_null($_POST['ids'])) {
         return "Member ids are mandatory!";
     }
@@ -68,6 +70,9 @@ function purge() {
             if ( ! $DB->deleteUser($id) )
                 $DB->TransactionError();
         }
+
+        if ($DB->isTransactionError())
+            $error="SQL Transaction Error deleting record";
         $DB->EndTransaction();
     }
     catch (Exception $e) {
@@ -75,11 +80,13 @@ function purge() {
         return "Exception in deleting duplicate member {$e->getMessage()}, refer error log";
     }
 
+
+
     //Create the audit
     //We have this outside the transaction as we dont want the failure of a audit record creation prevent the real work.
     $DB->creatAudit("Merged member with id {$id} into member with id {$genuine_id}",$_SESSION['userid']);
 
-    return NULL;
+    return $error;
 }
 
   $error = purge();
