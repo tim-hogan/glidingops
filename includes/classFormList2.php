@@ -1,5 +1,5 @@
 <?php
-require_once "./includes/classTime.php";
+require_once  dirname(__FILE__) . '/classTime.php';
 class FormList
 {
     private $config;
