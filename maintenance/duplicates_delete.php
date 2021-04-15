@@ -47,7 +47,10 @@ function purge() {
                 continue;
             }
 
+            error_log("Start the delete process");
+            error_log(" Filgts");
             $DB->replaceFlightsMemberWith($id, $genuine_id);
+            error_log(" Role Member");
             $DB->deleteRoleMemberDuplicate($id, $genuine_id);
             $DB->replaceRoleMemberMemberWith($id, $genuine_id);
             $DB->replaceTextsMemberWith($id, $genuine_id);
@@ -57,13 +60,18 @@ function purge() {
             $DB->replaceGroupMemberWith($id, $genuine_id);
             $DB->replaceSchemeSubsMemberWith($id, $genuine_id);
             $DB->replaceUsersMemberWith($id, $genuine_id);
-            
+
+            error_log(" Delete User");
             $DB->deleteUser($id);
+            error_log(" Delete complete");
 
         }
 
         if ($DB->isTransactionError())
+        {
+            error_log("Transaction error so roll back");
             $error="SQL Transaction Error deleting record";
+        }
         $DB->EndTransaction();
     }
     catch (Exception $e) {
