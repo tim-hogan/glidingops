@@ -26,7 +26,7 @@ class GlidingDB extends SQLPlus
 
     public function replaceAuditMemberWith($srcMemberid, $newMemberid)
     {
-        return $this->p_update("UPDATE texts SET memberid = ? WHERE memberid = ?","ii",$newMemberid,$srcMemberid);
+        return $this->p_update("UPDATE audit SET memberid = ? WHERE memberid = ?","ii",$newMemberid,$srcMemberid);
     }
 
     //*********************************************************************
