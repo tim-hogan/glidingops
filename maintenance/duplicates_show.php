@@ -95,7 +95,7 @@ foreach ($columns as $column)
     $str = htmlspecialchars($row[$column]);
     echo "<td>{$str}</td>";
 }
-echo "<input type='radio' name='genuine_id' value='{$row['id']}' onClick='genuineIdChanged();' />";
+echo "<td><input type='radio' name='genuine_id' value='{$row['id']}' onClick='genuineIdChanged();' /></td>";
 echo "</tr>";
 array_push($ids, $row['id']);
 }
