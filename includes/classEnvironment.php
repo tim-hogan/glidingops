@@ -1,6 +1,7 @@
 <?php
 require_once  dirname(__FILE__) . "/classVault.php";
-class Environment
+require_once  dirname(__FILE__) . "/interfaceIEnvironment.php";
+class Environment implements IEnvironment
 {
     private $vault = null;
     private $shelfname = null;
@@ -49,4 +50,4 @@ class Environment
         $this->vault->dumpAll();
     }
 }
-$devt_environment = new Environment();
+?>
