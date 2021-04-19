@@ -5,8 +5,8 @@ File.open(dotEnvFile, 'w') do |f|
 <<-ENV
 APP_ENV=development
 
-DB_HOST=localhost
-DB_PORT=3306
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
 
 DATABASE_NAME=gliding
 DATABASE_USER=homestead
