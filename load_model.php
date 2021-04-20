@@ -1,5 +1,6 @@
 <?php
-require_once "./includes/moduleEnvironment.php";
+require "./includes/moduleEnvironment.php";
+require_once dirname(__FILE__) . '/lrv/vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 $capsule = new Capsule;

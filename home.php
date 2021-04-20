@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 <?php $org=0; if(isset($_SESSION['org'])) $org=$_SESSION['org'];?>
 <?php
-require_once "./includes/moduleEnvironment.php";
+require "./includes/moduleEnvironment.php";
 
 if(isset($_SESSION['security']))
 {

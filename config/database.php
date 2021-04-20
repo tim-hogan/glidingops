@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . "/../includes/moduleEnvironment.php";
+require dirname(__FILE__) . "/../includes/moduleEnvironment.php";
 return [
     'gliding' => [
         'username' => $devt_environment->getkey('DATABASE_USER'),

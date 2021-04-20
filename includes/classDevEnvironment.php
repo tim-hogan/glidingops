@@ -1,6 +1,6 @@
 <?php
 require_once  dirname(__FILE__) . "/interfaceIEnvironment.php";
-require 'lrv/vendor/autoload.php';
+require_once dirname(__FILE__) . '/../lrv/vendor/autoload.php';
 
 class DevEnvironment implements IEnvironment
 {
