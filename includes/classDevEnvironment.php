@@ -1,11 +1,16 @@
 <?php
 require_once  dirname(__FILE__) . "/interfaceIEnvironment.php";
+require 'lrv/vendor/autoload.php';
+
 class DevEnvironment implements IEnvironment
 {
     private $primaryDBParams = null;
     
     function __construct()
-    {
+    {		
+	    $dotenv = new Dotenv\Dotenv(dirname(__FILE__).'/../lrv');
+		$dotenv->load();
+		
         $this->primaryDBParams = array();
         $this->primaryDBParams['dbname'] = $this->getkey("DATABASE_NAME");
         $this->primaryDBParams['username'] = $this->getkey("DATABASE_USER");

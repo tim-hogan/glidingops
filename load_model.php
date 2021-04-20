@@ -1,10 +1,6 @@
 <?php
 require_once "./includes/moduleEnvironment.php";
-require 'lrv/vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
-
-$dotenv = new Dotenv\Dotenv(__DIR__.'/lrv');
-$dotenv->load();
 
 $capsule = new Capsule;
 $capsule->addConnection([
