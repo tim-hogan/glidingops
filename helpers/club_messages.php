@@ -1,5 +1,5 @@
 <?php
-require 'timehelpers.php';
+require_once 'timehelpers.php';
 
 $con_params = require('./config/database.php');
 $con_params = $con_params['gliding'];

@@ -1,7 +1,7 @@
 <?php
 require_once  dirname(__FILE__) . "/classVault.php";
 require_once  dirname(__FILE__) . "/interfaceIEnvironment.php";
-class Environment implements IEnvironment
+class ProdEnvironment implements IEnvironment
 {
     private $vault = null;
     private $shelfname = null;
