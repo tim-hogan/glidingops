@@ -76,7 +76,7 @@ function purge() {
 
     //Create the audit
     //We have this outside the transaction as we dont want the failure of a audit record creation prevent the real work.
-    $DB->creatAudit("Merged member with id {$id} into member with id {$genuine_id}",$_SESSION['userid']);
+    $DB->createAudit("Merged member with id {$id} into member with id {$genuine_id}",$_SESSION['userid']);
 
     return $error;
 }

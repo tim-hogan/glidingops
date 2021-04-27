@@ -11,7 +11,7 @@ class GlidingDB extends SQLPlus
     //*********************************************************************
     // audit
     //*********************************************************************
-    public function creatAudit($description,$userid=null,$memberid=null)
+    public function createAudit($description,$userid=null,$memberid=null)
     {
         if ($userid && $memberid)
             return $this->p_create("insert into audit (description,userid,memberid) values (?,?,?)","sii",$description,$userid,$memberid);
@@ -77,6 +77,11 @@ class GlidingDB extends SQLPlus
         return $this->p_singlequery("select * from users where id = ?","i",$id);
     }
 
+    public function getUserByUsername($username)
+    {
+        return $this->p_singlequery("select * from users where usercode = ?","s",$username);
+    }
+
     public function getUserWithMember($id)
     {
         return $this->p_singlequery("select * from users left join members a on a.id = member where users.id = ?","i",$id);
@@ -89,7 +94,7 @@ class GlidingDB extends SQLPlus
 
     public function deleteUser($id)
     {
-        return $this->p_delete("delete form users where id = ?","i",$id);    
+        return $this->p_delete("delete form users where id = ?","i",$id);
     }
 
     //*********************************************************************
