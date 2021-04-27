@@ -5,43 +5,35 @@ File.open(dotEnvFile, 'w') do |f|
 <<-ENV
 APP_ENV=development
 
-DB_HOST=localhost
-DB_PORT=3306
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
 
-DB_DATABASE=gliding
-DB_USERNAME=homestead
-DB_PASSWORD=secret
+DATABASE_NAME=gliding
+DATABASE_USER=homestead
+DATABASE_PW=secret
 
-DB_TRACKS_DATABASE=tracks
-DB_TRACKS_USERNAME=homestead
-DB_TRACKS_PASSWORD=secret
+TRACKS_DATABASE_NAME=tracks
+TRACKS_DATABASE_USER=homestead
+TRACKS_DATABASE_PW=secret
 
 APP_KEY=base64:m8XNVK0wYvRJoDLfIcBYuK+/vZdmTP2+g8A1dPOOEUc=
 APP_DEBUG=true
 ENV
-        )
+)
 end
-
-legacyDatabaseCfgFile = File.expand_path('../config/database.php', lrvFolder)
-File.open(legacyDatabaseCfgFile, 'w') do |f|
+		
+rootFolder = File.expand_path("../../", File.dirname(__FILE__))
+phpInfoFile = File.expand_path("phpinfo.php", rootFolder)
+File.open(phpInfoFile, 'w') do |f|
     f.write(
-<<-DATABASE_PHP
+<<-PHPNFO
 <?php
-return [
-    'gliding' => [
-        'username' => 'homestead',
-        'password' => 'secret',
-        'hostname' => 'localhost',
-        'dbname' => 'gliding'
-    ],
-    'tracks' => [
-        'username' => 'homestead',
-        'password' => 'secret',
-        'hostname' => 'localhost',
-        'dbname' => 'tracks'
-    ]
-];
+  require_once "./includes/moduleEnvironment.php";
+  $env = $devt_environment->getkey('APP_ENV');  
+  if($env == 'development') { 
+	phpinfo(INFO_ALL);
+  }
 ?>
-DATABASE_PHP
-        )
+PHPNFO
+)
 end

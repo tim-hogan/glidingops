@@ -71,7 +71,8 @@ $diagtext="";
 	
   
   $con_params = require('./config/database.php'); $con_params = $con_params['gliding']; 
-$con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
+  
+  $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
   if (mysqli_connect_errno())
   {
    echo "<p>Unable to connect to database</p>";
@@ -95,7 +96,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
   $thisYear = intval($dateNow->format('Y'));
   $lastYear = $thisYear-1;
   
-  $q = "SELECT member_id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and (role_id = " . $role1 . " or  role_id =  " . $role2 . ") order by a.surname , a.firstname ";
+  $q = "SELECT a.member_id, a.displayname, a.surname , a.firstname from role_member LEFT JOIN members a ON a.id = role_member.member_id where role_member.org = ".$_SESSION['org']. " and (role_id = " . $role1 . " or  role_id =  " . $role2 . ") order by a.surname , a.firstname ";
   $r = mysqli_query($con,$q);
   while ($row = mysqli_fetch_array($r) )
   {
@@ -108,6 +109,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $tottimeLY=0;
     $dateFlight = new DateTime();
     $strLastDate="";
+	if($row[0] == null) continue;
     $q1= "SELECT localdate, (flights.land-flights.start) from flights where flights.pic = " . $row[0] . " and flights.p2 IS NOT NULL order by localdate DESC";
     $r1 = mysqli_query($con,$q1);
     while ($row1 = mysqli_fetch_array($r1) )

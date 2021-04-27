@@ -1,15 +1,13 @@
 <?php
-require_once "./includes/classEnvironment.php";
-require 'lrv/vendor/autoload.php';
+require "./includes/moduleEnvironment.php";
+require_once dirname(__FILE__) . '/lrv/vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
-
-$dotenv = new Dotenv\Dotenv(__DIR__.'/lrv');
-$dotenv->load();
 
 $capsule = new Capsule;
 $capsule->addConnection([
   'driver'   => 'mysql',
-  'host'     => getenv('DB_HOST'),
+  'host'     => getenv('DATABASE_HOST'),
+  'port' => getenv('DATABASE_PORT'),
   'database' => $devt_environment->getkey('DATABASE_NAME'),
   'username' => $devt_environment->getkey('DATABASE_USER'),
   'password' => $devt_environment->getkey('DATABASE_PW'),
@@ -20,8 +18,8 @@ $capsule->addConnection([
 
 $capsule->addConnection([
   'driver' => 'mysql',
-  'host' => env('DB_HOST'),
-  'port' => env('DB_PORT'),
+  'host' => getenv('DATABASE_HOST'),
+  'port' => getenv('DATABASE_PORT'),
   'database' => $devt_environment->getkey('TRACKS_DATABASE_NAME'),
   'username' => $devt_environment->getkey('TRACKS_DATABASE_USER'),
   'password' => $devt_environment->getkey('TRACKS_DATABASE_PW'),
