@@ -1,5 +1,5 @@
 <?php
-require_once (dirname(realpath(__FILE__)) ."/classEnvironment.php");
+require_once (dirname(realpath(__FILE__)) ."/moduleEnvironment.php");
 require_once (dirname(realpath(__FILE__)) ."/securityParams.php");
 
 class Secure
