@@ -21,17 +21,17 @@ function minmaxwinddow(n) {
         p.style.width = m + "px";
         p.style.flexBasis = m + "px";
         p.style.overflow = "hidden";
-        n.innerHTML = ">>";
         n.setAttribute("expanded", "0");
         n.setAttribute("title", "Maximise Panel");
+        n.className = "minimiser1";
     }
     else {
         p.style.width = p.fullwidth;
         p.style.flexBasis = p.fullwidth;
         p.style.overflow = "auto";
-        n.innerHTML = "<<";
         n.setAttribute("expanded", "1");
         n.setAttribute("title", "Minimise Panel");
+        n.className = "minimiser";
     }
 }
 

@@ -64,6 +64,32 @@ div.minimiser:hover {
     background-size: 25px 25px;
 }
 
+div.minimiser1 {
+    height: 25px;
+    width: 25px;
+    padding-right: 4px;
+    float: right;
+    margin: 0;
+    cursor: pointer;
+    font-size: 14pt;
+    font-stretch: extra-condensed;
+    background: url("/images/HideRight1.png") no-repeat;
+    background-size: 25px 25px;
+}
+
+div.minimiser1:hover {
+    height: 25px;
+    width: 25px;
+    padding-right: 4px;
+    float: right;
+    margin: 0;
+    cursor: pointer;
+    font-size: 14pt;
+    font-stretch: extra-condensed;
+    background: url("/images/HideRight2.png") no-repeat;
+    background-size: 25px 25px;
+}
+
 
 div.hider {padding-right: 4px;float: right;margin: 0;cursor: pointer;font-size: 14pt;font-stretch: extra-condensed;}
 @media only screen and (min-width: 800px) {
