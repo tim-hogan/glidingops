@@ -147,7 +147,7 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
         <div id="main">
             <div id="flexcontainer">
                 <div id="left">
-                    <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"><img src="/images/HideLeft1.png" /></div>
+                    <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)" title="Minimise"></div>
                     <div class="panel">
                         <div class="panel2">
                         <h1>SETTINGS</h1>
@@ -158,7 +158,7 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
                     </div>
                 </div>
                 <div id="right">
-                    <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"><img src="/images/HideLeft1.png" /></div>
+                    <div class="minimiser" expanded="1" minsize="20" onclick="minmaxwinddow(this)"></div>
                     <div class="panel">
                         <?php FormList::buildAllPanels($DB,$g_data,$g_FormTables,$formdata); ?>
                     </div>
