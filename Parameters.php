@@ -142,7 +142,7 @@ $g_FormTables = ['aircrafttype','aircraft','vectors'];
             <?php include "./orgs/{$org}/heading.php" ?>
         </div>
         <div id="menu">
-            <p>**EDIT**MENU</p>
+            <div class="menuitem">HOME</div>
         </div>
         <div id="main">
             <div id="flexcontainer">
