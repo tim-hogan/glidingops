@@ -47,7 +47,7 @@ div.minimiser {
     cursor: pointer;
     font-size: 14pt;
     font-stretch: extra-condensed;
-    background: url("/images/HideLeft1.jpg") no-repeat;
+    background: url("/images/HideLeft1.png") no-repeat;
     background-size: 25px 25px;
 }
 
@@ -60,7 +60,7 @@ div.minimiser:hover {
     cursor: pointer;
     font-size: 14pt;
     font-stretch: extra-condensed;
-    background: url("/images/HideLeft2.jpg") no-repeat;
+    background: url("/images/HideLeft2.png") no-repeat;
     background-size: 25px 25px;
 }
 
