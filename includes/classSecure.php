@@ -185,7 +185,9 @@ class Secure
     {
         if ($user)
         {
-            if (intval($user['user_security']) & intval($seclevel))
+            if (isset($user['user_security']) && (intval($user['user_security']) & intval($seclevel)))
+                return true;
+            if (isset($user['securitylevel']) && (intval($user['securitylevel']) & intval($seclevel)))
                 return true;
         }
         return false;
