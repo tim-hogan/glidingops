@@ -333,6 +333,35 @@ class GlidingDB extends SQLPlus
         return $r;
     }
 
+    public function allGliderFlightsForOrg($org,$fromlocal=null,$tolocal=null)
+    {
+        $r = null;
+        $gliderFlightType = $this->getGlidingFlightTypeId();
+        $q = "select * , a.name as LT, b.displayname as PICNAME , c.displayname as P2NAME , d.displayname as TOWY, e.rego_short as TOWREGO from flights left join launchtypes a on a.id = launchtype left join members b on b.id = pic left join members c on c.id = p2 left join members d on d.id = towpilot left join aircraft e on e.id";
+        if ($fromlocal && $tolocal)
+        {
+            $q .= " where type = {$gliderFlightType} and org = ? and localdate >= ? and localdate <= ? order by localdate,seq";
+            $r = $this->p_query($q,"iss",$org,$fromlocal,$tolocal);
+        }
+        if ($fromlocal && ! $tolocal)
+        {
+            $q .= " where type = {$gliderFlightType} and org = ? and localdate >= ? order by localdate,seq";
+            $r = $this->p_query($q,"is",$org,$fromlocal);
+        }
+        if (!$fromlocal && $tolocal)
+        {
+            $q .= " where type = {$gliderFlightType} and org = ? and localdate <= ? order by localdate,seq";
+            $r = $this->p_query($q,"is",$org,$tolocal);
+        }
+        if (!$fromlocal && !$tolocal)
+        {
+            $q .= " where type = {$gliderFlightType} and org = ? order by localdate,seq";
+            $r = $this->p_query($q,"i",$org);
+        }
+        if (!$r) {$this->sqlError($q); return null;}
+        return $r;
+    }
+
     public function replaceFlightsMemberWith($srcMemberid, $newMemberid)
     {
         $flights_fields = ["towpilot","pic","p2","billing_member1","billing_member2"];
