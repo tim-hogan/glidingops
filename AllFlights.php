@@ -45,7 +45,7 @@ if ($user && isset($user['org']))
         $org = $user['org'];
 }
 
-Secure::CheckPage2($user, intval(SECUIRTY_CFO) &  intval(SECURITY_CFI) & intval(SECURITY_ADMIN));
+Secure::CheckPage2($user, intval(SECUIRTY_CFO) | intval(SECURITY_CFI) | intval(SECURITY_ADMIN));
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
