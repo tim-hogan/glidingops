@@ -128,8 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strP2 = htmlspecialchars($flight['P2NAME']);
                                 $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
                                 $strLand = (new DateTime())->setTimestamp($flight['land'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
-                                $duration = ($flight['land'] / 1000) - ($flight['start'] / 1000) / 60;
-                                error_log("Duration {$duration}");
+                                $duration = (($flight['land'] / 1000) - ($flight['start'] / 1000)) / 60;
                                 $strDuration = sprintf("%02d",$duration / 60) . ":" . sprintf("%02d",$duration % 60);
 
                                 echo "<tr>";
