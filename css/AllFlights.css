@@ -5,6 +5,8 @@
 #selection button {margin-top: 20px;}
 #report {margin-top: 10px;padding: 10px;border: solid 1px #888;border-radius: 8px;}
 #report2 h1 {font-size: 12pt;color: #777;}
+#report2 th {padding-right: 8px;}
+#report2 td {padding-right: 8px;}
 #report2 .l {text-align: left;}
 #report2 .c {text-align: center;}
 #report2 .r {text-align: right;}
