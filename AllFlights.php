@@ -25,7 +25,7 @@ function var_error_log( $object=null,$text='')
 function getLocalDate($f)
 {
     if (isset($_POST[$f]))
-        return (new DateTime($_POST[$f]))->format(Ymd);
+        return (new DateTime($_POST[$f]))->format('Ymd');
     return null;
 }
 
