@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strTOWY = htmlspecialchars($flight['TOWY']);
                                 $strPIC = htmlspecialchars($flight['PICNAME']);
                                 $strP2 = htmlspecialchars($flight['P2NAME']);
-                                $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone($organistaion['timezone'])->format('H:s');
+                                $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:s');
 
 
                                 echo "<tr>";
