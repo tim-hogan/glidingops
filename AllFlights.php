@@ -72,6 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <link rel='stylesheet' type='text/css' href='css/heading.css' />
     <link rel='stylesheet' type='text/css' href='css/menu.css' />
     <link rel='stylesheet' type='text/css' href='css/main.css' />
+    <link rel='stylesheet' type='text/css' href='css/AllFlights.css' />
 </head>
 <body>
     <div id="container">
@@ -79,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             <?php include "./orgs/{$org}/heading.php" ?>
         </div>
         <div id="menu">
-            <div class="menuitem" onselect="window.location = 'home'">HOME</div>
+            <div class="menuitem" onclick="window.location='home'">HOME</div>
         </div>
         <div id="main">
             <h1>All flights report</h1>
@@ -105,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 if ($localDateStart && $localDateEnd)
                 {
                     echo "<div id='report2'>";
-                        $r = allFilightsForOrg($org,$localDateStart,$localDateEnd);
+                        $r = $DB->allFilightsForOrg($org,$localDateStart,$localDateEnd);
                         if (!$r || $r->num_rows == 0)
                         {
                             echo "<p>NO FLIGHT RECORDS</p>";
