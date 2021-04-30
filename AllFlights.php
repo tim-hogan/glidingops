@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         }
                         else
                         {
-                            echo "<h1>FLIGHTS</h1>";
+                            echo "<h1>FLIGHTS ({$r->num_rows})</h1>";
                             echo "<table>";
                             echo "<tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY/WINCHY</th><th>PIC</th><th>P2</th><th>LAUNCH</th></tr>";
 
@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "<td>{$strTOWY}</td>";
                                 echo "<td>{$strPIC}</td>";
                                 echo "<td>{$strP2}</td>";
-                                echo "<td>{$strLaunch2}</td>";
+                                echo "<td>{$strLaunch}</td>";
                                 echo "</tr>";
                             }
                             echo "</table>";
