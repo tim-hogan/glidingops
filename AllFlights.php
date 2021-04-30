@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 if ($localDateStart && $localDateEnd)
                 {
                     echo "<div id='report2'>";
-                        $r = $DB->allFilallGliderFlightsForOrgightsForOrg($org,$localDateStart,$localDateEnd);
+                        $r = $DB->allGliderFlightsForOrg($org,$localDateStart,$localDateEnd);
                         if (!$r || $r->num_rows == 0)
                         {
                             echo "<p>NO FLIGHT RECORDS</p>";
