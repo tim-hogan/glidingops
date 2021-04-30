@@ -185,7 +185,6 @@ class Secure
     {
         if ($user)
         {
-            error_log("user security is {$user['securitylevel']} Level is {$seclevel}");
             if (isset($user['user_security']) && (intval($user['user_security']) & intval($seclevel)))
                 return true;
             if (isset($user['securitylevel']) && (intval($user['securitylevel']) & intval($seclevel)))
