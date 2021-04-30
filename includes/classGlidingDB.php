@@ -341,7 +341,7 @@ class GlidingDB extends SQLPlus
         if ($fromlocal && $tolocal)
         {
             $q .= " and localdate >= ? and localdate <= ? order by localdate,seq";
-            error_log("Q is {$q}");
+            error_log("Org = {$org} From: {$fromlocal} To: {$tolocal} Q is {$q}");
             $r = $this->p_query($q,"iss",$org,$fromlocal,$tolocal);
         }
         if ($fromlocal && ! $tolocal)
