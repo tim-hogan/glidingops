@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         {
                             echo "<h1>FLIGHTS ({$r->num_rows})</h1>";
                             echo "<table>";
-                            echo "<tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY/WINCHY</th><th>PIC</th><th>P2</th><th>LAUNCH</th><th>LAND</th><th>DURATION</th></tr>";
+                            echo "<tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY/WINCHY</th><th>PIC</th><th>P2</th><th>LAUNCH</th><th>LAND</th><th>DURATION</th><th>CHARGE</th></tr>";
 
                             while ($flight = $r->fetch_assoc())
                             {
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strP2 = htmlspecialchars($flight['P2NAME']);
                                 $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
                                 $strLand = (new DateTime())->setTimestamp($flight['land'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
-                                $duration = ($flight['land'] / 1000) - ($flight['start'] / 1000);
+                                $duration = ($flight['land'] / 1000) - ($flight['start'] / 1000) / 60;
                                 $strDuration = sprintf("%02d",$duration / 60) . ":" . sprintf("%02d",$duration % 60);
 
                                 echo "<tr>";
@@ -141,9 +141,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "<td>{$strTOWY}</td>";
                                 echo "<td>{$strPIC}</td>";
                                 echo "<td>{$strP2}</td>";
-                                echo "<td>{$strLaunch}</td>";
-                                echo "<td>{$strLand}</td>";
-                                echo "<td>{$strDuration}</td>";
+                                echo "<td class='r'>{$strLaunch}</td>";
+                                echo "<td class='r'>{$strLand}</td>";
+                                echo "<td class='r'>{$strDuration}</td>";
                                 echo "</tr>";
                             }
                             echo "</table>";
