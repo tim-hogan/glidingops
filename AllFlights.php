@@ -149,7 +149,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "<td class='r'>{$strDuration}</td>";
                                 echo "<td class='c'>{$billingname}</td>";
                                 echo "<td>{$comment}</td>";
-                                echo "<td>" . $numtracks > 0 ? "MAP" : "" . "</td>";
+                                if ($numtracks > 0)
+                                    echo "<td>MAP</td>";
+                                else
+                                    echo "<td></td>";
                                 echo "</tr>";
                             }
                             echo "</table>";
