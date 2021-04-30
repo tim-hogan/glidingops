@@ -130,20 +130,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strLand = (new DateTime())->setTimestamp($flight['land'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
                                 $duration = (($flight['land'] / 1000) - ($flight['start'] / 1000)) / 60;
                                 $strDuration = sprintf("%02d",$duration / 60) . ":" . sprintf("%02d",$duration % 60);
-
+                                $billingname = htmlspecialchars($flight['BILLINGNAME']);
                                 echo "<tr>";
                                 echo "<td>{$strDate}</td>";
-                                echo "<td>{$flight['seq']}</td>";
-                                echo "<td>{$strLocation}</td>";
-                                echo" <td>{$flight['LT']}</td>";
-                                echo "<td>{$flight['TOWREGO']}</td>";
-                                echo "<td>{$flight['glider']}</td>";
+                                echo "<td class='c'>{$flight['seq']}</td>";
+                                echo "<td class='c'>{$strLocation}</td>";
+                                echo" <td class='c'>{$flight['LT']}</td>";
+                                echo "<td class='c'>{$flight['TOWREGO']}</td>";
+                                echo "<td class='c'>{$flight['glider']}</td>";
                                 echo "<td>{$strTOWY}</td>";
                                 echo "<td>{$strPIC}</td>";
                                 echo "<td>{$strP2}</td>";
                                 echo "<td class='r'>{$strLaunch}</td>";
                                 echo "<td class='r'>{$strLand}</td>";
                                 echo "<td class='r'>{$strDuration}</td>";
+                                echo "<td class='r'>{$billingname}</td>";
                                 echo "</tr>";
                             }
                             echo "</table>";
