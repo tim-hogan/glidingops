@@ -47,6 +47,8 @@ if ($user && isset($user['org']))
 
 Secure::CheckPage2($user, intval(SECUIRTY_CFO) | intval(SECURITY_CFI) | intval(SECURITY_ADMIN));
 
+$strNow = (new DateTime())->setTimezone(new DateTimeZone($organistaion['timezone']))->format("Y-m-d");
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     if (!Secure::checkCSRF())
@@ -93,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     </div>
                     <div id="divtodate">
                         <label for="todate">TO</label>
-                        <input id="todate" type="date" name="todate" />
+                        <input id="todate" type="date" name="todate" value="<?php echo $strNow;?>"/>
                     </div>
                     <?php
                     echo "<input type='hidden' name='formtoken' value='{$_SESSION['csrf_key']}'>";
@@ -115,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                         {
                             echo "<h1>FLIGHTS ({$r->num_rows})</h1>";
                             echo "<table>";
-                            echo "<tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY/WINCHY</th><th>PIC</th><th>P2</th><th>LAUNCH</th></tr>";
+                            echo "<tr><th>DATE</th><th>SEQ</th><th>LOCATION</th><th>LAUNCH TYPE</th><th>TOW</th><th>GLIDER</th><th>TOWY/WINCHY</th><th>PIC</th><th>P2</th><th>LAUNCH</th><th>LAND</th><th>DURATION</th></tr>";
 
                             while ($flight = $r->fetch_assoc())
                             {
@@ -124,8 +126,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 $strTOWY = htmlspecialchars($flight['TOWY']);
                                 $strPIC = htmlspecialchars($flight['PICNAME']);
                                 $strP2 = htmlspecialchars($flight['P2NAME']);
-                                $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:s');
-
+                                $strLaunch = (new DateTime())->setTimestamp($flight['start'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
+                                $strLand = (new DateTime())->setTimestamp($flight['land'] / 1000)->setTimezone(new DateTimeZone($organistaion['timezone']))->format('H:i');
+                                $duration = ($flight['land'] / 1000) - ($flight['start'] / 1000);
+                                $strDuration = sprintf("%02d",$duration / 60) . ":" . sprintf("%02d",$duration % 60);
 
                                 echo "<tr>";
                                 echo "<td>{$strDate}</td>";
@@ -138,6 +142,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                 echo "<td>{$strPIC}</td>";
                                 echo "<td>{$strP2}</td>";
                                 echo "<td>{$strLaunch}</td>";
+                                echo "<td>{$strLand}</td>";
+                                echo "<td>{$strDuration}</td>";
                                 echo "</tr>";
                             }
                             echo "</table>";
