@@ -337,25 +337,25 @@ class GlidingDB extends SQLPlus
     {
         $r = null;
         $gliderFlightType = $this->getGlidingFlightTypeId();
-        $q = "select * , a.name as LT, b.displayname as PICNAME , c.displayname as P2NAME , d.displayname as TOWY, e.rego_short as TOWREGO from flights left join launchtypes a on a.id = launchtype left join members b on b.id = pic left join members c on c.id = p2 left join members d on d.id = towpilot left join aircraft e on e.id";
+        $q = "select * , a.name as LT, b.displayname as PICNAME , c.displayname as P2NAME , d.displayname as TOWY, e.rego_short as TOWREGO from flights left join launchtypes a on a.id = launchtype left join members b on b.id = pic left join members c on c.id = p2 left join members d on d.id = towpilot left join aircraft e on e.id where flights.type = {$gliderFlightType} and flights.org = ?";
         if ($fromlocal && $tolocal)
         {
-            $q .= " where flights.type = {$gliderFlightType} and org = ? and localdate >= ? and localdate <= ? order by localdate,seq";
+            $q .= " and localdate >= ? and localdate <= ? order by localdate,seq";
             $r = $this->p_query($q,"iss",$org,$fromlocal,$tolocal);
         }
         if ($fromlocal && ! $tolocal)
         {
-            $q .= " where flights.type = {$gliderFlightType} and org = ? and localdate >= ? order by localdate,seq";
+            $q .= " and localdate >= ? order by localdate,seq";
             $r = $this->p_query($q,"is",$org,$fromlocal);
         }
         if (!$fromlocal && $tolocal)
         {
-            $q .= " where flights.type = {$gliderFlightType} and org = ? and localdate <= ? order by localdate,seq";
+            $q .= " localdate <= ? order by localdate,seq";
             $r = $this->p_query($q,"is",$org,$tolocal);
         }
         if (!$fromlocal && !$tolocal)
         {
-            $q .= " where flights.type = {$gliderFlightType} and org = ? order by localdate,seq";
+            $q .= " order by localdate,seq";
             $r = $this->p_query($q,"i",$org);
         }
         if (!$r) {$this->sqlError($q); return null;}
