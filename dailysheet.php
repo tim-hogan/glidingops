@@ -1174,8 +1174,7 @@ function StartUp()
 
   grplist = xmlDoc.getElementsByTagName("flights")[0].childNodes;
 
-  var k;
-  for (k=0; k<grplist.length; k++)
+  for (var k=0; k<grplist.length; k++)
   {
 
     if  (grplist[k].nodeName == "flight") {
@@ -1203,12 +1202,34 @@ function StartUp()
   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastVector,lastTowPilot,"","","0","0","0","","","","0");
   nextRow++;
 
-  if (bUpdServer == 1){
+  if (grplist.length > 0) //Update Location
+  {
+    const newLocation = "<?php echo $location; ?>"
+    for (var k=0; k<grplist.length; k++)
+    {    
+      if  (grplist[k].nodeName == "flight") {
+        var oldLocation = grplist[k].getElementsByTagName("location")[0].childNodes[0].nodeValue;
+        if (oldLocation != newLocation){
+          bUpdServer++;
+          grplist[k].getElementsByTagName("location")[0].childNodes[0].nodeValue = newLocation;
+        }
+      }
+    }
+  }
+
+  if (bUpdServer >= 1){
     sendXMLtoServer();
   }
 
   getBookings();
   $('#loading-spinner').hide()
+}
+
+function updateLocation(grplist)
+{
+  var nOfUpdates = 0;
+
+  return nOfUpdates;
 }
 
 function towlandbutton(what)
@@ -1255,9 +1276,11 @@ function AddNewLine()
 
 <span id='dayfield'>DATE</span>
 <span> | </span>
-<span id='sync'>SYNC</span>
-<span> | </span>
 <span id='locationLabel'>LOCATION</span>
+<span> | </span>
+<button type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Reset Location</button>
+<span> | </span>
+<span id='sync'>SYNC</span>
 <br>
 
 <table id='t1' style="width: 100%" class="table-condensed">
