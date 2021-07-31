@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
  }
 
 }
+
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 $whatdt = 'now';
@@ -733,7 +734,7 @@ function findxmlflightseq(list,id)
 }
 
 
-function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,start,towland,land,height,charges,comments,del)
+function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,start,towland,land,height,charges,comments,del, location)
 {
    var list = doc.getElementsByTagName("flights")[0].childNodes;
    var flight =  findxmlflightseq(list,seq);
@@ -761,11 +762,11 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
       updatenode(doc,flight.getElementsByTagName("charges")[0],charges);
       updatenode(doc,flight.getElementsByTagName("comments")[0],comments);
       updatenode(doc,flight.getElementsByTagName("del")[0],del);
+      updatenode(doc,flight.getElementsByTagName("location")[0],location);
    }
    else
    {
        var org=<?php echo $org;?>;
-       var loc='<?php echo $location;?>';
        var vnode,newtext;
        updseq++;
        updatenode(doc,doc.getElementsByTagName("updseq")[0],updseq);
@@ -775,11 +776,6 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
 
        vnode = doc.createElement('org');
        newtext=doc.createTextNode(org);
-       vnode.appendChild(newtext);
-       flight.appendChild(vnode);
-
-       vnode = doc.createElement('location');
-       newtext=doc.createTextNode(loc);
        vnode.appendChild(newtext);
        flight.appendChild(vnode);
 
@@ -858,6 +854,10 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
        vnode.appendChild(newtext);
        flight.appendChild(vnode);
 
+       vnode = doc.createElement('location');
+       newtext=doc.createTextNode(location);
+       vnode.appendChild(newtext);
+       flight.appendChild(vnode);
    }
    if (locstore ==1)
        localStorage.setItem(datestring, xml2Str(doc) );
@@ -972,7 +972,9 @@ function fieldchange(what, row = null) {
   comments = escape(comments);
   var del = document.getElementById("m" + iRow).value;
 
-  updatexmlflight(xmlDoc, iRow, launchtype, plane, glider, vector, towp, p1, p2, start, towland, land, height, charges, comments, del);
+  var location = "<?php echo $location ?>"
+
+  updatexmlflight(xmlDoc, iRow, launchtype, plane, glider, vector, towp, p1, p2, start, towland, land, height, charges, comments, del, location);
   //update the seq
   sendXMLtoServer();
 }
@@ -1168,10 +1170,11 @@ function StartUp()
   var day     = today.getDate();
   document.getElementById("dayfield").innerHTML = dt.substring(6,8) + "/" + dt.substring(4,6) + "/" + dt.substring(0,4);
 
+  document.getElementById("locationLabel").innerHTML = "Location: " + "<?php echo $location; ?>"
+
   grplist = xmlDoc.getElementsByTagName("flights")[0].childNodes;
 
-  var k;
-  for (k=0; k<grplist.length; k++)
+  for (var k=0; k<grplist.length; k++)
   {
 
     if  (grplist[k].nodeName == "flight") {
@@ -1199,12 +1202,34 @@ function StartUp()
   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastVector,lastTowPilot,"","","0","0","0","","","","0");
   nextRow++;
 
-  if (bUpdServer == 1){
+  if (grplist.length > 0) //Update Location
+  {
+    const newLocation = "<?php echo $location; ?>"
+    for (var k=0; k<grplist.length; k++)
+    {    
+      if  (grplist[k].nodeName == "flight") {
+        var oldLocation = grplist[k].getElementsByTagName("location")[0].childNodes[0].nodeValue;
+        if (oldLocation != newLocation){
+          bUpdServer++;
+          grplist[k].getElementsByTagName("location")[0].childNodes[0].nodeValue = newLocation;
+        }
+      }
+    }
+  }
+
+  if (bUpdServer >= 1){
     sendXMLtoServer();
   }
 
   getBookings();
   $('#loading-spinner').hide()
+}
+
+function updateLocation(grplist)
+{
+  var nOfUpdates = 0;
+
+  return nOfUpdates;
 }
 
 function towlandbutton(what)
@@ -1250,6 +1275,11 @@ function AddNewLine()
 <div id="container">
 
 <span id='dayfield'>DATE</span>
+<span> | </span>
+<span id='locationLabel'>LOCATION</span>
+<span> | </span>
+<button type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Reset Location</button>
+<span> | </span>
 <span id='sync'>SYNC</span>
 <br>
 
