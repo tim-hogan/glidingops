@@ -217,8 +217,9 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
 <th>TOW HEIGHT</th>
 <th>CHARGE</th>
 <th>COMMENTS</th>
+<th>LOCATION</th>
 <?php
-$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type, flights.vector from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
+$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type, flights.vector, flights.location from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
 $diagtext .= $sql . "<br>";
 $r = mysqli_query($con,$sql);
 $rownum = 0;
@@ -281,6 +282,7 @@ while ($row = mysqli_fetch_array($r) )
      echo "Retrieve";
   }
   echo "</td>";
+  echo "<td>"; echo $row[16]; echo "</td>";
 }
 ?>
 </table>
