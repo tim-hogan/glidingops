@@ -28,18 +28,9 @@ var DailySheet = function() {
         if (n.getAttribute("timedata") != "0") {
             var parent = what.parentNode;
             parent.removeChild(what);
-            var para = document.createElement("input");
-            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
-            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
 
             var now = new Date();
-            var d = new Date(today.year, today.month, today.day, now.getHours(), now.getMinutes(), 0);
-
-            para.setAttribute("onchange", "timechange(this)");
-            para.setAttribute("timedata", d.getTime());
-            para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
-            para.setAttribute("prevval", para.value);
-            para.size = 5;
+            var para = getTimeTextBox(new Date(today.year, today.month, today.day, now.getHours(), now.getMinutes(), 0));
             para.id = stid;
             parent.appendChild(para);
 
@@ -55,8 +46,7 @@ var DailySheet = function() {
         var parent = what.parentNode;
         parent.removeChild(what);
         var para = document.createElement("input");
-        para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
-        para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
+        para.setAttribute('class', 'textbox');
         para.setAttribute("onchange", "timechange(this)");
 
         var now = new Date();
@@ -98,6 +88,25 @@ var DailySheet = function() {
         }
     }
 
+    myPublic.towlandbutton= function(what)
+    {
+      var stid = what.id;
+      var iRow = what.id;   // n rownumber
+      iRow = iRow.substring(1,iRow.length);
+      var n = document.getElementById("g" + iRow);
+      if (n.getAttribute("timedata") != "0")
+      {
+        var parent = what.parentNode;
+        parent.removeChild(what);
+        var para = getTimeTextBox(new Date());
+        para.id = stid;
+        parent.appendChild(para);
+    
+        calcFlightTime(iRow);
+        fieldchange(what);
+      }
+    }
+
     myPublic.refreshMembers = function() {
         $('#loading-spinner').show()
         setTimeout(function(){
@@ -130,39 +139,15 @@ var DailySheet = function() {
         r1.appendChild(entryTypeSelect.domNode)
 
         var r2 = row.insertCell(2);
-        r2.innerHTML = "<input type='text' name='glider[]' class='upper ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' maxlength='3' size='4' onchange='fieldchange(this)' autocomplete='off'>";
+        r2.innerHTML = "<input type='text' name='glider[]' class='textbox' maxlength='3' size='3' onchange='fieldchange(this)' autocomplete='off'>";
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
-        // =============== START Vectors ===================
-        var options = ""
-        for(let vector of allVectors){
-            options += `\n<li><a href="#" data-value="${vector}">${vector}</a></li>`
-        }
         var vectorCell = row.insertCell(3);
         var id = `vector-${nextRow}`
-        var menu = (allVectors.length !== 0) ?
-`<div class="input-group-btn">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-th-list"></span></button>
-    <ul class="dropdown-menu">
-        ${options}
-    </ul>
-</div><!-- /btn-group -->` : ''
 
         vectorCell.innerHTML =
-`<div class="input-group">
-  <input type='text' id='${id}'
-        class='form-control upper ui-corner-all ui-widget ui-widget-content'
-        style='padding: 4px; min-width: 30px' maxlength='3'
-        name='vector[]' size='3' onchange='fieldchange(this, ${nextRow})' value='${vector}'
-        autocomplete='off'>
-  ${menu}
-</div><!-- /input-group -->`
-        $(vectorCell).find('li > a').click(function(e) {
-            var newVector = $(e.target).data('value')
-            $(vectorCell).find('input').val(newVector).change()
-        })
-        // =============== END Vectors ===================
+            `<input type='text' id='${id}' class='textbox' maxlength='2' size='2' name='vector[]' onchange='fieldchange(this, ${nextRow})' value='${vector}' autocomplete='off'>`
 
         //New towpilot code
 
@@ -187,15 +172,7 @@ var DailySheet = function() {
             r6.firstChild.setAttribute("id", "g" + nextRow);
             r6.firstChild.setAttribute("timedata", "0");
         } else {
-            var para = document.createElement("input");
-            var d = new Date(parseInt(start));
-            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
-            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
-            para.setAttribute("onchange", "timechange(this)");
-            para.setAttribute("timedata", d.getTime());
-            para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
-            para.setAttribute("prevval", para.value);
-            para.size = 5;
+            var para = getTimeTextBox(new Date(parseInt(start)));
             r6.appendChild(para);
             r6.firstChild.setAttribute("id", "g" + nextRow);
         }
@@ -206,19 +183,11 @@ var DailySheet = function() {
             var r13 = row.insertCell(nextCol);
             nextCol++;
             if (parseInt(towland) == 0) {
-                r13.innerHTML = "<button name='towland[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='towlandbutton(this)'>Tow Land</button>";
+                r13.innerHTML = "<button name='towland[]' class='ui-button ui-corner-all ui-widget' type='button' onclick='DailySheet.towlandbutton(this)'>Tow Land</button>";
                 r13.firstChild.setAttribute("id", "n" + nextRow);
                 r13.firstChild.setAttribute("timedata", "0");
             } else {
-                var para = document.createElement("input");
-                var d = new Date(parseInt(towland));
-                para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
-                para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
-                para.setAttribute("onchange", "timechange(this)");
-                para.setAttribute("timedata", d.getTime());
-                para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
-                para.setAttribute("prevval", para.value);
-                para.size = 5;
+                var para = getTimeTextBox(new Date(parseInt(towland)));
                 r13.appendChild(para);
                 r13.firstChild.setAttribute("id", "n" + nextRow);
             }
@@ -231,15 +200,7 @@ var DailySheet = function() {
             r7.firstChild.setAttribute("id", "h" + nextRow);
             r7.firstChild.setAttribute("timedata", "0");
         } else {
-            var para = document.createElement("input");
-            var d = new Date(parseInt(land));
-            para.setAttribute('class', 'ui-corner-all ui-widget ui-widget-content');
-            para.setAttribute('style', 'padding-top: 4px; padding-bottom: 4px;')
-            para.setAttribute("onchange", "timechange(this)");
-            para.setAttribute("timedata", d.getTime());
-            para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
-            para.setAttribute("prevval", para.value);
-            para.size = 5;
+            var para = getTimeTextBox(new Date(parseInt(land)));
             r7.appendChild(para);
             r7.firstChild.setAttribute("id", "h" + nextRow);
         }
@@ -328,29 +289,29 @@ var DailySheet = function() {
 
         r12 = row.insertCell(nextCol);
         nextCol++;
-        if (del == "0") {
-            var btn = document.createElement('button')
-            $(btn).addClass('ui-button ui-corner-all ui-widget')
-            $(btn).text('DELETE')
-            btn.name = 'delete[]'
-            btn.type = 'button'
-            btn.onclick = function() {
-                deleteline(this, row)
+
+        const imgUrls = [
+            {
+                src: 'img/delete.png',
+                alt: "delete"
+            },
+            {
+                src: 'img/restore.ico',
+                alt: "undelete"
             }
-            r12.appendChild(btn)
+        ]
+        var btn = document.createElement('input')
+        btn.setAttribute("src", imgUrls[del].src);
+        btn.setAttribute("alt", imgUrls[del].alt);
+        btn.setAttribute("title", imgUrls[del].alt);
+        btn.setAttribute("style", "width:2em");
+        btn.type="image";
+        btn.name = 'delete[]';
+        btn.onclick = function() {
+            toggleDelete(this, row, imgUrls)
         }
-        else {
-            var btn = document.createElement('button')
-            $(btn).addClass('ui-button ui-corner-all ui-widget')
-            $(btn).text('UNDELETE')
-            btn.name = 'delete[]'
-            btn.type = 'button'
-            btn.onclick = function() {
-                deleteline(this, row)
-            }
-            r12.appendChild(btn)
-            // r12.innerHTML = "<button class='ui-button ui-corner-all ui-widget' name='delete[]' type='button' onclick='deleteline(this, row)'>UNDELETE</button>";
-        }
+        r12.appendChild(btn)
+
         r12.firstChild.setAttribute("id", "m" + nextRow);
         r12.firstChild.setAttribute("value", del);
 
@@ -370,12 +331,57 @@ var DailySheet = function() {
             width: '100%',
         })
         if (del != "0")
-            greyRow(row, 1);
+            renderDeletedRow(row);
     }
 
     // ===========================================
     // private section
     // ===========================================
+    function getTimeTextBox(date)
+    {
+        var para = document.createElement("input");
+        para.setAttribute('class', 'textbox');
+        para.setAttribute("onchange", "timechange(this)");
+        para.setAttribute("timedata", date.getTime());
+        para.value = pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2);
+        para.setAttribute("prevval", para.value);
+        para.setAttribute("maxlength", 5);
+        para.size = 5;
+        return para;
+    }
+
+    function toggleDelete(what, row, imgUrls)
+    {
+      var iRow = what.id;
+      iRow = iRow.substring(1,iRow.length);
+      what.value = (+what.value + 1) % 2;
+      what.setAttribute("src", imgUrls[what.value].src)
+      what.setAttribute("alt", imgUrls[what.value].alt)
+      what.setAttribute("title", imgUrls[what.value].alt)
+      if (what.value > 0)
+      {
+        renderDeletedRow(row);
+      }
+      else
+      {
+        renderUndeletedRow(row);
+      }
+      fieldchange(what);
+    }
+
+    function renderDeletedRow(row)
+    {
+        $(row).find('.bootstrap-select').addClass('deleted')
+        $(row).find(':input').addClass('deleted')
+        $(row).find('td').addClass('deleted')
+    }
+
+    function renderUndeletedRow(row)
+    {
+        $(row).find('.bootstrap-select').removeClass('deleted')
+        $(row).find(':input').removeClass('deleted')
+        $(row).find('td').removeClass('deleted')
+    }
 
     function createDropDownList(row, colnum, colname, collid, listxml, listtag, selvalue, newval, options = {}) {
         var cell = row.insertCell(colnum);

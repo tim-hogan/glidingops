@@ -228,10 +228,6 @@ mysqli_close($con);
 
 echo "var updseq=" . $udpver . ";";
 echo "var server_updseq = updseq;";
-$allVectors = App\Models\Vector::forLocation($location)->get()->map(function ($vector) {
-  return $vector->designation;
-})
-
 ?>
 var datestring = "<?php echo $dateTime->format('Ymd');?>";
 <?php $tnow=time()*1000;$strnow =(string)$tnow;?>
@@ -239,7 +235,6 @@ var fxml="<timesheet><newassocs></newassocs><date>" + "<?php echo $dateStr;?>" +
 var towpilotxml = "<tpilots>" + "<?php echo $pilots;?>" + "</tpilots>";
 var winchdriverxml = "<wdrivers>" + "<?php echo $winchdrivers;?>" + "</wdrivers>";
 var allmembers = "<allmembers>" + "<?php echo $members;?>" + "</allmembers>";
-var allVectors = [<?=$allVectors->map(function ($v) { return "\"{$v}\""; })->implode(",")?>];
 var chargeopts = "<?php echo $chargeopts;?>";
 var towplanes = "<?php echo $towplanes;?>";
 var pollcnt=0;
@@ -863,38 +858,7 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
        localStorage.setItem(datestring, xml2Str(doc) );
 }
 
-function greyRow(row,b)
-{
-  if (b > 0)
-  {
-    $(row).find('.bootstrap-select').addClass('deleted')
-    $(row).find(':input').addClass('deleted')
-    $(row).find('td').addClass('deleted')
-  }
-  else
-  {
-    $(row).find('.bootstrap-select').removeClass('deleted')
-    $(row).find(':input').removeClass('deleted')
-    $(row).find('td').removeClass('deleted')
-  }
-}
 
-function deleteline(what, row)
-{
-  var iRow = what.id;
-  iRow = iRow.substring(1,iRow.length);
-  if (what.value == 0)
-  {
-    what.value="1";
-    what.innerHTML="UNDELETE";
-    greyRow(row, 1);
-  } else {
-    what.value="0";
-    what.innerHTML="DELETE";
-    greyRow(row);
-  }
-  fieldchange(what);
-}
 
 function fieldchange(what, row = null) {
   var iRow = row;
@@ -1232,31 +1196,6 @@ function updateLocation(grplist)
   return nOfUpdates;
 }
 
-function towlandbutton(what)
-{
-  var stid = what.id;
-  var iRow = what.id;   // n rownumber
-  iRow = iRow.substring(1,iRow.length);
-  var n = document.getElementById("g" + iRow);
-  if (n.getAttribute("timedata") != "0")
-  {
-    var parent = what.parentNode;
-    parent.removeChild(what);
-    var para = document.createElement("input");
-    var d = new Date();
-    para.setAttribute("onchange","timechange(this)");
-    para.setAttribute("timedata",d.getTime());
-    para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-    para.setAttribute("prevval",para.value);
-    para.size=5;
-    para.id = stid;
-    parent.appendChild(para);
-
-    calcFlightTime(iRow);
-    fieldchange(what);
-  }
-}
-
 function AddNewLine()
 {
    var iRow = (nextRow-1);
@@ -1285,10 +1224,10 @@ function AddNewLine()
 
 <table id='t1' style="width: 100%" class="table-condensed">
 <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
-<th>SEQ</th>
+<th></th>
 <th>LAUNCH</th>
 <th>GLIDER</th>
-<th>VECTOR</th>
+<th>VECT</th>
 <th>TOW PILOT<br/>WINCH DRIVER</th>
 <th>PIC</th>
 <th>P2</th>
