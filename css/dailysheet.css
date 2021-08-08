@@ -14,25 +14,12 @@ body {
 #container {
   margin: 0px;
   border: px;
+  padding: 5px;
 }
-div#add-line {
-  float: left;
-  clear: left;
-}
-div#final {
-  margin-left: 40px;
-  margin-right: 40px;
-  float: left;
-}
-#final button {
+button.final{
   background-color: #ff9191;
   height: 40px;
   font-size: 14px;
-}
-#bottomdiv {
-  height: 90px;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 #bookings {
   background-color: #e0e0e0;
@@ -97,10 +84,12 @@ table {
   text-align: right;
 }
 .red {
-  color: #ff0000;
+  color: #bb0303;
+  font-weight: bold;
 }
 .green {
-  color: #00ff00;
+  color: #199619;
+  font-weight: bold;
 }
 #tempdiv {
   width: 800px;
@@ -178,4 +167,16 @@ td select {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+p.title {
+  font-size: 16px;
+}
+
+#locationLabel{
+  font-weight: bold;
+}
+
+hr{
+  border-top: 1px dotted rgb(78, 78, 78);
 }

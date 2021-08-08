@@ -10,14 +10,16 @@ var DailySheet = function() {
     var membersFields = [];
     var chargesFields = [];
     var today = {};
+    var location;
 
-    myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId, strTodayYear, strTodayMonth, strTodayDay) {
+    myPublic.init = function(launchTypeTowId, launchTypeSelfId, launchTypeWinchId, strTodayYear, strTodayMonth, strTodayDay, locat) {
         launchTypes.tow = launchTypeTowId;
         launchTypes.self = launchTypeSelfId;
         launchTypes.winch = launchTypeWinchId;
         today.year  = strTodayYear;
         today.month = strTodayMonth;
         today.day   = strTodayDay;
+        location = locat;
     }
 
     myPublic.landbutton = function(what) {
@@ -83,7 +85,7 @@ var DailySheet = function() {
             var tp = "d" + iRow;
             var strtp = document.getElementById(tp).value;
             var vector = document.getElementById(`vector-${iRow}`).value;
-            myPublic.addrowdata(nextRow, 'l' + launchTypes.winch, "", vector, strtp, "", "", "0", "0", "0", "", "", "", "0");
+            myPublic.addrowdata(nextRow, 'l' + launchTypes.winch, "", vector, strtp, "", "", "0", "0", "0", "", "", "", location, "0");
             nextRow++;
         }
     }
@@ -125,7 +127,7 @@ var DailySheet = function() {
         }, 0);
     }
 
-    myPublic.addrowdata = function(id, plane, glider, vector, towy, p1, p2, start, towland, land, height, charges, comments, del) {
+    myPublic.addrowdata = function(id, plane, glider, vector, towy, p1, p2, start, towland, land, height, charges, comments, location, del) {
         console.log("Add row data plane = " + plane);
         var sel;
         var table = document.getElementById("t1");
@@ -283,11 +285,17 @@ var DailySheet = function() {
 
         r11 = row.insertCell(nextCol);
         nextCol++;
-        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='30' onchange='fieldchange(this)' autocomplete='off'>";
+        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='20' onchange='fieldchange(this)' autocomplete='off'>";
         r11.firstChild.setAttribute("value", unescape(comments));
         r11.firstChild.setAttribute("id", "l" + nextRow);
 
-        r12 = row.insertCell(nextCol);
+        r12 = row.insertCell(nextCol)
+        nextCol++;
+        r12.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='location[]' size='20' onchange='fieldchange(this)' autocomplete='off'>";
+        r12.firstChild.setAttribute("value", unescape(location));
+        r12.firstChild.setAttribute("id", "n" + nextRow);
+
+        r13 = row.insertCell(nextCol);
         nextCol++;
 
         const imgUrls = [
@@ -310,10 +318,10 @@ var DailySheet = function() {
         btn.onclick = function() {
             toggleDelete(this, row, imgUrls)
         }
-        r12.appendChild(btn)
+        r13.appendChild(btn)
 
-        r12.firstChild.setAttribute("id", "m" + nextRow);
-        r12.firstChild.setAttribute("value", del);
+        r13.firstChild.setAttribute("id", "m" + nextRow);
+        r13.firstChild.setAttribute("value", del);
 
         // Configure update events between columns
         entryTypeSelect.onValueSelected = function(value) {
