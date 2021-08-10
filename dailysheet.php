@@ -1198,8 +1198,7 @@ function AddNewLine()
 
     <hr>
     <div class="sheet">
-      <p class="title" >Daily ops sheet <span id='dayfield'>DATE</span>, <span id='locationLabel'>LOCATION</span><span> | </span><span id='sync'>SYNC</span></p>
-      <button style="display:none" type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Change Location Sheet</button>
+      <p class="title" >Daily ops sheet <span id='dayfield'>DATE</span>, <span id='locationLabel'>LOCATION</span><span> | </span> <span><button style="font-size:14px" type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Change Default Location</button> </span> <span> | </span> <span id='sync'>SYNC</span></p>
       <table id='t1' style="width: 100%" class="table-condensed">
         <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
         <th></th>
