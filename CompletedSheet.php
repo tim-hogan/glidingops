@@ -10,7 +10,7 @@
     @page {size: landscape;}
 }
 
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+body {margin: 1em;font-family: Arial, Helvetica, sans-serif;}
 table {border-collapse: collapse;}
 th {font-size: 14px;padding-left: 5px;padding-right: 8px;}
 td {font-size: 14px;border-style: dotted;border-color:#404040;border-width: 1px;padding-left: 5px;padding-right: 5px;}
@@ -103,7 +103,7 @@ while ($row = mysqli_fetch_array($r) )
 <html>
 <head>
 <style>
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+body {margin: 1em;font-family: Arial, Helvetica, sans-serif;}
 tr.tr1 {background-color:#000040;}
 td.td1 {font-family: Arial, Helvetica, sans-serif; color:#000040;font-size:20px}
 td.td2 {font-family: Arial, Helvetica, sans-serif; color:#000040;font-size:12px}

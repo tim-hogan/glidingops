@@ -278,8 +278,9 @@ function ShowCheckErrors(xml)
 
        if (bErr==0)
        {
-          e = document.createElement("H2");
-          e.innerHTML="Validation Error";
+          e = document.createElement("p");
+          e.setAttribute("class","title");
+          e.innerHTML="Validation Errors:";
           divnode.appendChild(e);
           bErr=1;
        }
@@ -442,7 +443,7 @@ xmlhttp.onreadystatechange = function ()
           inSync = 1;
           var st = document.getElementById("sync");
           st.innerHTML = "Sync";
-          st.classList.add("green");
+          st.setAttribute("class","green");
         }
 
         console.log("Reply from server status: " + status);
@@ -457,7 +458,7 @@ function sendXMLtoServer()
   inSync=0;
   var st = document.getElementById("sync");
   st.innerHTML = "Syncing";
-  st.classList.add("red");
+  st.setAttribute("class","red");
   var v="updflights.php";
   var params="org=<?php echo $org; ?>&upd=" + xml2Str(xmlDoc);
 
@@ -1094,7 +1095,7 @@ function StartUp()
 
   var st = document.getElementById("sync");
   st.innerHTML = "Sync";
-  st.classList.add("green");
+  st.setAttribute("class","green");
   inSync=1;
 
 
@@ -1228,10 +1229,11 @@ function AddNewLine()
       <br>
       <button id='final' class='ui-button ui-corner-all ui-widget final' onclick='finalise()'>Check and Finish Day</button>
     </div>
+    <hr>
     <div id='areachecks'>
     </div>
-    <hr>
     <div id='bookings' style="display:none">
+      <hr>
       <p class='p1'>TODAY'S BOOKINGS</p>
       <div id='bookings2'>
         <p></p>
