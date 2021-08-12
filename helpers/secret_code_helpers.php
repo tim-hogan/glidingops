@@ -23,7 +23,7 @@ function initiateServiceUserSession($securityLevel, $org){
     $_SESSION['org']= $org;
     $_SESSION['security']=$securityLevel;
     //$_SESSION['pagesortdata']=$pagesortdata ;
-    $_SESSION['dispname']="service user";
+    $_SESSION['dispname']="";
     $q="SELECT timezone from organisations where id = " . $org;
     $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
     $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);

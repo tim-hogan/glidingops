@@ -1,4 +1,4 @@
 <div id='head'>
-<p class='headp1'>auckland</p>
-<p class='headp2'>gliding club operations</p>
+<p class='headp1'>Auckland</p>
+<p class='headp2'>Gliding Club Operations</p>
 </div>
