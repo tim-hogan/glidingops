@@ -1,6 +1,11 @@
 <?php
 include 'timehelpers.php';
 include 'helpers.php';
+include './helpers/session_helpers.php';
+session_start();
+require_security_level(4);
+
+
 $org=0;
 $strdtnow='';
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];

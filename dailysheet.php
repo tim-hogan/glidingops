@@ -1,3 +1,32 @@
+<?php session_start(); ?>
+<?php
+include 'checkSecretCode.php';
+if(isset($_SESSION['security']))
+{
+ if (($_SESSION['security'] < 4))
+ {
+  die("Security level too low for this page");
+ }
+}
+else
+{
+  $orgId = $_GET['org'];
+  $key = $_GET['key'];
+  if (checkSecretCode($orgId, $key))
+  {
+    //one day cookie lifetime if access through secret code
+    session_start([
+      'cookie_lifetime' => 86400,
+    ]);
+    initiateServiceUserSession(5, $orgId);
+  }
+  else{
+    header('Location: Login.php');
+    die("Please logon");
+  }
+}
+
+?>
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
@@ -1195,9 +1224,9 @@ function AddNewLine()
   <?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
   <?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
   <div id="container">
-
     <hr>
     <div class="sheet">
+      <button type="button" onclick="document.location.href='/home'" style='float: right'>Home</button>
       <p class="title" >Daily ops sheet <span id='dayfield'>DATE</span>, <span id='locationLabel'>LOCATION</span><span> | </span> <span><button style="font-size:14px" type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Change Default Location</button> </span> <span> | </span> <span id='sync'>SYNC</span></p>
       <table id='t1' style="width: 100%" class="table-condensed">
         <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
