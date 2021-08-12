@@ -1,30 +1,24 @@
 <?php session_start(); ?>
 <?php
-include 'checkSecretCode.php';
-if(isset($_SESSION['security']))
-{
- if (($_SESSION['security'] < 4))
- {
-  die("Security level too low for this page");
- }
+include 'helpers/secret_code_helpers.php';
+if(isset($_SESSION['security'])){
+  if (($_SESSION['security'] < 4)){
+    die("Security level too low for this page");
+  }
 }
-else
-{
+else {
   $orgId = $_GET['org'];
   $key = $_GET['key'];
-  if (checkSecretCode($orgId, $key))
-  {
-    //one day cookie lifetime if access through secret code
-    session_start([
-      'cookie_lifetime' => 86400,
-    ]);
+  if (checkSecretCode($orgId, $key)) {
     initiateServiceUserSession(5, $orgId);
   }
-  else{
+  else {
     header('Location: Login.php');
     die("Please logon");
   }
 }
+//12 hours session cookie lifetime from this page
+session_set_cookie_params(12 * 3600,"/");
 
 ?>
 <!DOCTYPE HTML>
