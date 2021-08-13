@@ -1,5 +1,6 @@
 <?php
 include './helpers/session_helpers.php';
+include './helpers/secret_code_helpers.php';
 session_start();
 require_security_level(64);
 
@@ -7,8 +8,7 @@ $org = isset($_SESSION['org']) ? $org=$_SESSION['org'] : 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    $bytes = random_bytes(11);
-    $secret_code = bin2hex($bytes);
+    $secret_code = generateRandomString(16);
 
     $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
     $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
