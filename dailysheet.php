@@ -1,9 +1,67 @@
+<?php session_start(); ?>
+<?php
+include 'helpers/secret_code_helpers.php';
+if(isset($_SESSION['security'])){
+  if (($_SESSION['security'] < 4)){
+    die("Security level too low for this page");
+  }
+}
+else {
+  $org = $_GET['org'];
+  $key = $_GET['key'];
+  if (checkSecretCode($org, $key)) {
+    initiateServiceUserSession(5, $org);
+  }
+  else {
+    header('Location: Login.php');
+    die("Please logon");
+  }
+}
+//12 hours session cookie lifetime from this page
+session_set_cookie_params(12 * 3600,"/");
+
+
+
+include 'timehelpers.php';
+include 'helpers.php';
+$DEBUG=0;
+$org=0;
+$location= '';
+$specific_date='';
+if ($_SERVER["REQUEST_METHOD"] == "GET")
+{
+ $org = $_GET['org'];
+ if (isset($_GET['location']) )
+ {
+  $location = $_GET['location'];
+ }
+ else
+  $location = "";
+ if (strlen($location) <=0)
+ {
+   header('Location: StartDay.php?org='.$org);
+   exit();
+ }
+ if (isset($_GET['ds']) )
+ {
+  $specific_date = $_GET['ds'];
+ }
+}
+
+?>
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
 <meta name="viewport" content="initial-scale=1.0">
 <head>
-
+<style>
+  <?php $inc = "./orgs/" . $org . "/heading6.css"; include $inc; ?>
+</style>
+<style>
+  <?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?>
+</style>
+<link rel="stylesheet" type="text/css" href="styletable1.css">
+<script>function goBack() {window.history.back()}</script>
 <!-- JS Libraries -->
 <?php
 include 'jsLibraies.php';
@@ -37,32 +95,6 @@ if (window.XMLHttpRequest) {
 }
 
 <?php
-include 'timehelpers.php';
-include 'helpers.php';
-$DEBUG=0;
-$org=0;
-$location= '';
-$specific_date='';
-if ($_SERVER["REQUEST_METHOD"] == "GET")
-{
- $org = $_GET['org'];
- if (isset($_GET['location']) )
- {
-  $location = $_GET['location'];
- }
- else
-  $location = "";
- if (strlen($location) <=0)
- {
-   header('Location: StartDay.php?org='.$org);
-   exit();
- }
- if (isset($_GET['ds']) )
- {
-  $specific_date = $_GET['ds'];
- }
-
-}
 
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
@@ -1193,10 +1225,10 @@ function AddNewLine()
 <body id="body" onload="StartUp()">
   <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
   <?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
+  <?php $inc = "./orgs/" . $org . "/heading6.txt"; include $inc; ?>
+  <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
   <?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
   <div id="container">
-
-    <hr>
     <div class="sheet">
       <p class="title" >Daily ops sheet <span id='dayfield'>DATE</span>, <span id='locationLabel'>LOCATION</span><span> | </span> <span><button style="font-size:14px" type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Change Default Location</button> </span> <span> | </span> <span id='sync'>SYNC</span></p>
       <table id='t1' style="width: 100%" class="table-condensed">
