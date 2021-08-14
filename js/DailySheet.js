@@ -141,7 +141,7 @@ var DailySheet = function() {
         r1.appendChild(entryTypeSelect.domNode)
 
         var r2 = row.insertCell(2);
-        r2.innerHTML = "<input type='text' name='glider[]' class='textbox' maxlength='3' size='3' onchange='fieldchange(this)' autocomplete='off'>";
+        r2.innerHTML = "<input type='text' name='glider[]' class='textbox' maxlength='3' size='2' onchange='fieldchange(this)' autocomplete='off'>";
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
@@ -285,13 +285,13 @@ var DailySheet = function() {
 
         r11 = row.insertCell(nextCol);
         nextCol++;
-        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='20' onchange='fieldchange(this)' autocomplete='off'>";
+        r11.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='comment[]' size='12' onchange='fieldchange(this)' autocomplete='off'>";
         r11.firstChild.setAttribute("value", unescape(comments));
         r11.firstChild.setAttribute("id", "l" + nextRow);
 
         r12 = row.insertCell(nextCol)
         nextCol++;
-        r12.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='location[]' size='20' onchange='fieldchange(this)' autocomplete='off'>";
+        r12.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='location[]' size='12' onchange='fieldchange(this)' autocomplete='off'>";
         r12.firstChild.setAttribute("value", unescape(location));
         r12.firstChild.setAttribute("id", "n" + nextRow);
 
@@ -354,7 +354,7 @@ var DailySheet = function() {
         para.value = pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2);
         para.setAttribute("prevval", para.value);
         para.setAttribute("maxlength", 5);
-        para.size = 5;
+        para.size = 3;
         return para;
     }
 
