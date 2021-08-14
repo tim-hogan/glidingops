@@ -58,7 +58,7 @@ var DailySheet = function() {
         para.value = pad(d.getHours(), 2) + ":" + pad(d.getMinutes(), 2);
         para.setAttribute("prevval", para.value);
         para.id = stid;
-        para.size = 5;
+        para.size = 1;
         parent.appendChild(para);
 
         //Get the value of P2
@@ -141,7 +141,7 @@ var DailySheet = function() {
         r1.appendChild(entryTypeSelect.domNode)
 
         var r2 = row.insertCell(2);
-        r2.innerHTML = "<input type='text' name='glider[]' class='textbox' maxlength='3' size='2' onchange='fieldchange(this)' autocomplete='off'>";
+        r2.innerHTML = "<input type='text' name='glider[]' class='textbox' maxlength='3' size='1' onchange='fieldchange(this)' autocomplete='off'>";
         r2.firstChild.setAttribute("id", "c" + nextRow);
         r2.firstChild.setAttribute("value", glider);
 
@@ -149,7 +149,7 @@ var DailySheet = function() {
         var id = `vector-${nextRow}`
 
         vectorCell.innerHTML =
-            `<input type='text' id='${id}' class='textbox' maxlength='2' size='2' name='vector[]' onchange='fieldchange(this, ${nextRow})' value='${vector}' autocomplete='off'>`
+            `<input type='text' id='${id}' class='textbox' maxlength='2' size='1' name='vector[]' onchange='fieldchange(this, ${nextRow})' value='${vector}' autocomplete='off'>`
 
         //New towpilot code
 
@@ -291,7 +291,7 @@ var DailySheet = function() {
 
         r12 = row.insertCell(nextCol)
         nextCol++;
-        r12.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='location[]' size='12' onchange='fieldchange(this)' autocomplete='off'>";
+        r12.innerHTML = "<input type='text' class='ui-corner-all ui-widget ui-widget-content' style='padding: 4px;' name='location[]' size='10' onchange='fieldchange(this)' autocomplete='off'>";
         r12.firstChild.setAttribute("value", unescape(location));
         r12.firstChild.setAttribute("id", "n" + nextRow);
 
@@ -354,7 +354,7 @@ var DailySheet = function() {
         para.value = pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2);
         para.setAttribute("prevval", para.value);
         para.setAttribute("maxlength", 5);
-        para.size = 3;
+        para.size = 1;
         return para;
     }
 
