@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <?php $inc = "./orgs/" . $org . "/heading2.txt"; include $inc; ?>
     <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
     <div style="padding:5px">
-        <form action="/manage-secret-code.php" method="POST">
+        <form action="/manage-secret-code.php" method="POST" onsubmit="return confirm('Resetting the secret code might have unintented consequences. Are you sure you want to proceed?');">
             <input type="submit" value="Regenerate Secret Code"></input>
         </form>
         <?php if(isset($error)) {?>
