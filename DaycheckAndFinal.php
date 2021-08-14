@@ -1,5 +1,5 @@
 <?php
-include '../helpers/session_helpers.php';
+include './helpers/session_helpers.php';
 session_start();
 require_security_level(4);
 
