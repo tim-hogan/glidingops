@@ -167,6 +167,8 @@ if ($_SESSION['security'] >= 1)
      echo "<p class='u'><a href='Towy.php'>Tow Pilots Report</a></p>";
   if (($_SESSION['security'] & 32))
      echo "<p class='u'><a href='Engineer.php'>Engineer Report</a></p>";
+   if (($_SESSION['security'] & 32))
+     echo "<p class='u'><a href='last-flights-list.php?col=1&descsort=1'>Currency Report</a></p>";
 
   echo "</td>";
   $col = ($col + 1) % $totcol;if ($col == 0) echo "</tr><tr>";
