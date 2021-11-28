@@ -1260,7 +1260,6 @@ function AddNewLine()
       <br>
       <button id='final' class='ui-button ui-corner-all ui-widget final' onclick='finalise()'>Check and Finish Day</button>
     </div>
-    <hr>
     <div id='areachecks'>
     </div>
     <div id='bookings' style="display:none">
@@ -1274,6 +1273,13 @@ function AddNewLine()
     </div>
     <p id="err"></p>
     <p id="diag"><?php if($DEBUG>0)echo $diagtext;?></p>
+    <hr>  
+    <!--The following empty rows have been inserted on purpose, in order to accommodate the dailysheet page to certain tablets - otherwise the virtual keyboard would hide some of the rows. Don't delete them. -->
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>  
   </div>
   <div id='loading-spinner'>
     <div class='loader'></div>
