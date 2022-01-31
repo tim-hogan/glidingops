@@ -222,6 +222,7 @@ if ($colsort == 0)
       <th data-sort-id='28' <?=($colsort == 28) ? "class='colsel'" : ''?> style='cursor:pointer'>EMAIL</th>
       <th data-sort-id='30' <?=($colsort == 30) ? "class='colsel'" : ''?> style='cursor:pointer'>TEXT</th>
       <th data-sort-id='31' <?=($colsort == 31) ? "class='colsel'" : ''?> style='cursor:pointer'>EMIAL</th>
+      <th>PHOTO</th>
    </tr>
    </thead>
 <tbody>
@@ -345,6 +346,7 @@ if (true){echo "<td>";echo $row[25];echo "</td>";}
 if (true){echo "<td>";echo $row[27];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[29];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[30];echo "</td>";}
+if (true){echo "<td class='right'><a href='img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' target='_blank'><img width='50' src='./img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' alt='no photo'/></a> </td>";}
   echo "</tr>";
 }
 ?>
