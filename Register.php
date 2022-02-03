@@ -79,7 +79,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
      'X-Mailer: PHP/' . phpversion();
     $message = "Login details are Username " . $email . " Temporary Password " . $pw;
     mail($email, "Welcome to Wellington Gliding Club Ops", $message, $headers);
-    header('Location: Login.php');
+    header('Location: Login.php?registered=1');
    }
   }
   else
