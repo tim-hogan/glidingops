@@ -77,7 +77,15 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $headers = 'From: operations@glidingops.com' . "\r\n" .
      'Reply-To: wgcoperations@gmail.com' . "\r\n" .
      'X-Mailer: PHP/' . phpversion();
-    $message = "Login details are Username " . $email . " Temporary Password " . $pw;
+    $message = 
+      "Here are your login details for Gliding Ops.\n".
+      "\n".
+      "Username: ".$email."\n".
+      "Temporary Password: ".$pw."\n".
+      "\n".
+      "You will be asked to change the temporary password on your first login.".
+      "\n".
+      "http://www.glidingops.com/Login.php";
     mail($email, "Welcome to Wellington Gliding Club Ops", $message, $headers);
     header('Location: Login.php?registered=1');
    }
@@ -90,9 +98,9 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
 ?>
 <div id='container'>
 <div id='entry'>
-<p class='p1'>Members can register by entering their email address below:</p>
-<p class='p2'>Note, you need to use the email address that the club has in its members list.</p>
-<p class='p2'>An email will be sent to you with a temporary password. Remember to <br>check your SPAM folder in case your ISP puts the email there.</p>
+<p class='p1'>Members can register by entering their email address below.</p>
+<p class='p2'>Note, you need to use the email address you used when you joined the club.</p>
+<p class='p2'>An email will be sent to you with a temporary password.<br/>It might end up in SPAM, so please check that too.</p>
 <form method='POST' action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <table>
 <tr><td>email:</td><td><input type='text' name='email' size='40' autofocus></td><td></td></tr>
