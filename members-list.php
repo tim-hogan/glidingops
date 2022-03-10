@@ -346,7 +346,7 @@ if (true){echo "<td>";echo $row[25];echo "</td>";}
 if (true){echo "<td>";echo $row[27];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[29];echo "</td>";}
 if (true){echo "<td class='right'>";echo $row[30];echo "</td>";}
-if (true){echo "<td class='right'><a href='img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' target='_blank'><img width='50' src='./img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' alt='no photo'/></a> </td>";}
+if (true){echo "<td class='right'><a href='img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' target='_blank'><img width='50' src='./img/members/";echo str_replace("'","_",$row[4]);echo ".jpg' alt=""/></a> </td>";}
   echo "</tr>";
 }
 ?>
