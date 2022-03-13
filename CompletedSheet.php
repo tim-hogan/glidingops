@@ -10,7 +10,7 @@
     @page {size: landscape;}
 }
 
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+body {margin: 1em;font-family: Arial, Helvetica, sans-serif;}
 table {border-collapse: collapse;}
 th {font-size: 14px;padding-left: 5px;padding-right: 8px;}
 td {font-size: 14px;border-style: dotted;border-color:#404040;border-width: 1px;padding-left: 5px;padding-right: 5px;}
@@ -103,7 +103,7 @@ while ($row = mysqli_fetch_array($r) )
 <html>
 <head>
 <style>
-body {margin: 0px;font-family: Arial, Helvetica, sans-serif;}
+body {margin: 1em;font-family: Arial, Helvetica, sans-serif;}
 tr.tr1 {background-color:#000040;}
 td.td1 {font-family: Arial, Helvetica, sans-serif; color:#000040;font-size:20px}
 td.td2 {font-family: Arial, Helvetica, sans-serif; color:#000040;font-size:12px}
@@ -217,8 +217,9 @@ $message .= "<th>LAUNCH TYPE</th><th>TYPE</th></tr>";
 <th>TOW HEIGHT</th>
 <th>CHARGE</th>
 <th>COMMENTS</th>
+<th>LOCATION</th>
 <?php
-$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type, flights.vector from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
+$sql= "SELECT flights.seq,e.rego_short,flights.glider, a.displayname,b.displayname,c.displayname, (flights.land - flights.start), flights.height, flights.billing_option, d.displayname,flights.billing_member2, comments, f.name , flights.launchtype, flights.type, flights.vector, flights.location from flights LEFT JOIN members a ON a.id = flights.towpilot LEFT JOIN members b ON b.id = flights.pic LEFT JOIN members c ON c.id = flights.p2 LEFT JOIN members d ON d.id = flights.billing_member1 LEFT JOIN aircraft e ON e.id = flights.towplane LEFT JOIN launchtypes f on f.id = flights.launchtype where flights.org = ".$org." and flights.finalised = 1 and flights.localdate=" . $dateStr . " order by flights.seq ASC";
 $diagtext .= $sql . "<br>";
 $r = mysqli_query($con,$sql);
 $rownum = 0;
@@ -281,6 +282,7 @@ while ($row = mysqli_fetch_array($r) )
      echo "Retrieve";
   }
   echo "</td>";
+  echo "<td>"; echo $row[16]; echo "</td>";
 }
 ?>
 </table>
