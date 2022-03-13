@@ -1,0 +1,5 @@
+<div id='head'>
+<table class='t1'>
+<tr><td class='tdhead1'><p class='headp2'>Auckland - Gliding Club Operations</p></td><td class='head3' rowspan="2"><?php echo $_SESSION['dispname'];?> Signed in as: <?php echo $_SESSION['who'];?><br><a href='SignOut.php' class='wt'>Sign Out</a><br></td><td class='head4'></td></tr>
+</table>
+</div>

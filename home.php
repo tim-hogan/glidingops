@@ -130,6 +130,8 @@ if ($_SESSION['security'] >= 1)
      echo "<p class='u'><a href='Towy.php'>Tow Pilots Report</a></p>";
   if (($_SESSION['security'] & 32))
      echo "<p class='u'><a href='Engineer.php'>Engineer Report</a></p>";
+   if (($_SESSION['security'] & 32))
+     echo "<p class='u'><a href='last-flights-list.php?col=1&descsort=1'>Currency Report</a></p>";
 
   echo "</td>";
   $col = ($col + 1) % $totcol;if ($col == 0) echo "</tr><tr>";
@@ -178,6 +180,8 @@ if (($_SESSION['security'] & 120))
      echo "<p class='u'><a href='maintenance/duplicates_index.php'>Manage duplicate memberships</a></p>";
   if (($_SESSION['security'] & 64))
       echo "<p class='u'><a href='app/vectors'>Manage vector definitions</a></p>";
+  if (($_SESSION['security'] & 64))
+      echo "<p class='u'><a href='manage-secret-code.php'>Manage secret code</a></p>";
 
   echo "</td>";
   $col = ($col + 1) % $totcol;if ($col == 0) echo "</tr><tr>";
