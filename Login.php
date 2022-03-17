@@ -28,11 +28,15 @@ a:hover {color: #0000FF;}
     <link rel="stylesheet" href="./css/notify.css" />
     <script src="./js/notify.js"></script>
     <?php
-        if(isset($_GET['registered'])){
+        if(
+            (isset($_GET['registered']))
+            ||
+            (isset($_GET['recovered']))
+        ){
         ?>
         <script>
         var options = {
-            message: "<br/> Check your mail box! <br/> </br> You should have received a welcome email from operations@glidingops.com",
+            message: "<br/> Check your mail box! <br/> </br> You should have received an email from operations@glidingops.com",
             color: "success",
             timeout: 10000,
         };
