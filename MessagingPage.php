@@ -65,6 +65,15 @@ function textCounter(field, cnt, maxlimit)
     cntfield.innerHTML = maxlimit - field.value.length;
  }
 </script>
+<script>
+function selectUnselectAll(element, role_id){
+  var isChecked = element.checked;
+  var checkboxes = document.querySelectorAll("#role_" + role_id + " input[type=checkbox]")
+  for(var i = 0; i < checkboxes.length; i++){
+	  checkboxes[i].checked = isChecked;
+  }
+};
+</script>
 </head>
 <body id="body">
 <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
@@ -278,8 +287,8 @@ foreach($roles as $role)
     if ($r && $r->num_rows > 0)
     {
         $rolename = htmlspecialchars($role['name']);
-        echo "<h2>{$rolename}s</h2>";
-        echo "<table>";
+        echo "<h2><input type='checkbox' onchange='selectUnselectAll(this, ".$role['id'] .")'/>{$rolename}s</h2>";
+        echo "<table id='role_".$role['id']."'>";
         $colm = 0;
         while ($member = $r->fetch_array(MYSQLI_ASSOC))
         {
@@ -340,7 +349,7 @@ while ($row2 = mysqli_fetch_array($r2) )
 echo "<h2>Groups</h2>";
 echo "<table>";
 $colm = 0;
-$sql= "SELECT * FROM groups where org = " . $org;
+$sql= "SELECT * FROM gliding.groups where org = " . $org;
 $r = mysqli_query($con,$sql);
 while ($row = mysqli_fetch_array($r) )
 {

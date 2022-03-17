@@ -55,6 +55,7 @@ select {margin-bottom: 20px;}
                     <select name='what'>
                         <option value='GCK'>GCK</option>
                         <option value='GPH'>GPH</option>
+                        <option value='GTR'>GTR</option>
                         <option value='GUS'>GUS</option>
                     </select><br/>
                     <input type='submit' name='enter' value='PRESS TO CHANGE'/>

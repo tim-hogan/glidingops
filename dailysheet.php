@@ -1,9 +1,67 @@
+<?php session_start(); ?>
+<?php
+include 'helpers/secret_code_helpers.php';
+if(isset($_SESSION['security'])){
+  if (($_SESSION['security'] < 4)){
+    die("Security level too low for this page");
+  }
+}
+else {
+  $org = $_GET['org'];
+  $key = $_GET['key'];
+  if (checkSecretCode($org, $key)) {
+    initiateServiceUserSession(5, $org);
+  }
+  else {
+    header('Location: Login.php');
+    die("Please logon");
+  }
+}
+//12 hours session cookie lifetime from this page
+session_set_cookie_params(12 * 3600,"/");
+
+
+
+include 'timehelpers.php';
+include 'helpers.php';
+$DEBUG=0;
+$org=0;
+$location= '';
+$specific_date='';
+if ($_SERVER["REQUEST_METHOD"] == "GET")
+{
+ $org = $_GET['org'];
+ if (isset($_GET['location']) )
+ {
+  $location = $_GET['location'];
+ }
+ else
+  $location = "";
+ if (strlen($location) <=0)
+ {
+   header('Location: StartDay.php?org='.$org);
+   exit();
+ }
+ if (isset($_GET['ds']) )
+ {
+  $specific_date = $_GET['ds'];
+ }
+}
+
+?>
 <!DOCTYPE HTML>
 <html>
 <meta name="viewport" content="width=device-width">
 <meta name="viewport" content="initial-scale=1.0">
 <head>
-
+<style>
+  <?php $inc = "./orgs/" . $org . "/heading6.css"; include $inc; ?>
+</style>
+<style>
+  <?php $inc = "./orgs/" . $org . "/menu1.css"; include $inc; ?>
+</style>
+<link rel="stylesheet" type="text/css" href="styletable1.css">
+<script>function goBack() {window.history.back()}</script>
 <!-- JS Libraries -->
 <?php
 include 'jsLibraies.php';
@@ -37,32 +95,7 @@ if (window.XMLHttpRequest) {
 }
 
 <?php
-include 'timehelpers.php';
-include 'helpers.php';
-$DEBUG=0;
-$org=0;
-$location= '';
-$specific_date='';
-if ($_SERVER["REQUEST_METHOD"] == "GET")
-{
- $org = $_GET['org'];
- if (isset($_GET['location']) )
- {
-  $location = $_GET['location'];
- }
- else
-  $location = "";
- if (strlen($location) <=0)
- {
-   header('Location: StartDay.php?org='.$org);
-   exit();
- }
- if (isset($_GET['ds']) )
- {
-  $specific_date = $_GET['ds'];
- }
 
-}
 $con_params = require('./config/database.php'); $con_params = $con_params['gliding'];
 $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params['password'],$con_params['dbname']);
 $whatdt = 'now';
@@ -227,10 +260,6 @@ mysqli_close($con);
 
 echo "var updseq=" . $udpver . ";";
 echo "var server_updseq = updseq;";
-$allVectors = App\Models\Vector::forLocation($location)->get()->map(function ($vector) {
-  return $vector->designation;
-})
-
 ?>
 var datestring = "<?php echo $dateTime->format('Ymd');?>";
 <?php $tnow=time()*1000;$strnow =(string)$tnow;?>
@@ -238,7 +267,6 @@ var fxml="<timesheet><newassocs></newassocs><date>" + "<?php echo $dateStr;?>" +
 var towpilotxml = "<tpilots>" + "<?php echo $pilots;?>" + "</tpilots>";
 var winchdriverxml = "<wdrivers>" + "<?php echo $winchdrivers;?>" + "</wdrivers>";
 var allmembers = "<allmembers>" + "<?php echo $members;?>" + "</allmembers>";
-var allVectors = [<?=$allVectors->map(function ($v) { return "\"{$v}\""; })->implode(",")?>];
 var chargeopts = "<?php echo $chargeopts;?>";
 var towplanes = "<?php echo $towplanes;?>";
 var pollcnt=0;
@@ -249,7 +277,9 @@ DailySheet.init(<?php echo $launchTypeTow;?>,
                 <?php echo $launchTypeWinch;?>,
                 Number(strTodayYear),
                 Number(strTodayMonth) - 1,
-                Number(strTodayDay));
+                Number(strTodayDay),
+                '<?=$location?>'
+                );
 
 function ShowCheckErrors(xml)
 {
@@ -280,8 +310,9 @@ function ShowCheckErrors(xml)
 
        if (bErr==0)
        {
-          e = document.createElement("H2");
-          e.innerHTML="Validation Error";
+          e = document.createElement("p");
+          e.setAttribute("class","title");
+          e.innerHTML="Validation Errors:";
           divnode.appendChild(e);
           bErr=1;
        }
@@ -444,7 +475,7 @@ xmlhttp.onreadystatechange = function ()
           inSync = 1;
           var st = document.getElementById("sync");
           st.innerHTML = "Sync";
-          st.setAttribute("class", "green");
+          st.setAttribute("class","green");
         }
 
         console.log("Reply from server status: " + status);
@@ -733,7 +764,7 @@ function findxmlflightseq(list,id)
 }
 
 
-function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,start,towland,land,height,charges,comments,del)
+function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,start,towland,land,height,charges,comments,del, location)
 {
    var list = doc.getElementsByTagName("flights")[0].childNodes;
    var flight =  findxmlflightseq(list,seq);
@@ -761,11 +792,11 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
       updatenode(doc,flight.getElementsByTagName("charges")[0],charges);
       updatenode(doc,flight.getElementsByTagName("comments")[0],comments);
       updatenode(doc,flight.getElementsByTagName("del")[0],del);
+      updatenode(doc,flight.getElementsByTagName("location")[0],location);
    }
    else
    {
        var org=<?php echo $org;?>;
-       var loc='<?php echo $location;?>';
        var vnode,newtext;
        updseq++;
        updatenode(doc,doc.getElementsByTagName("updseq")[0],updseq);
@@ -775,11 +806,6 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
 
        vnode = doc.createElement('org');
        newtext=doc.createTextNode(org);
-       vnode.appendChild(newtext);
-       flight.appendChild(vnode);
-
-       vnode = doc.createElement('location');
-       newtext=doc.createTextNode(loc);
        vnode.appendChild(newtext);
        flight.appendChild(vnode);
 
@@ -858,43 +884,16 @@ function updatexmlflight(doc,seq,launchtype,plane,glider,vector,towpilot,p1,p2,s
        vnode.appendChild(newtext);
        flight.appendChild(vnode);
 
+       vnode = doc.createElement('location');
+       newtext=doc.createTextNode(location);
+       vnode.appendChild(newtext);
+       flight.appendChild(vnode);
    }
    if (locstore ==1)
        localStorage.setItem(datestring, xml2Str(doc) );
 }
 
-function greyRow(row,b)
-{
-  if (b > 0)
-  {
-    $(row).find('.bootstrap-select').addClass('deleted')
-    $(row).find(':input').addClass('deleted')
-    $(row).find('td').addClass('deleted')
-  }
-  else
-  {
-    $(row).find('.bootstrap-select').removeClass('deleted')
-    $(row).find(':input').removeClass('deleted')
-    $(row).find('td').removeClass('deleted')
-  }
-}
 
-function deleteline(what, row)
-{
-  var iRow = what.id;
-  iRow = iRow.substring(1,iRow.length);
-  if (what.value == 0)
-  {
-    what.value="1";
-    what.innerHTML="UNDELETE";
-    greyRow(row, 1);
-  } else {
-    what.value="0";
-    what.innerHTML="DELETE";
-    greyRow(row);
-  }
-  fieldchange(what);
-}
 
 function fieldchange(what, row = null) {
   var iRow = row;
@@ -972,7 +971,9 @@ function fieldchange(what, row = null) {
   comments = escape(comments);
   var del = document.getElementById("m" + iRow).value;
 
-  updatexmlflight(xmlDoc, iRow, launchtype, plane, glider, vector, towp, p1, p2, start, towland, land, height, charges, comments, del);
+  var location = document.getElementById("n" + iRow).value;
+
+  updatexmlflight(xmlDoc, iRow, launchtype, plane, glider, vector, towp, p1, p2, start, towland, land, height, charges, comments, del, location);
   //update the seq
   sendXMLtoServer();
 }
@@ -1144,7 +1145,7 @@ function StartUp()
       fxml = lxml;
       xmlDoc=parser.parseFromString(fxml,"text/xml");
       st.innerHTML = "Not Syncronised";
-      st.setAttribute("class","red");
+      st.classList.add("red");
       updseq = parseInt(l);
       bUpdServer = 1;
       inSync=0;
@@ -1168,10 +1169,12 @@ function StartUp()
   var day     = today.getDate();
   document.getElementById("dayfield").innerHTML = dt.substring(6,8) + "/" + dt.substring(4,6) + "/" + dt.substring(0,4);
 
+  var location = "<?php echo $location; ?>";
+  document.getElementById("locationLabel").innerHTML = "Location: " + location
+
   grplist = xmlDoc.getElementsByTagName("flights")[0].childNodes;
 
-  var k;
-  for (k=0; k<grplist.length; k++)
+  for (var k=0; k<grplist.length; k++)
   {
 
     if  (grplist[k].nodeName == "flight") {
@@ -1191,15 +1194,16 @@ function StartUp()
       var vheight = grplist[k].getElementsByTagName("height")[0].childNodes[0].nodeValue;
       var vcharge = grplist[k].getElementsByTagName("charges")[0].childNodes[0].nodeValue;
       var vcomments = strNodeValue(grplist[k].getElementsByTagName("comments")[0].childNodes[0]);
+      var vlocation = strNodeValue(grplist[k].getElementsByTagName("location")[0].childNodes[0]);
       var vdel = strNodeValue(grplist[k].getElementsByTagName("del")[0].childNodes[0]);
-      DailySheet.addrowdata(vid,vplane,vglider,vVector,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments,vdel);
+      DailySheet.addrowdata(vid,vplane,vglider,vVector,vtow,vp1,vp2,vstart,vtowland,vland,vheight,vcharge,vcomments, vlocation,vdel);
       nextRow++
     }
   }
-  DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastVector,lastTowPilot,"","","0","0","0","","","","0");
+  DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",lastVector,lastTowPilot,"","","0","0","0","","","",location,"0");
   nextRow++;
 
-  if (bUpdServer == 1){
+  if (bUpdServer >= 1){
     sendXMLtoServer();
   }
 
@@ -1207,92 +1211,76 @@ function StartUp()
   $('#loading-spinner').hide()
 }
 
-function towlandbutton(what)
-{
-  var stid = what.id;
-  var iRow = what.id;   // n rownumber
-  iRow = iRow.substring(1,iRow.length);
-  var n = document.getElementById("g" + iRow);
-  if (n.getAttribute("timedata") != "0")
-  {
-    var parent = what.parentNode;
-    parent.removeChild(what);
-    var para = document.createElement("input");
-    var d = new Date();
-    para.setAttribute("onchange","timechange(this)");
-    para.setAttribute("timedata",d.getTime());
-    para.value= pad(d.getHours(),2) + ":" + pad(d.getMinutes(),2);
-    para.setAttribute("prevval",para.value);
-    para.size=5;
-    para.id = stid;
-    parent.appendChild(para);
-
-    calcFlightTime(iRow);
-    fieldchange(what);
-  }
-}
-
 function AddNewLine()
 {
    var iRow = (nextRow-1);
    var strtp = document.getElementById("d" + iRow).value;
    var vector = document.getElementById(`vector-${iRow}`).value;
-   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",vector,strtp,"","","0","0","0","","","","0");
+   DailySheet.addrowdata(nextRow,'l' + '<?=$launchTypeWinch?>',"",vector,strtp,"","","0","0","0","","","",'<?=$location?>',"0");
    nextRow++;
 }
 
 </script>
 </head>
 <body id="body" onload="StartUp()">
-<?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
-<?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
-<?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
-<div id="container">
-
-<span id='dayfield'>DATE</span>
-<span id='sync'>SYNC</span>
-<br>
-
-<table id='t1' style="width: 100%" class="table-condensed">
-<?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
-<th>SEQ</th>
-<th>LAUNCH</th>
-<th>GLIDER</th>
-<th>VECTOR</th>
-<th>TOW PILOT<br/>WINCH DRIVER</th>
-<th>PIC</th>
-<th>P2</th>
-<th>START</th>
-<?php if ($towChargeType==2) echo "<th>TOW LAND</th>";?>
-<th>LAND</th>
-<?php if ($towChargeType==1) echo "<th>HEIGHT</th>";?>
-<?php if ($towChargeType==2) echo "<th>TOW</th><th>GLIDER</th>";?>
-<?php if ($towChargeType==1) echo "<th>TIME</th>";?>
-<th>BILLING</th>
-<th>COMMENTS</th>
-</tr>
-</table>
-<div id='bottomdiv'>
-<div id='add-line'>
-  <button  class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="AddNewLine()">Add Line</button>
-</div>
-<div id='final'>
-  <button id='final' class='ui-button ui-corner-all ui-widget' onclick='finalise()'>Check and Finish Day</button>
-</div>
-</div>
-<div id='areachecks'>
-</div>
-<div id='bookings'>
-<p class='p1'>TODAY'S BOOKINGS</p>
-<div id='bookings2'>
-<p></p>
-<table id='btable'>
-</table>
-</div>
-</div>
-<p id="err"></p>
-<p id="diag"><?php if($DEBUG>0)echo $diagtext;?></p>
-</div>
+  <?php include __DIR__.'/helpers/dev_mode_banner.php' ?>
+  <?php if ($org <= 0){ die("Cannot start daily log sheet as Club Organisation not specified");}  ?>
+  <?php $inc = "./orgs/" . $org . "/heading6.txt"; include $inc; ?>
+  <?php $inc = "./orgs/" . $org . "/menu1.txt"; include $inc; ?>
+  <?php if (strlen($location) == 0){ header('Location: StartDay.php?org='.$org);}  ?>
+  <div id="container">
+    <div class="sheet">
+      <p class="title" >Daily ops sheet <span id='dayfield'>DATE</span>, <span id='locationLabel'>LOCATION</span><span> | </span> <span><button style="font-size:14px" type="button" onclick="document.location.href='/StartDay.php?org=<?php echo $org ?>&location=<?php echo $location ?>'">Change Default Location</button> </span> <span> | </span> <span id='sync'>SYNC</span></p>
+      <table id='t1' style="width: 100%" class="table-condensed">
+        <?php if ($towChargeType==2) echo "<tr><th colspan='9'></th><th colspan='2'>TIME</th></tr><tr>";?>
+        <th></th>
+        <th>LAUNCH</th>
+        <th>GLIDER</th>
+        <th>VECT</th>
+        <th>TOW PILOT<br/>WINCH DRIVER</th>
+        <th>PIC</th>
+        <th>P2</th>
+        <th>START</th>
+        <?php if ($towChargeType==2) echo "<th>TOW LAND</th>";?>
+        <th>LAND</th>
+        <?php if ($towChargeType==1) echo "<th>HEIGHT</th>";?>
+        <?php if ($towChargeType==2) echo "<th>TOW</th><th>GLIDER</th>";?>
+        <?php if ($towChargeType==1) echo "<th>TIME</th>";?>
+        <th>BILLING</th>
+        <th>COMMENTS</th>
+        <th>LOCATION</th>
+        </tr>
+      </table>
+      <button  class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="AddNewLine()">Add Line</button>
+    </div>
+    <hr>
+    <div id='final'>
+      <p class="title">End of the day ops:</p>
+      <button style="display:none" class='ui-button ui-corner-all ui-widget' style="margin-top: 10px; margin-bottom: 10px;" onclick="">Show flights from all locations</button>
+      <br>
+      <button id='final' class='ui-button ui-corner-all ui-widget final' onclick='finalise()'>Check and Finish Day</button>
+    </div>
+    <div id='areachecks'>
+    </div>
+    <div id='bookings' style="display:none">
+      <hr>
+      <p class='p1'>TODAY'S BOOKINGS</p>
+      <div id='bookings2'>
+        <p></p>
+        <table id='btable'>
+        </table>
+      </div>
+    </div>
+    <p id="err"></p>
+    <p id="diag"><?php if($DEBUG>0)echo $diagtext;?></p>
+    <hr>  
+    <!--The following empty rows have been inserted on purpose, in order to accommodate the dailysheet page to certain tablets - otherwise the virtual keyboard would hide some of the rows. Don't delete them. -->
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>  
+  </div>
   <div id='loading-spinner'>
     <div class='loader'></div>
   </div>
