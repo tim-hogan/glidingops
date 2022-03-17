@@ -78,9 +78,13 @@ else
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS,$str);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
                 $result = curl_exec($ch);
-
+                if (!$result)
+                {
+                    error_log("Curl error in SendTxt.php " . curl_error($ch));
+                }
 
                 $result = json_decode($result,true);
 

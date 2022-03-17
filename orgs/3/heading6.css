@@ -1,0 +1,15 @@
+#head {background-color:#000040;}
+table.t1 {width: 100%;border-collapse:collapse;}
+a.wt{color: white;}
+a.wt:link{color: white;}
+a.wt:visited {color: white;}
+a.wt:hover {color: #0000FF;}
+p.headp1 {font-family: Calibri, Arial, Helvetica, sans-serif; margin:0;color:white;font-size:50px}
+p.headp2 {font-family: Calibri, Arial, Helvetica, sans-serif; margin:0;color:white;font-size:20px}
+td.tdhead1 {padding-left:0px;}
+td.head3 {color:white;border-style: none;font-size:14px;font-family: Arial, Helvetica, sans-serif;text-align: right;vertical-align: top;}
+td.head4 {width: 30px;border-style: none;}
+#head a {text-decoration: none; color: white;}
+#head a:link{text-decoration: none; color: white;}
+#head a:visited {text-decoration: none; color: white;}
+#head a:hover {text-decoration: none; color: #0000FF;}

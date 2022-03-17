@@ -36,13 +36,6 @@ afterScriptPath = "after.sh"
 customizationScriptPath = "user-customizations.sh"
 aliasesPath = "aliases"
 
-php56InstallScript = <<-SCRIPT
-sudo apt-get update
-sudo apt-get -y \
-    -o Dpkg::Options::="--force-confdef" \
-    -o Dpkg::Options::="--force-confold" \
-    install php5.6 php5.6-dev php5.6-fpm php5.6-mcrypt php5.6-mbstring php5.6-curl php5.6-cli php5.6-mysql php5.6-gd php5.6-intl php5.6-xsl php5.6-zip
-SCRIPT
 
 require File.expand_path('dev/bootstrap.rb', currentDir)
 require File.expand_path(confDir + '/scripts/homestead.rb')
@@ -55,7 +48,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provision "shell" do |s|
             s.inline = "awk '{ sub(\"\r$\", \"\"); print }' /tmp/bash_aliases > /home/vagrant/.bash_aliases"
         end
-        config.vm.provision "shell", inline: php56InstallScript
     end
 
     if File.exist? homesteadYamlPath then
