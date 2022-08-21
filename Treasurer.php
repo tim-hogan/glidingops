@@ -318,9 +318,11 @@ SQL;
 		$towcost=0.0;
         $towcost = CalcTowCharge2($_SESSION['org'],$row[8],$row[9],$row[11],$row[3],"",1,0);
 
-
-        if ($towcost < 0.00)
+        $error = false;
+        if ($towcost < 0.00){
+            $error = true;
 		    echo "<td class='right'>ERROR</td>";
+        }
 		else
 		{
             echo "<td class='right'>$";
@@ -338,8 +340,11 @@ SQL;
 		echo "<td class='right'>$";
         echo sprintf("%01.2f",$airwaycost);
 		echo "</td>";
-		echo "<td class='right'>$";
-        echo sprintf("%01.2f",($towcost+$glidcost+$airwaycost));
+		echo "<td class='right'>";
+        if ($error)
+            echo "ERROR";
+        else
+            echo sprintf("$%01.2f",($towcost+$glidcost+$airwaycost));
 		echo "</td>";
         echo "<td>";echo $row[6];echo "</td>";
 	}
@@ -413,8 +418,11 @@ SQL;
 		echo "<td>";echo $row[7];echo "</td>";
 		$towcost=0.0;
         $towcost = CalcTowCharge2($_SESSION['org'],$row[8],$row[9],$row[11],$row[3],"",1,0);
-		if ($towcost < 0.00)
+        $error = false;
+		if ($towcost < 0.00){
+            $error = true;
 		    echo "<td class='right'>ERROR</td>";
+        }
 		else
 		{
             echo "<td class='right'>$";
@@ -434,8 +442,12 @@ SQL;
         echo sprintf("%01.2f",$airwaycost);
 		echo "</td>";
 
-		echo "<td class='right'>$";
-        echo sprintf("%01.2f",($towcost+$glidcost+$airwaycost));
+		echo "<td class='right'>";
+        
+        if ($error)
+            echo "ERROR";
+        else
+            echo sprintf("$%01.2f",($towcost+$glidcost+$airwaycost));
 		echo "</td>";
 
         echo "<td>";echo $row[6];echo "</td>";
@@ -543,8 +555,10 @@ SQL;
 			else
 			if ($row2[8] == $winchlaunch)
 				  $towcost = CalcWinchCharge($con,$_SESSION['org'],$row2[19],$flightDate);
+            $error = false;
             if ($towcost < 0.00)
             {
+                $error = true;
 			    echo "<td class='right'>ERROR</td>";
             }
 		    else
@@ -564,8 +578,11 @@ SQL;
 			echo "<td class='right'>$";
 			echo sprintf("%01.2f",$airwaycost);
 			echo "</td>";
-			echo "<td class='right'>$";
-			echo sprintf("%01.2f",($towcost+$glidcost+$airwaycost));
+			echo "<td class='right'>";
+            if ($error)
+                echo "ERROR";
+            else
+                echo sprintf("$%01.2f",($towcost+$glidcost+$airwaycost));
 			echo "</td>";
 			echo "<td>";echo $row2[6];echo "</td>";			
 		}		
@@ -735,8 +752,10 @@ SQL;
                 if ($SchemeCharge > 0 && $iChargeTow == 0)
                      $towcost=0.0;
             }
+            $error = false;
             if ($towcost < 0.00)
             {
+                $error = true;
 			    echo "<td class='right'>ERROR</td>";
             }
 		    else
@@ -764,8 +783,11 @@ SQL;
         	echo sprintf("%01.2f",$airways);
         	echo "</td>";
 
-		    echo "<td class='right'>$";
-   		    echo sprintf("%01.2f",($towcost+$glidcost+$airways));
+		    echo "<td class='right'>";
+            if ($error)
+                echo "ERROR";
+            else
+                echo sprintf("$%01.2f",($towcost+$glidcost+$airwaycost));
             echo "</td>";
 
 		    $totamount = $totamount + ($towcost+$glidcost+$airways);
