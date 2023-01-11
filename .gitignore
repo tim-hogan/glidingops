@@ -8,7 +8,12 @@ lrv/.vagrant
 vagrant.log
 lrv/vagrant.log
 <<<<<<< HEAD
+<<<<<<< HEAD
 phpinfo.php
 =======
 img/members
 >>>>>>> master
+=======
+phpinfo.php
+img/members
+>>>>>>> 404517d11122de9afa8b2e660c055bf57e6b69db
