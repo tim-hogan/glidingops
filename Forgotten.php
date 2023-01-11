@@ -55,15 +55,20 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
     $headers = 'From: operations@glidingops.com' . "\r\n" .
      'Reply-To: wgcoperations@gmail.com' . "\r\n" .
      'X-Mailer: PHP/' . phpversion();
-    $message = "Login details are Username " . $email . " Temporary Password " . $pw;
-    mail($email, "Wellington Gliding Club Ops", $message, $headers);
-    header('Location: Login.php');
+     $message = 
+     "Here are your login details for Gliding Ops.\n".
+     "\n".
+     "Username: ".$email."\n".
+     "Temporary Password: ".$pw."\n".
+     "\n".
+     "You will be asked to change the temporary password on your first login.".
+     "\n".
+     "http://www.glidingops.com/Login.php";
+    mail($email, "Password Recovery - Gliding Ops", $message, $headers);
+    header('Location: Login.php?recovered=1');
   }
   else
-  {
-   $errtext='The email address you entered is not registered to this site.<br>Either correct and resubmit or register ';
-   $errtext .= "<a href='Register.php'>here</a>";
-  }
+   $errtext = "Sorry, that email address is not recorded as a member";
  }
 }
 ?>

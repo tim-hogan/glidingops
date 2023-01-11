@@ -86,7 +86,7 @@ $con=mysqli_connect($con_params['hostname'],$con_params['username'],$con_params[
       "You will be asked to change the temporary password on your first login.".
       "\n".
       "http://www.glidingops.com/Login.php";
-    mail($email, "Welcome to Wellington Gliding Club Ops", $message, $headers);
+    mail($email, "Welcome - Gliding Ops", $message, $headers);
     header('Location: Login.php?registered=1');
    }
   }
